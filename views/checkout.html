@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>結帳 — {{siteName}}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: { colors: {
+    brand: { 500:'#3B5BDB', 600:'#2B44B0' },
+    accent: { 400:'#E8A838', 500:'#d4922a' },
+    purple: { 500:'#a855f7', 600:'#9333ea' }
+  }, fontFamily: { sans: ['Noto Sans TC','sans-serif'] }}}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans min-h-screen flex items-center justify-center">
+
+<div class="max-w-lg w-full mx-auto px-6 py-16">
+  <a href="/" class="inline-flex items-center gap-2 text-gray-400 hover:text-gray-600 text-sm mb-8 transition">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    返回課程頁
+  </a>
+
+  <!-- Order summary -->
+  <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-purple-500/20">K</div>
+      <div>
+        <div class="font-bold text-gray-900">{{courseTitle}}</div>
+        <div class="text-gray-400 text-sm">{{brandName}}</div>
+      </div>
+    </div>
+    <hr class="border-gray-100 mb-4">
+    <div class="flex justify-between items-center">
+      <span class="text-gray-500">課程費用</span>
+      <span class="text-3xl font-black text-gray-900">NT$ {{price}}</span>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+    <h2 class="font-bold text-gray-900 text-lg mb-6">填寫報名資料</h2>
+
+    <form id="checkoutForm" class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-600 font-medium mb-1.5">姓名</label>
+        <input type="text" name="name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition" placeholder="你的姓名">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 font-medium mb-1.5">Email</label>
+        <input type="email" name="email" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition" placeholder="your@email.com">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 font-medium mb-1.5">手機</label>
+        <input type="tel" name="phone" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition" placeholder="0912-345-678">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-600 font-medium mb-3">付款方式</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="cursor-pointer">
+            <input type="radio" name="method" value="ecpay" checked class="peer sr-only">
+            <div class="border-2 border-gray-200 peer-checked:border-brand-500 peer-checked:bg-brand-50 rounded-xl p-4 transition text-center">
+              <div class="text-2xl mb-1">💳</div>
+              <div class="text-sm font-bold text-gray-800">信用卡 / ATM</div>
+              <div class="text-xs text-gray-400">綠界 ECPay</div>
+            </div>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="method" value="portaly" class="peer sr-only">
+            <div class="border-2 border-gray-200 peer-checked:border-purple-500 peer-checked:bg-purple-50 rounded-xl p-4 transition text-center">
+              <div class="text-2xl mb-1">🔗</div>
+              <div class="text-sm font-bold text-gray-800">Portaly</div>
+              <div class="text-xs text-gray-400">多元支付</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white font-bold py-4 rounded-xl text-lg transition shadow-lg shadow-purple-500/25 mt-2">
+        確認付款 NT$ {{price}}
+      </button>
+      <p class="text-center text-gray-400 text-xs mt-3">點擊付款即表示你同意我們的服務條款</p>
+    </form>
+
+    <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+      <div class="text-amber-700 text-sm font-bold mb-1">🚧 測試模式</div>
+      <div class="text-amber-600/70 text-xs">金流尚未正式串接，提交後將模擬付款成功流程</div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = '處理中...';
+  btn.disabled = true;
+  btn.classList.add('opacity-60');
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (result.success) {
+      window.location.href = result.paymentUrl;
+    } else {
+      alert(result.message);
+      btn.textContent = '確認付款 NT$ {{price}}';
+      btn.disabled = false;
+      btn.classList.remove('opacity-60');
+    }
+  } catch (err) {
+    alert('系統錯誤，請稍後再試');
+    btn.textContent = '確認付款 NT$ {{price}}';
+    btn.disabled = false;
+    btn.classList.remove('opacity-60');
+  }
+});
+</script>
+</body>
+</html>

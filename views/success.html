@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>付款成功 — {{brandName}}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: { colors: {
+    brand: { 50:'#f0f4ff', 500:'#3B5BDB' },
+    purple: { 600:'#9333ea' }
+  }, fontFamily: { sans: ['Noto Sans TC','sans-serif'] }}}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  @keyframes checkmark { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .check-anim { animation: checkmark 0.5s ease-out 0.3s both; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans min-h-screen flex items-center justify-center">
+
+<div class="max-w-md w-full mx-auto px-6 py-16 text-center">
+  <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6 check-anim">
+    <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+  </div>
+
+  <h1 class="text-3xl font-black text-gray-900 mb-3">付款成功！</h1>
+  <p class="text-gray-500 text-lg mb-8">歡迎加入 {{courseTitle}}</p>
+
+  <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-8 text-left shadow-sm">
+    <h3 class="font-bold text-gray-900 mb-4">接下來你可以：</h3>
+    <div class="space-y-4">
+      <div class="flex items-start gap-3">
+        <span class="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 text-sm font-bold flex-shrink-0">1</span>
+        <div><div class="text-gray-900 font-medium">進入課程</div><div class="text-gray-400 text-sm">點擊下方按鈕，立即開始學習</div></div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 text-sm font-bold flex-shrink-0">2</span>
+        <div><div class="text-gray-900 font-medium">加入學員群</div><div class="text-gray-400 text-sm">掃描 QR Code 加入 LINE 專屬群組</div></div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center text-brand-500 text-sm font-bold flex-shrink-0">3</span>
+        <div><div class="text-gray-900 font-medium">收藏課程連結</div><div class="text-gray-400 text-sm">將課程連結加入書籤，隨時回來複習</div></div>
+      </div>
+    </div>
+  </div>
+
+  <a href="{{courseUrl}}" class="inline-block w-full bg-gradient-to-r from-brand-500 to-purple-600 text-white font-bold py-4 rounded-xl text-lg transition shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40">開始上課 →</a>
+  <p class="text-gray-400 text-xs mt-6">課程連結已發送到你的 Email，也可以透過 LINE Bot 隨時取得。</p>
+</div>
+</body>
+</html>

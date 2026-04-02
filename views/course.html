@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>課程 — {{brandName}}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: { colors: {
+    brand: { 50:'#f0f4ff', 100:'#dbe4ff', 500:'#3B5BDB', 600:'#2B44B0' },
+    purple: { 50:'#faf5ff', 500:'#a855f7', 600:'#9333ea' }
+  }, fontFamily: { sans: ['Noto Sans TC','sans-serif'] }}}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+  .lesson-item.active { background: #f0f4ff; border-color: #3B5BDB; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans">
+
+<!-- Top bar -->
+<header class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 h-14">
+  <div class="h-full px-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white font-black text-xs shadow-md">K</div>
+      <span class="font-bold text-gray-900 text-sm hidden sm:block">{{brandName}}</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-gray-400 text-sm">歡迎，<span class="text-gray-900 font-medium">{{userName}}</span></span>
+      <button id="sidebarToggle" class="md:hidden w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="flex pt-14 min-h-screen">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar fixed md:sticky top-14 left-0 w-80 h-[calc(100vh-3.5rem)] bg-white border-r border-gray-100 overflow-y-auto z-40 transform -translate-x-full md:translate-x-0 transition-transform shadow-xl md:shadow-none">
+    <div class="p-4">
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs text-gray-400 font-medium">學習進度</span>
+          <span class="text-xs text-brand-500 font-bold" id="progressText">0%</span>
+        </div>
+        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div id="progressBar" class="h-full bg-gradient-to-r from-brand-500 to-purple-500 rounded-full transition-all" style="width:0%"></div>
+        </div>
+      </div>
+      <div id="courseNav" class="space-y-5"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 min-w-0">
+    <div class="bg-gray-900 aspect-video w-full max-h-[70vh] flex items-center justify-center" id="videoArea">
+      <div class="text-center text-gray-500">
+        <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-sm">選擇左側課程開始學習</p>
+      </div>
+    </div>
+
+    <div class="p-6 md:p-8 max-w-4xl">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-brand-500 text-sm font-medium" id="lessonStage">—</span>
+      </div>
+      <h1 class="text-2xl font-black text-gray-900 mb-4" id="lessonTitle">歡迎來到課程</h1>
+      <p class="text-gray-500 leading-relaxed" id="lessonDesc">從左側選單選擇你要觀看的課程單元。</p>
+
+      <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+        <button id="prevBtn" class="flex items-center gap-2 text-gray-400 hover:text-gray-700 transition text-sm disabled:opacity-30" disabled>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          上一課
+        </button>
+        <button id="completeBtn" class="bg-brand-50 hover:bg-brand-100 text-brand-500 font-medium px-5 py-2 rounded-xl text-sm transition">
+          標記完成 ✓
+        </button>
+        <button id="nextBtn" class="flex items-center gap-2 text-gray-400 hover:text-gray-700 transition text-sm disabled:opacity-30" disabled>
+          下一課
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+<script>
+const courseData = {{courseData}};
+const token = '{{token}}';
+const allLessons = [];
+courseData.stages.forEach((stage, si) => {
+  stage.lessons.forEach((lesson, li) => {
+    allLessons.push({ ...lesson, stageIndex: si, stageTitle: stage.title, lessonIndex: li });
+  });
+});
+
+let currentIndex = -1;
+const completed = new Set(JSON.parse(localStorage.getItem('knowu_completed_' + token) || '[]'));
+const stageIcons = ['from-amber-400 to-orange-500','from-blue-400 to-cyan-500','from-purple-400 to-pink-500','from-green-400 to-emerald-500'];
+const stageNums = ['bg-amber-100 text-amber-700','bg-blue-100 text-blue-700','bg-purple-100 text-purple-700','bg-green-100 text-green-700'];
+
+function renderNav() {
+  const nav = document.getElementById('courseNav');
+  nav.innerHTML = '';
+  courseData.stages.forEach((stage, si) => {
+    const done = stage.lessons.filter(l => completed.has(l.id)).length;
+    let html = `<div>
+      <div class="flex items-center gap-2 mb-2 px-2">
+        <div class="w-6 h-6 rounded-md bg-gradient-to-br ${stageIcons[si]} flex items-center justify-center text-white text-xs font-bold shadow-sm">${si+1}</div>
+        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider flex-1">${stage.title}</span>
+        <span class="text-xs text-gray-300">${done}/${stage.lessons.length}</span>
+      </div><div class="space-y-0.5">`;
+    stage.lessons.forEach((lesson, li) => {
+      const gi = allLessons.findIndex(l => l.id === lesson.id);
+      const active = gi === currentIndex;
+      const isDone = completed.has(lesson.id);
+      html += `<button onclick="selectLesson(${gi})" class="lesson-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent transition hover:bg-gray-50 ${active ? 'active !border-brand-200' : ''}">
+        <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${isDone ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}">
+          ${isDone ? '✓' : li + 1}
+        </div>
+        <span class="text-sm ${active ? 'text-gray-900 font-medium' : 'text-gray-600'} truncate">${lesson.title}</span>
+        <span class="text-xs text-gray-300 ml-auto flex-shrink-0">${lesson.duration}</span>
+      </button>`;
+    });
+    html += '</div></div>';
+    nav.innerHTML += html;
+  });
+  updateProgress();
+}
+
+function selectLesson(index) {
+  currentIndex = index;
+  const lesson = allLessons[index];
+  const videoArea = document.getElementById('videoArea');
+  if (lesson.videoUrl) {
+    videoArea.innerHTML = `<iframe src="${lesson.videoUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>`;
+  } else {
+    videoArea.innerHTML = `<div class="text-center text-gray-500"><svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p class="text-sm">影片即將上線</p></div>`;
+  }
+  document.getElementById('lessonStage').textContent = `Stage ${lesson.stageIndex+1} — ${lesson.stageTitle}`;
+  document.getElementById('lessonTitle').textContent = lesson.title;
+  document.getElementById('lessonDesc').textContent = '';
+  document.getElementById('prevBtn').disabled = index === 0;
+  document.getElementById('nextBtn').disabled = index === allLessons.length - 1;
+  const cb = document.getElementById('completeBtn');
+  if (completed.has(lesson.id)) { cb.textContent = '已完成 ✓'; cb.className = 'bg-green-100 text-green-600 font-medium px-5 py-2 rounded-xl text-sm cursor-default'; }
+  else { cb.textContent = '標記完成 ✓'; cb.className = 'bg-brand-50 hover:bg-brand-100 text-brand-500 font-medium px-5 py-2 rounded-xl text-sm transition cursor-pointer'; }
+  renderNav();
+  if (window.innerWidth < 768) toggleSidebar();
+}
+
+function updateProgress() {
+  const pct = Math.round((completed.size / allLessons.length) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+document.getElementById('completeBtn').addEventListener('click', () => {
+  if (currentIndex < 0) return;
+  completed.add(allLessons[currentIndex].id);
+  localStorage.setItem('knowu_completed_' + token, JSON.stringify([...completed]));
+  selectLesson(currentIndex);
+});
+document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) selectLesson(currentIndex - 1); });
+document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < allLessons.length - 1) selectLesson(currentIndex + 1); });
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('-translate-x-full');
+  document.getElementById('sidebarOverlay').classList.toggle('hidden');
+}
+document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+renderNav();
+</script>
+</body>
+</html>
