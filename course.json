@@ -7,13 +7,17 @@
   "stages": [
     {
       "id": "s1",
-      "title": "畫大餅 — 全局觀",
+      "title": "大局觀",
       "description": "看懂整套系統怎麼賺錢，建立信心",
       "lessons": [
         { "id": "s1-1", "title": "一個人 + AI = 一間公司", "videoUrl": "https://www.youtube.com/embed/Uyp2XA2uqrY", "duration": "15:00" },
         { "id": "s1-2", "title": "完整漏斗全貌：廣告→LP→LINE→直播→金流→課程", "videoUrl": "", "duration": "20:00" },
         { "id": "s1-3", "title": "ROI 實證：我怎麼用這套系統賺錢", "videoUrl": "", "duration": "18:00" },
-        { "id": "s1-4", "title": "30 天造局路線圖", "videoUrl": "", "duration": "12:00" }
+        { "id": "s1-4", "title": "30 天造局路線圖", "videoUrl": "", "duration": "12:00" },
+        { "id": "s1-5", "title": "Anthropic 帳號申請 + Claude Code 安裝", "videoUrl": "", "duration": "10:00" },
+        { "id": "s1-6", "title": "Zeabur 帳號註冊 + 信用卡綁定", "videoUrl": "", "duration": "8:00" },
+        { "id": "s1-7", "title": "LINE 官方帳號申請 + Messaging API 開通", "videoUrl": "", "duration": "12:00" },
+        { "id": "s1-8", "title": "GitHub 帳號註冊 + 基本操作", "videoUrl": "", "duration": "10:00" }
       ]
     },
     {
@@ -24,7 +28,9 @@
         { "id": "s2-1", "title": "三個問題找到你的課程主題", "videoUrl": "", "duration": "15:00" },
         { "id": "s2-2", "title": "AI 市場調研：競品分析 + 痛點挖掘", "videoUrl": "", "duration": "20:00" },
         { "id": "s2-3", "title": "差異化定位：你憑什麼教這個", "videoUrl": "", "duration": "18:00" },
-        { "id": "s2-4", "title": "學員人設 & 產品階梯設計", "videoUrl": "", "duration": "16:00" }
+        { "id": "s2-4", "title": "學員人設 & 產品階梯設計", "videoUrl": "", "duration": "16:00" },
+        { "id": "s2-5", "title": "Notion 帳號申請 + Integration 建立", "videoUrl": "", "duration": "10:00" },
+        { "id": "s2-6", "title": "用 AI 自動建立課程管理看板到 Notion", "videoUrl": "", "duration": "15:00" }
       ]
     },
     {
@@ -48,7 +54,10 @@
         { "id": "s4-3", "title": "LINE OA + AI 機器人基礎設定", "videoUrl": "", "duration": "25:00" },
         { "id": "s4-4", "title": "金流串接：TapPay 付款 → 自動開通", "videoUrl": "", "duration": "22:00" },
         { "id": "s4-5", "title": "課程平台上架：course.json + 影片嵌入", "videoUrl": "", "duration": "18:00" },
-        { "id": "s4-6", "title": "自訂網域 + 上線檢查清單", "videoUrl": "", "duration": "12:00" }
+        { "id": "s4-6", "title": "自訂網域 + 上線檢查清單", "videoUrl": "", "duration": "12:00" },
+        { "id": "s4-7", "title": "TapPay Portal 註冊 + 商家申請 + IP 綁定", "videoUrl": "", "duration": "15:00" },
+        { "id": "s4-8", "title": "LINE Webhook 設定 + 自動回覆關閉", "videoUrl": "", "duration": "10:00" },
+        { "id": "s4-9", "title": "用測試卡走完一次完整付款流程", "videoUrl": "", "duration": "10:00" }
       ]
     },
     {
@@ -60,7 +69,9 @@
         { "id": "s5-2", "title": "受眾策略：興趣 vs 類似 vs Advantage+", "videoUrl": "", "duration": "18:00" },
         { "id": "s5-3", "title": "AI 批量產廣告素材（5 個角度一次產）", "videoUrl": "", "duration": "22:00" },
         { "id": "s5-4", "title": "Pixel 安裝 + Conversion API 追蹤", "videoUrl": "", "duration": "15:00" },
-        { "id": "s5-5", "title": "小預算測試投放：$300/天跑出第一批數據", "videoUrl": "", "duration": "16:00" }
+        { "id": "s5-5", "title": "小預算測試投放：$300/天跑出第一批數據", "videoUrl": "", "duration": "16:00" },
+        { "id": "s5-6", "title": "Meta 企業管理平台申請 + 廣告帳號建立", "videoUrl": "", "duration": "12:00" },
+        { "id": "s5-7", "title": "Chrome Pixel Helper 安裝 + 驗證追蹤", "videoUrl": "", "duration": "8:00" }
       ]
     },
     {
