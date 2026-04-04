@@ -1,0 +1,57 @@
+apiVersion: zeabur.com/v1
+kind: Template
+metadata:
+  name: AI 造局術課程平台
+  description: 一鍵部署課程銷售系統（LP + LINE Bot + TapPay 金流 + 課程觀看 + 自動追單）
+spec:
+  services:
+    - name: knowu-web
+      icon: https://raw.githubusercontent.com/user/repo/main/public/icon.png
+      template: GIT
+      gitRepo:
+        url: https://github.com/user/knowu-web
+        branch: main
+      env:
+        PORT:
+          default: "3000"
+        SITE_NAME:
+          description: 你的課程名稱
+          required: true
+        BRAND_NAME:
+          description: 你的品牌名
+          required: true
+        PUBLIC_BASE_URL:
+          description: 你的網域（https 開頭）
+          required: true
+        LINE_CHANNEL_TOKEN:
+          description: LINE Channel Access Token
+          required: true
+        LINE_CHANNEL_SECRET:
+          description: LINE Channel Secret
+          required: true
+        ADMIN_USER_ID:
+          description: 管理者的 LINE User ID
+          required: true
+        TAPPAY_APP_ID:
+          description: TapPay App ID
+          default: "12348"
+        TAPPAY_APP_KEY:
+          description: TapPay App Key
+          default: "app_pa1pQwXUzaRoMd7svcJawNKgWOBIlBBsIfiPlTZy7ZOiPgCaRKkRGeYRAV1Y"
+        TAPPAY_PARTNER_KEY:
+          description: TapPay Partner Key
+          required: true
+        TAPPAY_MERCHANT_ID:
+          description: TapPay Merchant ID
+          required: true
+        TAPPAY_ENV:
+          description: sandbox 或 production
+          default: sandbox
+        DASHBOARD_PASSWORD:
+          description: 儀表板密碼
+          default: knowu2026
+        MONGODB_URI:
+          default: "${MONGO_CONNECTION_STRING}"
+    - name: mongodb
+      template: MARKETPLACE
+      marketplaceCode: mongodb

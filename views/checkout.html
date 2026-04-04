@@ -15,6 +15,7 @@ tailwind.config = {
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://js.tappaysdk.com/sdk/tpdirect/v5.18.0"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased font-sans min-h-screen flex items-center justify-center">
 
@@ -24,19 +25,44 @@ tailwind.config = {
     返回課程頁
   </a>
 
+  <!-- Plan Switcher -->
+  <div class="grid grid-cols-2 gap-3 mb-6">
+    <button id="btn-v1" onclick="switchPlan('v1')" class="plan-btn border-2 rounded-2xl p-4 text-left transition relative">
+      <div class="text-xs font-bold text-gray-400 tracking-wider mb-1">STARTER</div>
+      <div class="font-black text-gray-900 text-lg">v1 基礎版</div>
+      <div class="text-2xl font-black mt-2">$<span id="price-v1">{{priceV1}}</span></div>
+      <ul class="mt-3 space-y-1 text-xs text-gray-500">
+        <li>38 堂實戰課程</li>
+        <li>全系統一鍵部署</li>
+        <li>3 波自動追單</li>
+      </ul>
+    </button>
+    <button id="btn-v2" onclick="switchPlan('v2')" class="plan-btn border-2 rounded-2xl p-4 text-left transition relative overflow-hidden">
+      <div class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">推薦</div>
+      <div class="text-xs font-bold text-purple-500 tracking-wider mb-1">PRO</div>
+      <div class="font-black text-gray-900 text-lg">v2 進階版</div>
+      <div class="text-2xl font-black mt-2">$<span id="price-v2">{{priceV2}}</span></div>
+      <ul class="mt-3 space-y-1 text-xs text-gray-500">
+        <li>v1 全部 + 進階自動化</li>
+        <li>AI 分身 + 短影音自動化</li>
+        <li>6 波追單 + Dashboard</li>
+      </ul>
+    </button>
+  </div>
+
   <!-- Order summary -->
   <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
     <div class="flex items-center gap-3 mb-4">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-purple-500/20">K</div>
       <div>
-        <div class="font-bold text-gray-900">{{courseTitle}}</div>
-        <div class="text-gray-400 text-sm">{{brandName}}</div>
+        <div class="font-bold text-gray-900" id="order-title">{{courseTitle}}</div>
+        <div class="text-gray-400 text-sm" id="order-plan">STARTER</div>
       </div>
     </div>
     <hr class="border-gray-100 mb-4">
     <div class="flex justify-between items-center">
       <span class="text-gray-500">課程費用</span>
-      <span class="text-3xl font-black text-gray-900">NT$ {{price}}</span>
+      <span class="text-3xl font-black text-gray-900">NT$ <span id="order-price">{{price}}</span></span>
     </div>
   </div>
 
@@ -55,76 +81,155 @@ tailwind.config = {
       </div>
       <div>
         <label class="block text-sm text-gray-600 font-medium mb-1.5">手機</label>
-        <input type="tel" name="phone" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition" placeholder="0912-345-678">
+        <input type="tel" name="phone" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition" placeholder="0912345678">
       </div>
 
+      <!-- TapPay 信用卡輸入區 -->
       <div>
-        <label class="block text-sm text-gray-600 font-medium mb-3">付款方式</label>
-        <div class="grid grid-cols-2 gap-3">
-          <label class="cursor-pointer">
-            <input type="radio" name="method" value="ecpay" checked class="peer sr-only">
-            <div class="border-2 border-gray-200 peer-checked:border-brand-500 peer-checked:bg-brand-50 rounded-xl p-4 transition text-center">
-              <div class="text-2xl mb-1">💳</div>
-              <div class="text-sm font-bold text-gray-800">信用卡 / ATM</div>
-              <div class="text-xs text-gray-400">綠界 ECPay</div>
+        <label class="block text-sm text-gray-600 font-medium mb-3">信用卡資訊</label>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">卡號</label>
+            <div id="card-number" class="h-10"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">到期日</label>
+              <div id="card-expiration-date" class="h-10"></div>
             </div>
-          </label>
-          <label class="cursor-pointer">
-            <input type="radio" name="method" value="portaly" class="peer sr-only">
-            <div class="border-2 border-gray-200 peer-checked:border-purple-500 peer-checked:bg-purple-50 rounded-xl p-4 transition text-center">
-              <div class="text-2xl mb-1">🔗</div>
-              <div class="text-sm font-bold text-gray-800">Portaly</div>
-              <div class="text-xs text-gray-400">多元支付</div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">安全碼</label>
+              <div id="card-ccv" class="h-10"></div>
             </div>
-          </label>
+          </div>
         </div>
+        <div id="card-error" class="text-red-500 text-xs mt-2 hidden"></div>
       </div>
 
-      <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white font-bold py-4 rounded-xl text-lg transition shadow-lg shadow-purple-500/25 mt-2">
-        確認付款 NT$ {{price}}
+      <button type="submit" id="submitBtn" disabled class="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl text-lg transition shadow-lg shadow-purple-500/25 mt-2">
+        確認付款 NT$ <span id="btn-price">{{price}}</span>
       </button>
-      <p class="text-center text-gray-400 text-xs mt-3">點擊付款即表示你同意我們的服務條款</p>
+      <p class="text-center text-gray-400 text-xs mt-3">
+        <svg class="inline w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        付款由 TapPay 安全處理，卡號不經過本站
+      </p>
     </form>
-
-    <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-      <div class="text-amber-700 text-sm font-bold mb-1">🚧 測試模式</div>
-      <div class="text-amber-600/70 text-xs">金流尚未正式串接，提交後將模擬付款成功流程</div>
-    </div>
   </div>
 </div>
 
 <script>
-document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+var currentPlan = '{{plan}}';
+var prices = { v1: {{priceV1}}, v2: {{priceV2}} };
+var labels = { v1: 'STARTER', v2: 'PRO' };
+
+function switchPlan(plan) {
+  currentPlan = plan;
+  var price = prices[plan].toLocaleString();
+
+  // Update UI
+  document.getElementById('order-price').textContent = price;
+  document.getElementById('btn-price').textContent = price;
+  document.getElementById('order-plan').textContent = labels[plan];
+
+  // Update button styles
+  document.getElementById('btn-v1').className = plan === 'v1'
+    ? 'plan-btn border-2 border-brand-500 bg-blue-50 rounded-2xl p-4 text-left transition relative ring-2 ring-brand-500/20'
+    : 'plan-btn border-2 border-gray-200 rounded-2xl p-4 text-left transition relative hover:border-gray-300';
+  document.getElementById('btn-v2').className = plan === 'v2'
+    ? 'plan-btn border-2 border-purple-500 bg-purple-50 rounded-2xl p-4 text-left transition relative overflow-hidden ring-2 ring-purple-500/20'
+    : 'plan-btn border-2 border-gray-200 rounded-2xl p-4 text-left transition relative overflow-hidden hover:border-gray-300';
+
+  // Update URL without reload
+  var url = new URL(window.location);
+  url.searchParams.set('plan', plan);
+  history.replaceState(null, '', url);
+}
+
+// Init
+switchPlan(currentPlan);
+
+// TapPay SDK
+TPDirect.setupSDK({{tappayAppId}}, '{{tappayAppKey}}', '{{tappayEnv}}');
+
+TPDirect.card.setup({
+  fields: {
+    number: { element: '#card-number', placeholder: '**** **** **** ****' },
+    expirationDate: { element: '#card-expiration-date', placeholder: 'MM / YY' },
+    ccv: { element: '#card-ccv', placeholder: 'CVV' }
+  },
+  styles: {
+    'input': { 'color': '#1a1a1a', 'font-size': '16px', 'font-family': 'Noto Sans TC, sans-serif' },
+    ':focus': { 'color': '#1a1a1a' },
+    '.valid': { 'color': '#16a34a' },
+    '.invalid': { 'color': '#dc2626' }
+  },
+  isMaskCreditCardNumber: true
+});
+
+var canPay = false;
+TPDirect.card.onUpdate(function(update) {
+  var btn = document.getElementById('submitBtn');
+  var err = document.getElementById('card-error');
+  canPay = update.canGetPrime;
+  btn.disabled = !canPay;
+  if (update.status.number === 2 || update.status.expiry === 2 || update.status.ccv === 2) {
+    err.textContent = '請檢查信用卡資訊';
+    err.classList.remove('hidden');
+  } else {
+    err.classList.add('hidden');
+  }
+});
+
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  const btn = document.getElementById('submitBtn');
+  if (!canPay) return;
+
+  var btn = document.getElementById('submitBtn');
   btn.textContent = '處理中...';
   btn.disabled = true;
-  btn.classList.add('opacity-60');
 
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData);
+  var formData = new FormData(e.target);
+  var data = Object.fromEntries(formData);
 
-  try {
-    const res = await fetch('/api/checkout', {
+  TPDirect.card.getPrime(function(result) {
+    if (result.status !== 0) {
+      alert('信用卡驗證失敗：' + result.msg);
+      btn.innerHTML = '確認付款 NT$ <span id="btn-price">' + prices[currentPlan].toLocaleString() + '</span>';
+      btn.disabled = false;
+      return;
+    }
+
+    fetch('/api/pay', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const result = await res.json();
-    if (result.success) {
-      window.location.href = result.paymentUrl;
-    } else {
-      alert(result.message);
-      btn.textContent = '確認付款 NT$ {{price}}';
+      body: JSON.stringify({
+        prime: result.card.prime,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        plan: currentPlan
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      if (res.success && res.requires3DS) {
+        // 3D Secure — 跳轉到銀行驗證頁
+        window.location.href = res.redirectUrl;
+        return;
+      } else if (res.success) {
+        window.location.href = res.redirectUrl;
+      } else {
+        alert(res.message || '付款失敗，請重試');
+        btn.innerHTML = '確認付款 NT$ <span id="btn-price">' + prices[currentPlan].toLocaleString() + '</span>';
+        btn.disabled = false;
+      }
+    })
+    .catch(function() {
+      alert('系統錯誤，請稍後再試');
+      btn.innerHTML = '確認付款 NT$ <span id="btn-price">' + prices[currentPlan].toLocaleString() + '</span>';
       btn.disabled = false;
-      btn.classList.remove('opacity-60');
-    }
-  } catch (err) {
-    alert('系統錯誤，請稍後再試');
-    btn.textContent = '確認付款 NT$ {{price}}';
-    btn.disabled = false;
-    btn.classList.remove('opacity-60');
-  }
+    });
+  });
 });
 </script>
 </body>
