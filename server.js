@@ -45,8 +45,15 @@ function servePage(res, filename, vars = {}) {
 
 // ============ ROUTES ============
 
-// LP 落地頁
+// LP 落地頁（/ 和 /lp 都指向同一頁）
 app.get('/', (req, res) => {
+  servePage(res, 'lp.html', {
+    siteName: process.env.SITE_NAME || 'AI 造局術',
+    brandName: process.env.BRAND_NAME || 'knowu 國際顧問',
+    courseData: JSON.stringify(courseData)
+  });
+});
+app.get('/lp', (req, res) => {
   servePage(res, 'lp.html', {
     siteName: process.env.SITE_NAME || 'AI 造局術',
     brandName: process.env.BRAND_NAME || 'knowu 國際顧問',
@@ -76,7 +83,7 @@ const TAPPAY_RECORD_API = TAPPAY_BASE + '/tpc/transaction/query';
 // 結帳頁
 app.get('/checkout', (req, res) => {
   const plan = req.query.plan === 'v2' ? 'v2' : 'v1';
-  const price = plan === 'v2' ? (courseData.priceV2 || 79800) : courseData.price;
+  const price = plan === 'v2' ? (courseData.priceV2 || 99800) : courseData.price;
   servePage(res, 'checkout.html', {
     siteName: process.env.SITE_NAME || 'AI 造局術',
     brandName: process.env.BRAND_NAME || 'knowu 國際顧問',
@@ -84,7 +91,7 @@ app.get('/checkout', (req, res) => {
     courseTitle: courseData.title,
     plan,
     priceV1: courseData.price,
-    priceV2: courseData.priceV2 || 79800,
+    priceV2: courseData.priceV2 || 99800,
     tappayAppId: TAPPAY_APP_ID,
     tappayAppKey: TAPPAY_APP_KEY,
     tappayEnv: TAPPAY_ENV,
@@ -119,8 +126,8 @@ app.post('/api/pay', async (req, res) => {
     if (!prime) return res.status(400).json({ success: false, message: '缺少付款資訊' });
 
     const selectedPlan = plan === 'v2' ? 'v2' : 'v1';
-    const amount = selectedPlan === 'v2' ? (courseData.priceV2 || 79800) : courseData.price;
-    const planLabel = selectedPlan === 'v2' ? 'AI 造局術 PRO' : 'AI 造局術 STARTER';
+    const amount = selectedPlan === 'v2' ? (courseData.priceV2 || 99800) : courseData.price;
+    const planLabel = selectedPlan === 'v2' ? 'AI 造局術 Partner' : 'AI 造局術 Builder';
 
     const orderId = 'KU' + Date.now();
     const courseToken = crypto.randomBytes(32).toString('hex');

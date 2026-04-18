@@ -28,24 +28,37 @@ tailwind.config = {
   <!-- Plan Switcher -->
   <div class="grid grid-cols-2 gap-3 mb-6">
     <button id="btn-v1" onclick="switchPlan('v1')" class="plan-btn border-2 rounded-2xl p-4 text-left transition relative">
-      <div class="text-xs font-bold text-gray-400 tracking-wider mb-1">STARTER</div>
-      <div class="font-black text-gray-900 text-lg">v1 基礎版</div>
-      <div class="text-2xl font-black mt-2">$<span id="price-v1">{{priceV1}}</span></div>
-      <ul class="mt-3 space-y-1 text-xs text-gray-500">
-        <li>38 堂實戰課程</li>
-        <li>全系統一鍵部署</li>
-        <li>3 波自動追單</li>
+      <div class="text-xs font-bold text-gray-400 tracking-wider mb-1">BUILDER</div>
+      <div class="font-black text-gray-900 text-lg">AI 造局術 Builder</div>
+      <div class="text-sm text-gray-500 mt-1">完整 7 階段 + 自動化系統部署</div>
+      <div class="text-sm font-bold text-green-600 mt-1">30 天內讓你的系統跑起來</div>
+      <div class="mt-2"><span class="text-gray-400 line-through text-sm">$128,800</span></div>
+      <div class="text-2xl font-black">$<span id="price-v1">{{priceV1}}</span> <span class="text-sm font-normal text-gray-400">一次性</span></div>
+      <div class="mt-1"><span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-0.5 rounded-full">早鳥優惠 省 $59,000</span></div>
+      <ul class="mt-3 space-y-1.5 text-xs text-gray-500">
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>63 堂實戰影片課程</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Zeabur 模板一鍵部署</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>LP + LINE Bot + 金流 + 課程平台</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>3 波自動追單再行銷</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Meta 廣告策略教學</li>
       </ul>
     </button>
     <button id="btn-v2" onclick="switchPlan('v2')" class="plan-btn border-2 rounded-2xl p-4 text-left transition relative overflow-hidden">
       <div class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">推薦</div>
-      <div class="text-xs font-bold text-purple-500 tracking-wider mb-1">PRO</div>
-      <div class="font-black text-gray-900 text-lg">v2 進階版</div>
-      <div class="text-2xl font-black mt-2">$<span id="price-v2">{{priceV2}}</span></div>
-      <ul class="mt-3 space-y-1 text-xs text-gray-500">
-        <li>v1 全部 + 進階自動化</li>
-        <li>AI 分身 + 短影音自動化</li>
-        <li>6 波追單 + Dashboard</li>
+      <div class="text-xs font-bold text-purple-500 tracking-wider mb-1">PARTNER</div>
+      <div class="font-black text-gray-900 text-lg">AI 造局術 Partner</div>
+      <div class="text-sm text-gray-500 mt-1">Builder 全部 + 全自動化進階模組</div>
+      <div class="text-sm font-bold text-green-600 mt-1">30 天後你只負責直播，其他全自動</div>
+      <div class="mt-2"><span class="text-gray-400 line-through text-sm">$160,000</span></div>
+      <div class="text-2xl font-black">$<span id="price-v2">{{priceV2}}</span> <span class="text-sm font-normal text-gray-400">一次性</span></div>
+      <div class="mt-1"><span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-0.5 rounded-full">早鳥優惠 省 $60,200</span></div>
+      <ul class="mt-3 space-y-1.5 text-xs text-gray-500">
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Builder 全部內容</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>短影音自動化（IG + FB + YT 每天發）</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>AI 分身（24 小時自動回覆）</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>6 波完整再行銷</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>廣告素材 AI 批量生產</li>
+        <li class="flex items-center gap-1.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>漏斗 Dashboard 數據分析</li>
       </ul>
     </button>
   </div>
@@ -56,7 +69,7 @@ tailwind.config = {
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-purple-500/20">K</div>
       <div>
         <div class="font-bold text-gray-900" id="order-title">{{courseTitle}}</div>
-        <div class="text-gray-400 text-sm" id="order-plan">STARTER</div>
+        <div class="text-gray-400 text-sm" id="order-plan">Builder</div>
       </div>
     </div>
     <hr class="border-gray-100 mb-4">
@@ -120,7 +133,7 @@ tailwind.config = {
 <script>
 var currentPlan = '{{plan}}';
 var prices = { v1: {{priceV1}}, v2: {{priceV2}} };
-var labels = { v1: 'STARTER', v2: 'PRO' };
+var labels = { v1: 'Builder', v2: 'Partner' };
 
 function switchPlan(plan) {
   currentPlan = plan;
