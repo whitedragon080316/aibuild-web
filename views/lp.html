@@ -26,11 +26,9 @@ tailwind.config = {
   .card { background: #fff; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); transition: all 0.3s ease; }
   .card:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04); transform: translateY(-2px); }
   .glow-purple { box-shadow: 0 0 40px -10px rgba(139,92,246,0.4); }
-  .glow-purple-hover:hover { box-shadow: 0 0 60px -15px rgba(139,92,246,0.6); }
   .glow-orange { box-shadow: 0 8px 30px rgba(234,88,12,0.35); }
   .glow-orange:hover { box-shadow: 0 12px 40px rgba(234,88,12,0.5); transform: translateY(-2px); }
   html { scroll-behavior: smooth; }
-  .hero-gradient { background: linear-gradient(135deg, #faf5ff 0%, #f0f4ff 50%, #fff 100%); }
   .section-alt { background: #faf5ff; }
   .hero-banner {
     background: linear-gradient(135deg, #1a0533 0%, #0f1a4e 40%, #1a2980 70%, #26d0ce 100%);
@@ -45,6 +43,8 @@ tailwind.config = {
     content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 80px;
     background: linear-gradient(to top, #fff, transparent);
   }
+  .ta-card { transition: all 0.3s ease; cursor: default; }
+  .ta-card:hover { transform: translateY(-4px); }
 </style>
 </head>
 <body class="bg-white text-gray-800 antialiased font-sans">
@@ -57,10 +57,10 @@ tailwind.config = {
       <span class="font-bold text-gray-900 text-lg tracking-tight">knowu</span>
     </div>
     <div class="hidden md:flex items-center gap-8 text-sm text-gray-500 font-medium">
+      <a href="#who" class="hover:text-brand-600 transition">誰適合</a>
       <a href="#features" class="hover:text-brand-600 transition">課程特色</a>
       <a href="#curriculum" class="hover:text-brand-600 transition">課程內容</a>
       <a href="#pricing" class="hover:text-brand-600 transition">方案</a>
-      <a href="#faq" class="hover:text-brand-600 transition">FAQ</a>
     </div>
     <a href="#pricing" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition glow-orange">立即報名</a>
   </div>
@@ -70,42 +70,41 @@ tailwind.config = {
 <section class="hero-banner pt-16">
   <div class="max-w-6xl mx-auto px-6 py-16 md:py-24 relative z-10">
     <div class="grid md:grid-cols-5 gap-10 items-center">
-      <!-- Text -->
       <div class="md:col-span-3 text-center md:text-left">
         <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
           <span class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></span>
           <span class="text-white/80 text-sm font-medium">2026 全新課程</span>
         </div>
 
-        <div class="text-purple-300 text-sm font-bold tracking-widest mb-3">NOCODING AI 實戰課程</div>
+        <div class="text-purple-300 text-sm font-bold tracking-widest mb-3">NOCODING AI COURSE SYSTEM</div>
 
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5">
-          把任何專業<br>
-          變成自動運轉的<br>
-          線上課程事業
+          你有專業<br>
+          AI 幫你變成<br>
+          自動賺錢的線上事業
         </h1>
 
         <p class="text-lg text-blue-200/70 leading-relaxed mb-8 max-w-lg">
-          不只教你做課程，而是幫你<strong class="text-white">部署一整套自動化銷售系統</strong>。從廣告、落地頁、LINE Bot 到金流收款，全部搭好。
+          從第一步到系統上線，<strong class="text-white">每一步都有人帶你走</strong>。不用自己摸索方向對不對，AI 幫你建系統，教練幫你確認方向。
         </p>
 
         <div class="flex flex-col sm:flex-row gap-3 mb-10">
           <a href="#pricing" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-2xl text-lg transition glow-orange text-center">
             開始打造你的事業 →
           </a>
-          <a href="#curriculum" class="bg-white/10 border border-white/20 hover:bg-white/20 text-white font-bold px-8 py-4 rounded-2xl text-lg transition text-center">
-            看完整課綱
+          <a href="#who" class="bg-white/10 border border-white/20 hover:bg-white/20 text-white font-bold px-8 py-4 rounded-2xl text-lg transition text-center">
+            看看你是哪一種
           </a>
         </div>
 
         <div class="flex items-center gap-8 flex-wrap">
           <div>
-            <div class="text-3xl font-black text-white">8</div>
+            <div class="text-3xl font-black text-white">7</div>
             <div class="text-sm text-blue-200/50">大階段</div>
           </div>
           <div class="w-px h-10 bg-white/20"></div>
           <div>
-            <div class="text-3xl font-black text-white">49</div>
+            <div class="text-3xl font-black text-white">63</div>
             <div class="text-sm text-blue-200/50">堂實戰課</div>
           </div>
           <div class="w-px h-10 bg-white/20"></div>
@@ -116,7 +115,6 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- Photo -->
       <div class="md:col-span-2 flex justify-center md:justify-end">
         <div class="relative">
           <img src="/public/bago-hero.png" alt="Bago" class="w-56 h-72 md:w-72 md:h-96 object-cover object-top rounded-3xl shadow-2xl shadow-black/40 ring-4 ring-white/10">
@@ -130,34 +128,114 @@ tailwind.config = {
   </div>
 </section>
 
+<!-- 三種人 -->
+<section id="who" class="py-24 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="inline-block bg-purple-100 rounded-full px-4 py-1.5 mb-4">
+        <span class="text-purple-700 text-sm font-bold">你是哪一種？</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">這三種人，最適合 AI 造局術</h2>
+      <p class="text-gray-500 text-lg">找到你的位置，看看這套系統怎麼幫你</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- TA 1: 有專業想開課 -->
+      <div class="ta-card card border-2 border-amber-200 p-8 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-3xl mb-6 shadow-lg shadow-amber-500/20">&#127891;</div>
+        <div class="text-amber-600 font-bold text-sm mb-2">TYPE A</div>
+        <h3 class="text-xl font-black text-gray-900 mb-3">有專業，想做線上課程</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">你是教練、講師、治療師、設計師、工程師⋯⋯有一身本事，但不知道怎麼包裝成線上課程，更不知道怎麼賣。</p>
+        <div class="bg-amber-50 rounded-xl p-4">
+          <div class="text-amber-700 text-xs font-bold mb-2">你現在的卡點</div>
+          <ul class="space-y-1.5 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-amber-500 mt-0.5">&#8226;</span>不知道課程要賣給誰</li>
+            <li class="flex items-start gap-2"><span class="text-amber-500 mt-0.5">&#8226;</span>架站、金流、Bot 全不會</li>
+            <li class="flex items-start gap-2"><span class="text-amber-500 mt-0.5">&#8226;</span>怕做了沒人買</li>
+          </ul>
+        </div>
+        <div class="mt-5 bg-green-50 border border-green-200 rounded-xl p-4">
+          <div class="text-green-700 text-xs font-bold mb-2">AI 造局術幫你</div>
+          <p class="text-sm text-gray-600">從選題定位到整套銷售系統上線，<strong>5 小時搞定</strong>。你只要有專業，剩下交給 AI。</p>
+        </div>
+      </div>
+
+      <!-- TA 2: 已有課程想轉系統 -->
+      <div class="ta-card card border-2 border-blue-200 p-8 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-400 to-cyan-500"></div>
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-3xl mb-6 shadow-lg shadow-blue-500/20">&#128260;</div>
+        <div class="text-blue-600 font-bold text-sm mb-2">TYPE B</div>
+        <h3 class="text-xl font-black text-gray-900 mb-3">已有線上課程，想換 AI 系統</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">你已經在 WordPress、Teachable、Hahow 上開課了，但被平台綁架、被抽成、自動化程度低。</p>
+        <div class="bg-blue-50 rounded-xl p-4">
+          <div class="text-blue-700 text-xs font-bold mb-2">你現在的痛點</div>
+          <ul class="space-y-1.5 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-blue-500 mt-0.5">&#8226;</span>WP 外掛衝突、維護頭大</li>
+            <li class="flex items-start gap-2"><span class="text-blue-500 mt-0.5">&#8226;</span>平台抽成 10-30%</li>
+            <li class="flex items-start gap-2"><span class="text-blue-500 mt-0.5">&#8226;</span>沒有自動追單和 Bot</li>
+          </ul>
+        </div>
+        <div class="mt-5 bg-green-50 border border-green-200 rounded-xl p-4">
+          <div class="text-green-700 text-xs font-bold mb-2">AI 造局術幫你</div>
+          <p class="text-sm text-gray-600">搬到你自己的系統，<strong>0 抽成、0 年費</strong>，還自動幫你追單、收錢、交付課程。</p>
+        </div>
+      </div>
+
+      <!-- TA 3: 課程製作人 / 廣告代操 -->
+      <div class="ta-card card border-2 border-purple-200 p-8 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-400 to-pink-500"></div>
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-3xl mb-6 shadow-lg shadow-purple-500/20">&#128187;</div>
+        <div class="text-purple-600 font-bold text-sm mb-2">TYPE C</div>
+        <h3 class="text-xl font-black text-gray-900 mb-3">想當課程製作人 / 廣告代操</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">你不一定要自己開課。學會用 AI 建系統 + 投廣告，幫有專業的人把整套課程事業搞定，就是你的生意。</p>
+        <div class="bg-purple-50 rounded-xl p-4">
+          <div class="text-purple-700 text-xs font-bold mb-2">你能提供的服務</div>
+          <ul class="space-y-1.5 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-purple-500 mt-0.5">&#8226;</span>幫客戶建站（LP + Bot + 金流 + 課程平台）</li>
+            <li class="flex items-start gap-2"><span class="text-purple-500 mt-0.5">&#8226;</span>幫客戶投廣告、看數據、優化</li>
+            <li class="flex items-start gap-2"><span class="text-purple-500 mt-0.5">&#8226;</span>每月主機費分潤，客戶越多收入越高</li>
+          </ul>
+        </div>
+        <div class="mt-5 bg-green-50 border border-green-200 rounded-xl p-4">
+          <div class="text-green-700 text-xs font-bold mb-2">AI 造局術幫你</div>
+          <p class="text-sm text-gray-600">學會整套流程後，<strong>一次性建置費 + 每月主機分潤</strong>，一個人就能接案。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- Pain Points -->
-<section class="py-24 bg-white">
+<section class="py-24 section-alt">
   <div class="max-w-6xl mx-auto px-6">
     <div class="text-center mb-16">
       <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">你是不是也卡在這裡？</h2>
-      <p class="text-gray-500 text-lg">有專業、有熱情，但就是不知道怎麼變成線上課程事業</p>
+      <p class="text-gray-500 text-lg">有想法、有專業，但每一步都不確定自己走對了沒</p>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
       <div class="card p-8 border border-gray-100">
-        <div class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center text-2xl mb-5">😩</div>
-        <h3 class="text-gray-900 font-bold text-lg mb-3">課程做好了，沒人買</h3>
-        <p class="text-gray-500 text-sm leading-relaxed">花了三個月錄課，上架後只有朋友捧場。沒有系統化的銷售漏斗，只能靠朋友圈。</p>
+        <div class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center text-2xl mb-5">&#128553;</div>
+        <h3 class="text-gray-900 font-bold text-lg mb-3">東西從無到有，不知道第一步</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">想做線上課程，但架站、金流、Bot、廣告⋯⋯光是決定先做哪個就卡住了。</p>
       </div>
       <div class="card p-8 border border-gray-100">
-        <div class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-2xl mb-5">💸</div>
-        <h3 class="text-gray-900 font-bold text-lg mb-3">請代操，燒錢沒效果</h3>
-        <p class="text-gray-500 text-sm leading-relaxed">廣告代操月費 $30,000 起跳，一年燒掉 $336,000，效果還不一定好。</p>
+        <div class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-2xl mb-5">&#128184;</div>
+        <h3 class="text-gray-900 font-bold text-lg mb-3">做了，但不確定方向對不對</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">課程錄了、廣告投了，但數據不好也不知道要改什麼。每天在懷疑自己是不是白做了。</p>
       </div>
       <div class="card p-8 border border-gray-100">
-        <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-2xl mb-5">🤯</div>
-        <h3 class="text-gray-900 font-bold text-lg mb-3">技術門檻太高</h3>
-        <p class="text-gray-500 text-sm leading-relaxed">架站、串金流、做 Bot、投廣告⋯⋯每一項都要找不同的人，成本疊上去根本做不起。</p>
+        <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-2xl mb-5">&#129327;</div>
+        <h3 class="text-gray-900 font-bold text-lg mb-3">行銷太複雜，不知道做哪個</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">短影片、長影片、輪播貼文、限時動態、Podcast⋯⋯每個都有人說要做，但你一個人根本做不完。</p>
       </div>
       <div class="card p-8 border border-gray-100">
-        <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl mb-5">🫠</div>
-        <h3 class="text-gray-900 font-bold text-lg mb-3">一個人根本忙不過來</h3>
-        <p class="text-gray-500 text-sm leading-relaxed">做產品、拍素材、投廣告、開直播、追客戶、交付課程 — 全部你一個人。客戶一多訊息回不完，明明有人想買，卻因為你分身乏術而錯過成交。</p>
+        <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl mb-5">&#128171;</div>
+        <h3 class="text-gray-900 font-bold text-lg mb-3">沒有人告訴你「你現在做這個就對了」</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">買了課程、看了教學、加了社群，但遇到問題還是只能自己摸索。你缺的不是資訊，是有人帶你走。</p>
       </div>
     </div>
   </div>
@@ -176,7 +254,7 @@ tailwind.config = {
 
     <div class="grid md:grid-cols-3 gap-6 mb-12">
       <div class="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
-        <div class="text-5xl font-black gradient-text-gold mb-2" style="-webkit-text-fill-color:unset;color:#E8A838;">5 小時</div>
+        <div class="text-5xl font-black mb-2" style="color:#E8A838;">5 小時</div>
         <div class="text-gray-400">從零到完整課程平台</div>
         <div class="text-gray-500 text-sm mt-2">LP + 課程系統 + 金流 + LINE Bot + 自動追單</div>
       </div>
@@ -195,7 +273,7 @@ tailwind.config = {
     <div class="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10">
       <div class="flex items-start gap-4">
         <div class="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0 text-2xl">
-          <span>&#x1f3d7;&#xfe0f;</span>
+          &#127959;&#65039;
         </div>
         <div>
           <h3 class="text-xl font-bold mb-3">你現在看到的一切，就是 5 小時的成果</h3>
@@ -221,14 +299,13 @@ tailwind.config = {
     </div>
 
     <div class="grid md:grid-cols-1 gap-8 max-w-4xl mx-auto">
-      <!-- Bago -->
       <div class="card border border-gray-100 p-8 md:p-10">
         <div class="flex items-start gap-5">
           <img src="/public/bago.jpg" alt="Bago" class="w-16 h-16 rounded-full object-cover flex-shrink-0 ring-2 ring-orange-200">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-1">
               <h3 class="text-xl font-black text-gray-900">Bago 老師</h3>
-              <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">創辦人 &amp; 第一位學員</span>
+              <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded-full">TYPE A — 有專業想開課</span>
             </div>
             <p class="text-gray-500 text-sm mb-5">知脊整聊學院 — 整復師技術培訓</p>
 
@@ -262,7 +339,6 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- Placeholder for future testimonials -->
       <div class="text-center text-gray-400 text-sm py-4">
         更多學員成果持續更新中 &#8230;
       </div>
@@ -295,7 +371,7 @@ tailwind.config = {
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm12 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
         </div>
         <h3 class="text-gray-900 font-bold text-xl mb-3">一鍵部署，不用寫程式</h3>
-        <p class="text-gray-500 leading-relaxed">用我們的 Zeabur 模板，改 4 樣設定就能上線。課程平台、LINE Bot、金流、LP 全部包好。</p>
+        <p class="text-gray-500 leading-relaxed">用我們的模板，改 4 樣設定就能上線。課程平台、LINE Bot、金流、LP 全部包好。</p>
       </div>
 
       <div class="card p-8 border border-gray-100">
@@ -329,13 +405,13 @@ tailwind.config = {
       <div class="rounded-2xl border-2 border-gray-200 p-8 bg-gray-50">
         <div class="text-red-500 font-bold text-sm mb-6 flex items-center gap-2">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
-          傳統方式：外包 / 代操
+          傳統方式：外包 / 代操 / 平台
         </div>
         <div class="space-y-4 text-sm">
           <div class="flex justify-between"><span class="text-gray-500">廣告代操</span><span class="text-red-500 font-bold">$360,000/年</span></div>
           <div class="flex justify-between"><span class="text-gray-500">網站架設</span><span class="text-red-500 font-bold">$50,000~150,000</span></div>
           <div class="flex justify-between"><span class="text-gray-500">LINE Bot 開發</span><span class="text-red-500 font-bold">$80,000~200,000</span></div>
-          <div class="flex justify-between"><span class="text-gray-500">課程平台年費</span><span class="text-red-500 font-bold">$36,000/年</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">課程平台年費 + 抽成</span><span class="text-red-500 font-bold">$36,000+/年</span></div>
           <hr class="border-gray-300">
           <div class="flex justify-between text-lg"><span class="text-gray-900 font-bold">第一年總計</span><span class="text-red-500 font-bold">$526,000+</span></div>
         </div>
@@ -348,14 +424,14 @@ tailwind.config = {
           AI 造局術
         </div>
         <div class="space-y-4 text-sm">
-          <div class="flex justify-between"><span class="text-gray-600">AI 系統建置費（一次性）</span><span class="text-purple-700 font-bold"><span class="text-gray-400 line-through text-xs mr-1">$108,000</span>$59,800</span></div>
-          <div class="flex justify-between"><span class="text-gray-600">Zeabur 主機</span><span class="text-purple-700 font-bold">~$1,800/年</span></div>
+          <div class="flex justify-between"><span class="text-gray-600">AI 系統建置費（一次性）</span><span class="text-purple-700 font-bold"><span class="text-gray-400 line-through text-xs mr-1">$128,800</span>$69,800</span></div>
+          <div class="flex justify-between"><span class="text-gray-600">雲端主機（$16 USD/月）</span><span class="text-purple-700 font-bold">~$6,144/年</span></div>
           <div class="flex justify-between"><span class="text-gray-600">Claude Code</span><span class="text-purple-700 font-bold">~$6,400/年</span></div>
-          <div class="flex justify-between"><span class="text-gray-600">廣告（自己投）</span><span class="text-gray-400">依預算</span></div>
+          <div class="flex justify-between"><span class="text-gray-600">平台抽成</span><span class="text-purple-700 font-bold">$0 永遠</span></div>
           <hr class="border-purple-200">
-          <div class="flex justify-between text-lg"><span class="text-gray-900 font-bold">第一年總計</span><span class="text-purple-700 font-bold">$68,000</span></div>
+          <div class="flex justify-between text-lg"><span class="text-gray-900 font-bold">第一年總計</span><span class="text-purple-700 font-bold">$82,300</span></div>
         </div>
-        <div class="mt-4 text-center bg-green-100 text-green-700 text-sm font-bold py-2 rounded-xl">省下 $468,000+ / 年</div>
+        <div class="mt-4 text-center bg-green-100 text-green-700 text-sm font-bold py-2 rounded-xl">省下 $440,000+ / 年</div>
       </div>
     </div>
   </div>
@@ -368,7 +444,7 @@ tailwind.config = {
       <div class="inline-block bg-purple-100 rounded-full px-4 py-1.5 mb-4">
         <span class="text-purple-700 text-sm font-bold">完整課綱</span>
       </div>
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">8 大階段，49 堂實戰課</h2>
+      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">7 大階段，63 堂實戰課</h2>
       <p class="text-gray-500 text-lg">每階段都有<span class="text-accent-500 font-bold">「策略」</span>+<span class="text-brand-500 font-bold">「AI 建置」</span>雙軌，學完直接上線</p>
     </div>
 
@@ -414,21 +490,21 @@ tailwind.config = {
       <!-- v1 -->
       <div class="card border border-gray-200 rounded-3xl p-8 relative overflow-hidden">
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-400 to-accent-500"></div>
-        <div class="text-accent-500 font-bold text-sm mb-2 tracking-wider">STARTER</div>
-        <h3 class="text-2xl font-black text-gray-900 mb-1">AI 造局術 v1</h3>
-        <p class="text-gray-400 text-sm mb-2">完整 8 階段 + 自動化系統部署</p>
-        <p class="text-green-600 text-sm font-bold mb-6">30 天內讓你的系統跑起來</p>
+        <div class="text-accent-500 font-bold text-sm mb-2 tracking-wider">BUILDER</div>
+        <h3 class="text-2xl font-black text-gray-900 mb-1">AI 造局術 Builder</h3>
+        <p class="text-gray-400 text-sm mb-2">完整課程 + 系統部署 + AI 幫你建</p>
+        <p class="text-green-600 text-sm font-bold mb-6">每一步都有教學帶你走，不會迷路</p>
         <div class="mb-1">
-          <span class="text-lg text-gray-400 line-through">$108,000</span>
+          <span class="text-lg text-gray-400 line-through">$128,800</span>
         </div>
         <div class="mb-2">
-          <span class="text-4xl font-black text-gray-900">$59,800</span>
+          <span class="text-4xl font-black text-gray-900">$69,800</span>
           <span class="text-gray-400 text-sm ml-1">一次性</span>
         </div>
-        <div class="inline-block bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full mb-6">早鳥優惠 省 $48,200</div>
+        <div class="inline-block bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full mb-6">早鳥優惠 省 $59,000</div>
         <ul class="space-y-3 mb-8 text-sm">
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">49 堂實戰影片課程</span></li>
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">Zeabur 模板一鍵部署</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">63 堂實戰影片課程</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">雲端模板一鍵部署</span></li>
           <li class="flex items-start gap-3"><svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">LP + LINE Bot + 金流 + 課程平台</span></li>
           <li class="flex items-start gap-3"><svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">3 波自動追單再行銷</span></li>
           <li class="flex items-start gap-3"><svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">Meta 廣告策略教學</span></li>
@@ -440,25 +516,25 @@ tailwind.config = {
       <div class="card border-2 border-purple-300 rounded-3xl p-8 relative overflow-hidden glow-purple">
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-500 to-purple-600"></div>
         <div class="absolute top-4 right-4 bg-gradient-to-r from-brand-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg shadow-purple-500/25">推薦</div>
-        <div class="text-purple-600 font-bold text-sm mb-2 tracking-wider">PRO</div>
-        <h3 class="text-2xl font-black text-gray-900 mb-1">AI 造局術 v2</h3>
-        <p class="text-gray-400 text-sm mb-2">v1 全部 + 全自動化進階模組</p>
-        <p class="text-purple-600 text-sm font-bold mb-6">30 天後你只負責直播，其他全自動</p>
+        <div class="text-purple-600 font-bold text-sm mb-2 tracking-wider">PARTNER</div>
+        <h3 class="text-2xl font-black text-gray-900 mb-1">AI 造局術 Partner</h3>
+        <p class="text-gray-400 text-sm mb-2">Builder 全部 + 教練陪跑 + 接案授權</p>
+        <p class="text-purple-600 text-sm font-bold mb-6">不只給你系統，還有人確認你的方向對不對</p>
         <div class="mb-1">
-          <span class="text-lg text-gray-400 line-through">$168,000</span>
+          <span class="text-lg text-gray-400 line-through">$160,000</span>
         </div>
         <div class="mb-2">
-          <span class="text-4xl font-black text-gray-900">$79,800</span>
+          <span class="text-4xl font-black text-gray-900">$99,800</span>
           <span class="text-gray-400 text-sm ml-1">一次性</span>
         </div>
-        <div class="inline-block bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full mb-6">早鳥優惠 省 $88,200</div>
+        <div class="inline-block bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full mb-6">早鳥優惠 省 $60,200</div>
         <ul class="space-y-3 mb-8 text-sm">
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">v1 全部內容</span></li>
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">短影音自動化（IG + FB + YT 每天發）</span></li>
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">AI 分身（24 小時自動回覆）</span></li>
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">6 波完整再行銷</span></li>
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">廣告素材 AI 批量生產</span></li>
-          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">漏斗 Dashboard 數據分析</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">Builder 全部內容</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600 font-bold text-gray-900">教練陪跑（確認方向 + 解決卡關）</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">1 對 1 系統健檢 × 3 次</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">行銷內容策略規劃（不用自己想要拍什麼）</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">課程製作人授權（可幫客戶部署接案）</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-600">聯盟行銷資格</span></li>
         </ul>
         <a href="/checkout?plan=v2" class="block w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white font-bold py-3.5 rounded-xl text-center transition shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40">立即報名</a>
       </div>
@@ -467,54 +543,12 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- FAQ -->
-<section id="faq" class="py-24 bg-white">
-  <div class="max-w-3xl mx-auto px-6">
-    <h2 class="text-3xl font-black text-gray-900 text-center mb-12">常見問題</h2>
-    <div class="space-y-3">
-
-      <div class="border border-gray-200 rounded-2xl overflow-hidden bg-white">
-        <button onclick="toggleFaq(this)" class="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition">
-          <span class="font-bold text-gray-900 pr-4">我完全不會寫程式，可以上嗎？</span>
-          <svg class="w-5 h-5 text-gray-400 transition-transform flex-shrink-0 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div class="px-6 pb-5 text-gray-500 text-sm leading-relaxed hidden faq-content">可以。所有技術都用模板部署，你只需要改 4 樣設定（LINE Token、綠界金鑰、品牌名、課程內容）。不需要寫任何一行程式碼。</div>
-      </div>
-
-      <div class="border border-gray-200 rounded-2xl overflow-hidden bg-white">
-        <button onclick="toggleFaq(this)" class="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition">
-          <span class="font-bold text-gray-900 pr-4">跟其他開課平台（Teachable、Hahow）有什麼不同？</span>
-          <svg class="w-5 h-5 text-gray-400 transition-transform flex-shrink-0 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div class="px-6 pb-5 text-gray-500 text-sm leading-relaxed hidden faq-content">開課平台只給你「放課程的地方」。AI 造局術給你整套銷售系統：廣告策略 + LP + LINE Bot + 自動追單 + 金流 + 課程平台。而且系統跑在你自己的伺服器，不被平台綁架。</div>
-      </div>
-
-      <div class="border border-gray-200 rounded-2xl overflow-hidden bg-white">
-        <button onclick="toggleFaq(this)" class="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition">
-          <span class="font-bold text-gray-900 pr-4">每個月的維護成本大概多少？</span>
-          <svg class="w-5 h-5 text-gray-400 transition-transform flex-shrink-0 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div class="px-6 pb-5 text-gray-500 text-sm leading-relaxed hidden faq-content">Zeabur 主機約 NT$150/月 + Claude Code 約 NT$530/月。沒有年費、沒有平台抽成。系統是你自己的，每月不到 $700，比任何平台都低。</div>
-      </div>
-
-      <div class="border border-gray-200 rounded-2xl overflow-hidden bg-white">
-        <button onclick="toggleFaq(this)" class="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition">
-          <span class="font-bold text-gray-900 pr-4">我已經有課程了，可以只用系統嗎？</span>
-          <svg class="w-5 h-5 text-gray-400 transition-transform flex-shrink-0 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div class="px-6 pb-5 text-gray-500 text-sm leading-relaxed hidden faq-content">可以。你可以直接跳到 Stage 2 開始部署系統，把現有課程搬上來。不過建議還是看完 Stage 1 的定位策略，重新檢視你的產品階梯。</div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
 <!-- CTA -->
 <section class="py-24 bg-gradient-to-br from-brand-500 to-purple-600 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]"></div>
   <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
-    <h2 class="text-3xl md:text-4xl font-black text-white mb-6">準備好把你的專業<br>變成自動運轉的事業了嗎？</h2>
-    <p class="text-white/70 text-lg mb-8">跟著系統走，4 個階段後你就有一套完整的自動化銷售漏斗。</p>
+    <h2 class="text-3xl md:text-4xl font-black text-white mb-6">你不需要自己摸索<br>每一步都有人帶你走</h2>
+    <p class="text-white/70 text-lg mb-8">AI 幫你建系統，教練幫你確認方向。從第一步到自動收錢，不會迷路。</p>
     <a href="#pricing" class="inline-block bg-white hover:bg-gray-100 text-brand-600 font-bold px-10 py-4 rounded-2xl text-lg transition shadow-xl">選擇方案，開始造局 →</a>
   </div>
 </section>
