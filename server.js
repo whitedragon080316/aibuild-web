@@ -65,7 +65,11 @@ app.get('/lp', (req, res) => {
 app.get('/live', (req, res) => {
   servePage(res, 'live.html', {
     siteName: process.env.SITE_NAME || 'AI 造局術',
-    brandName: process.env.BRAND_NAME || 'knowu 國際顧問'
+    brandName: process.env.BRAND_NAME || 'knowu 國際顧問',
+    LINE_ADD_URL: process.env.LINE_ADD_URL || 'https://lin.ee/uRKyXnW',
+    SEATS_REMAINING: process.env.SEATS_REMAINING || '30',
+    LIVESTREAM_DATE: process.env.LIVESTREAM_DATE || '待公告',
+    SESSION_TIME: process.env.SESSION_TIME || '下一場'
   });
 });
 

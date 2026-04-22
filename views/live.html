@@ -68,7 +68,7 @@ tailwind.config = {
       <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-purple-500/25">K</div>
       <span class="font-bold text-gray-900">knowu</span>
     </div>
-    <a href="#register" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2 rounded-xl text-sm transition glow-orange">報名直播 → 領藍圖</a>
+    <a href="{{LINE_ADD_URL}}" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2 rounded-xl text-sm transition glow-orange" onclick="fbq('track','Lead');">加 LINE → AI 診斷</a>
   </div>
 </nav>
 
@@ -88,19 +88,60 @@ tailwind.config = {
         </h1>
 
         <p class="text-white/75 text-base md:text-lg mb-7 leading-relaxed">
-          做不出課？做了賣不掉？想自動化不會 code？<br>
+          你有專業，卡在「怎麼把線上課賣出去」？<br>
           <strong class="text-amber-300">這 60 分鐘給你答案。</strong>
         </p>
 
-        <a href="#register" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-black px-10 py-4 rounded-2xl text-xl transition glow-orange" onclick="fbq('track','Lead');">
-          報名 {{SESSION_TIME}} 直播 → 領取藍圖
+        <a href="{{LINE_ADD_URL}}" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-black px-10 py-4 rounded-2xl text-xl transition glow-orange" onclick="fbq('track','Lead');">
+          加 LINE → AI 顧問聊 10 分鐘 → 拿你專屬診斷報告
         </a>
-        <div class="text-white/40 text-sm mt-2">加 LINE 報名直播，立即領取</div>
+        <div class="text-white/40 text-sm mt-2">{{SESSION_TIME}} 有直播，AI 諮詢完會通知你</div>
       </div>
 
       <div class="md:col-span-2 flex justify-center md:justify-end">
         <img src="/public/bago-hero.png" alt="Chiawei" class="w-52 h-64 md:w-64 md:h-80 object-cover object-top rounded-3xl shadow-2xl shadow-black/30 ring-4 ring-white/10">
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- 我卡了 1 年 story -->
+<section class="py-20 bg-gray-50">
+  <div class="max-w-2xl mx-auto px-6">
+    <div class="text-center mb-10">
+      <div class="inline-block text-purple-600 text-sm font-bold tracking-[0.2em] mb-3">我卡了 1 年</div>
+      <h2 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight">一個月辦 4 場直播<br>只成交 1 單</h2>
+    </div>
+
+    <div class="card p-8 md:p-10 space-y-6 text-gray-700 leading-[1.9]">
+      <p>我以為是廣告不準、講稿結構不對、方案不吸引 —<br><strong class="text-gray-900">改了一年。結果還是 1 單。</strong></p>
+
+      <p>直到我發現：<br>
+        問題不是廣告、講稿、方案。<br>
+        是我根本不知道<strong class="text-gray-900">誰來了、誰卡在哪、誰該怎麼追</strong>。<br>
+        一場 30 人，我記得 3 個。其他 27 個自然流失。
+      </p>
+
+      <div class="border-t border-gray-200 pt-6">
+        <p class="font-black text-gray-900 text-lg mb-4">所以我建了 AI 顧問。</p>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3"><span class="text-purple-500 font-black flex-shrink-0">▸</span><span>它<strong class="text-gray-900">告訴我數據</strong> — 誰高意願、誰猶豫、誰該立刻跟進</span></li>
+          <li class="flex items-start gap-3"><span class="text-purple-500 font-black flex-shrink-0">▸</span><span>它<strong class="text-gray-900">幫我改好手動事</strong> — 追單文案、分眾訊息、個別化建議</span></li>
+          <li class="flex items-start gap-3"><span class="text-purple-500 font-black flex-shrink-0">▸</span><span>它<strong class="text-gray-900">記住每個人</strong> — 比我自己還清楚他的狀況</span></li>
+        </ul>
+      </div>
+
+      <div class="border-t border-gray-200 pt-6 text-center">
+        <p class="text-gray-600 mb-2">我只負責直播。其他 AI 做完。</p>
+        <p class="text-2xl font-black text-gray-900">上個月：<span class="text-amber-600">9 位客戶成交</span></p>
+      </div>
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="{{LINE_ADD_URL}}" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-black px-10 py-4 rounded-2xl text-xl transition glow-orange" onclick="fbq('track','Lead');">
+        加 LINE → AI 顧問聊 10 分鐘
+      </a>
+      <div class="text-gray-400 text-sm mt-2">跟我用的同一套 AI 顧問，先幫你做診斷</div>
     </div>
   </div>
 </section>
@@ -146,10 +187,10 @@ tailwind.config = {
     <p class="text-center text-gray-500 mt-10">看完你馬上能動手，不用花一年摸索。</p>
 
     <div class="text-center mt-10">
-      <a href="#register" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-black px-10 py-4 rounded-2xl text-xl transition glow-orange" onclick="fbq('track','Lead');">
-        報名 {{SESSION_TIME}} 直播 →
+      <a href="{{LINE_ADD_URL}}" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-black px-10 py-4 rounded-2xl text-xl transition glow-orange" onclick="fbq('track','Lead');">
+        加 LINE → AI 顧問聊 10 分鐘
       </a>
-      <div class="text-gray-400 text-sm mt-2">加 LINE 報名，直播前會發連結</div>
+      <div class="text-gray-400 text-sm mt-2">聊完會通知你 {{SESSION_TIME}} 直播</div>
     </div>
   </div>
 </section>
@@ -179,33 +220,20 @@ tailwind.config = {
         </div>
       </div>
 
-      <div class="border-t border-gray-100 pt-8 mb-8">
-        <div class="text-purple-600 text-sm font-bold tracking-wider mb-3">講者</div>
-        <div class="flex items-start gap-4">
-          <img src="/public/bago-hero.png" alt="Chiawei" class="w-16 h-16 rounded-full object-cover object-top flex-shrink-0 ring-2 ring-purple-100">
-          <div>
-            <div class="text-xl font-black text-gray-900 mb-1">Chiawei</div>
-            <div class="text-purple-600 text-sm font-bold mb-2">整復師 / 系統造局者</div>
-            <p class="text-gray-600 text-sm leading-relaxed">整復師起家，同時在跑 2 個 LINE Bot + Meta 廣告。每天還在第一線踩坑、debug、改 code。</p>
-            <p class="text-gray-600 text-sm leading-relaxed mt-2">先前辦過 2 場小型直播 → 7 人成交、30 萬營收。這場擴大成 100 人版本，把我怎麼做的整套拆給你看。</p>
-          </div>
-        </div>
-      </div>
-
       <div class="border-t border-gray-100 pt-8">
-        <div class="text-purple-600 text-sm font-bold tracking-wider mb-4">為什麼要來這場</div>
+        <div class="text-purple-600 text-sm font-bold tracking-wider mb-4">為什麼要上線</div>
         <div class="space-y-3 text-gray-700">
           <div class="flex items-start gap-3">
             <span class="text-purple-500 font-bold flex-shrink-0">&#8226;</span>
-            <span>直播限 <strong class="text-gray-900">100 位</strong>（維持 Q&amp;A 品質）</span>
+            <span><strong class="text-gray-900">Live demo</strong> — 我那 9 單的完整系統當場打開給你看（LP / 廣告 / LINE / 金流 / 追單）</span>
           </div>
           <div class="flex items-start gap-3">
             <span class="text-purple-500 font-bold flex-shrink-0">&#8226;</span>
-            <span>直播當下讓你看清楚<strong class="text-gray-900">「造局系統」</strong>是什麼</span>
+            <span><strong class="text-gray-900">針對你的狀況 Q&amp;A</strong> — 你在 LINE 聊過的內容，直播時我會針對性解答</span>
           </div>
           <div class="flex items-start gap-3">
             <span class="text-purple-500 font-bold flex-shrink-0">&#8226;</span>
-            <span>有問題當場問，錯過就是<strong class="text-gray-900">下一場（不同主題）</strong></span>
+            <span>直播限 <strong class="text-gray-900">100 位</strong>，錯過就是下一場（不同主題）</span>
           </div>
         </div>
       </div>
@@ -217,25 +245,10 @@ tailwind.config = {
 <section id="register" class="py-20 bg-gradient-to-br from-brand-500 to-purple-600 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]"></div>
   <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
-    <h2 class="text-3xl md:text-4xl font-black text-white mb-4">60 分鐘直播<br>讓你看懂整套<span class="text-amber-300">造局系統</span></h2>
-    <p class="text-white/70 text-lg mb-8">加 LINE 報名直播，報名即領取<br>《一人公司 AI 自動化藍圖》</p>
-    <a href="#" class="inline-block bg-white hover:bg-gray-100 text-brand-600 font-bold px-10 py-4 rounded-2xl text-xl transition shadow-xl" onclick="fbq('track','Lead');">報名 {{SESSION_TIME}} 直播 → 領取藍圖</a>
-    <div class="text-white/50 text-sm mt-2">加 LINE 報名直播，立即領取</div>
-
-    <div class="grid grid-cols-3 gap-4 mt-10 max-w-xl mx-auto">
-      <div class="bg-white/10 border border-white/20 rounded-xl p-4">
-        <div class="text-xl font-black text-white">免費</div>
-        <div class="text-xs text-white/60">完全不收錢</div>
-      </div>
-      <div class="bg-white/10 border border-white/20 rounded-xl p-4">
-        <div class="text-xl font-black text-white">60 min</div>
-        <div class="text-xs text-white/60">不灌水不拖時間</div>
-      </div>
-      <div class="bg-white/10 border border-white/20 rounded-xl p-4">
-        <div class="text-xl font-black text-white">Live</div>
-        <div class="text-xs text-white/60">當場展示系統運作</div>
-      </div>
-    </div>
+    <h2 class="text-3xl md:text-4xl font-black text-white mb-4">不用再改廣告講稿方案<br><span class="text-amber-300">讓 AI 告訴你該改什麼</span></h2>
+    <p class="text-white/70 text-lg mb-8">加 LINE，AI 顧問跟你聊 10 分鐘<br>給你一份專屬診斷報告 — 完全免費</p>
+    <a href="{{LINE_ADD_URL}}" class="inline-block bg-white hover:bg-gray-100 text-brand-600 font-bold px-10 py-4 rounded-2xl text-xl transition shadow-xl" onclick="fbq('track','Lead');">加 LINE → AI 顧問馬上開始</a>
+    <div class="text-white/50 text-sm mt-4">聊完會通知你 {{SESSION_TIME}} 直播，當場針對你的診斷 Q&amp;A</div>
   </div>
 </section>
 
