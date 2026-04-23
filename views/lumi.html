@@ -567,7 +567,7 @@
         <span class="divider"></span>
         <span class="sub">Bago 老師的 AI 顧問</span>
       </div>
-      <div class="brand-sub">造局 AI<span class="dot"></span>7 題陪你看見盲點</div>
+      <div class="brand-sub">造局 AI<span class="dot"></span>7 題問完，你會知道你的下一步</div>
     </div>
   </div>
   <div id="progress-wrap">
@@ -717,7 +717,7 @@ async function startSession() {
     if (data.history && data.history.length > 0) {
       data.history.forEach(m => addMsg(m.role === 'user' ? 'user' : 'ai', m.content));
     } else {
-      addMsg('ai', `嗨 ${displayName || '你'}～我是 Lumi，Bago 老師的 AI 顧問。\n\n花 5-10 分鐘，7 題我陪你看見自己的盲點。\n\n**第 1 題**：你的目標是什麼？理想中的樣子長什麼樣？`);
+      addMsg('ai', `嗨 ${displayName || '你'}～我是 Lumi，Bago 老師的 AI 顧問。\n\n7 題問完，你會知道你的下一步。\n\n**第 1 題**：你的目標是什麼？理想中的樣子長什麼樣？`);
     }
     inputEl.focus();
   } catch (e) {
