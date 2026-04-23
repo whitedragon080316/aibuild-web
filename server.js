@@ -474,7 +474,7 @@ ${Object.keys(data.waveStats).length > 0 ? `
 // LIFF 前端頁
 app.get('/lumi', (req, res) => {
   servePage(res, 'lumi.html', {
-    LIFF_ID: process.env.LIFF_ID || '',
+    LIFF_ID: process.env.LIFF_ID || '2009874507-vMOk2taj',
   });
 });
 
