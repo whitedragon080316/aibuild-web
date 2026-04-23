@@ -502,9 +502,23 @@ ul,ol{padding-left:24px;}
 li{margin-bottom:6px;}
 a{color:#3B5BDB;}
 .footer{margin-top:40px;padding-top:20px;border-top:1px solid #e5e5ea;font-size:13px;color:#666;text-align:center;}
+.qr-block{margin-top:32px;padding:24px;background:#fff;border:1px solid #e5e5ea;border-radius:12px;text-align:center;}
+.qr-block h3{color:#2B44B0;margin:0 0 12px;font-size:16px;}
+.qr-block img{display:block;margin:12px auto;border:1px solid #e5e5ea;border-radius:8px;}
+.qr-block .hint{font-size:12.5px;color:#888;margin-top:8px;}
+.qr-block a{display:inline-block;margin-top:8px;font-weight:600;}
 </style>
 </head><body>
 <div id="content"></div>
+
+<div class="qr-block">
+  <h3>👉 加 LINE 預約 5/28 直播</h3>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=4&data=https%3A%2F%2Flin.ee%2FuRKyXnW" alt="加 LINE QR Code" width="180" height="180">
+  <div>手機點連結 · 桌機掃 QR</div>
+  <a href="https://lin.ee/uRKyXnW" target="_blank" rel="noopener">https://lin.ee/uRKyXnW</a>
+  <div class="hint">沒加的不會收到當天直播連結</div>
+</div>
+
 <div class="footer">生成時間：${session.reportGeneratedAt?.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) || '-'}</div>
 <script>
 document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(session.reportMarkdown)});
