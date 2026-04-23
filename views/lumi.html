@@ -577,12 +577,11 @@
 </header>
 
 <div id="fallback-panel">
-  <h2>Dev 模式</h2>
-  <p>沒從 LINE 開啟，請手動輸入 LINE User ID（dev 測試用）</p>
-  <input id="fallback-userid" placeholder="Uxxxxxxxxxxxxxxxxx">
-  <input id="fallback-name" placeholder="顯示名稱（選填）">
-  <button onclick="startWithFallback()">開始對話</button>
-  <div class="hint">正式部署時從 LIFF 進入會自動帶入 LINE userId</div>
+  <h2>開始你的造局診斷</h2>
+  <p>7 題問完，你會知道你的下一步。</p>
+  <input id="fallback-name" placeholder="你叫什麼名字？">
+  <button onclick="startWithFallback()">開始（約 10 分鐘）</button>
+  <div class="hint">做完想收報告到 LINE？結尾會引導你加好友</div>
 </div>
 
 <div id="chat-container" style="display:none;">
@@ -662,20 +661,22 @@ function setProgress(currentQuestion) {
 
 async function initLiff() {
   if (!LIFF_ID || LIFF_ID === '{{' + 'LIFF_ID}}') {
-    console.log('No LIFF_ID configured, using fallback');
+    console.log('No LIFF_ID configured, using guest mode');
     showFallback();
     return;
   }
   try {
     await liff.init({ liffId: LIFF_ID });
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
+    // 只有在 LINE app 裡 + 已登入才用 LIFF profile，否則讓用戶用訪客模式
+    if (liff.isInClient() && liff.isLoggedIn()) {
+      const profile = await liff.getProfile();
+      lineUserId = profile.userId;
+      displayName = profile.displayName;
+      await startSession();
+    } else {
+      // 網頁版（外部瀏覽器）→ 不強迫 LINE 登入，直接訪客模式
+      showFallback();
     }
-    const profile = await liff.getProfile();
-    lineUserId = profile.userId;
-    displayName = profile.displayName;
-    await startSession();
   } catch (e) {
     console.error('LIFF init failed:', e);
     showFallback();
@@ -688,10 +689,9 @@ function showFallback() {
 }
 
 async function startWithFallback() {
-  const uid = document.getElementById('fallback-userid').value.trim();
-  const name = document.getElementById('fallback-name').value.trim() || 'dev-user';
-  if (!uid) { alert('請輸入 LINE User ID'); return; }
-  lineUserId = uid;
+  const name = document.getElementById('fallback-name').value.trim() || '訪客';
+  // 訪客模式：生成隨機 guest userId（不綁 LINE）
+  lineUserId = 'guest_' + Math.random().toString(36).slice(2, 12);
   displayName = name;
   document.getElementById('fallback-panel').classList.remove('show');
   document.getElementById('chat-container').style.display = 'flex';
