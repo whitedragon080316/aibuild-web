@@ -137,11 +137,36 @@ Agent｜NT$99,800（特價）
 
 ### 2.5 護城河區（保留但更新）
 
-4 條：
-1. 踩坑 60+ 案例庫
-2. 跑通的活 case（Lumi / 知脊整復 / 學院）
-3. 即時陪跑 presence
-4. 學員擁有自己 infra，不是 SaaS 月費綁架
+5 條（第 5 條是 2026-04-24 新增 — 最關鍵的一條）：
+
+1. **踩坑 60+ 案例庫**
+   真的跑通 + 踩過坑的具體紀錄，Google / ChatGPT 查不到
+
+2. **跑通的活 case**
+   Lumi / 知脊整復 / 知脊整聊學院 — 你正在用的 AI 顧問就是產品示範
+
+3. **即時陪跑 presence**
+   30 分鐘給方向 vs AI 廢話一天
+
+4. **學員擁有自己 infra**
+   不是 SaaS 月費綁架，code / data / agent 都是你的
+
+5. **🔴 拿到 zip 也跑不動 — invisible scaffolding 才是真正 IP**
+   ```
+   GitHub 上一堆 multi-agent repo（10K stars 一週爆紅那種）你裝過對吧？
+   為什麼裝完還是跑不動？
+
+   差在 invisible 的那層 ——
+   什麼任務派哪個 agent / agent 卡住怎麼救 / handoff 的時機 /
+   哪些你自己留著做 / 失敗 100 次內化的 pattern
+
+   這層無法 doc 化、無法 zip。只有跑過、踩過坑、有人接你才會。
+
+   所以你買的不是「我給你一個 AI 顧問」—
+   是「AI 顧問 + Bago 的判斷 encode 進去 + 卡住有人接 + 你跑 100 次內化」。
+
+   file 我直接給你都沒差，scaffolding 才是付費理由。
+   ```
 
 ### 2.6 Manifesto / 宣言區（Bago 決策：全砍）
 
