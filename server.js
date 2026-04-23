@@ -519,7 +519,11 @@ a{color:#3B5BDB;}
   <div class="hint">沒加的不會收到當天直播連結</div>
 </div>
 
-<div class="footer">生成時間：${session.reportGeneratedAt?.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) || '-'}</div>
+<div class="footer">
+  <div style="color:#2B44B0; font-weight:700; letter-spacing:0.05em; margin-bottom:8px;">你的事業，始於自己，終於 AI</div>
+  <div>AI 造局術 · Bago 老師</div>
+  <div style="margin-top:6px; color:#999;">生成時間：${session.reportGeneratedAt?.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) || '-'}</div>
+</div>
 <script>
 document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(session.reportMarkdown)});
 </script>
