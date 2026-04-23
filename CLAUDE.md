@@ -65,3 +65,17 @@ lib/
 - LINE 推播不可撤回，先 preview
 - TapPay production 需要在 Portal 綁定 IP
 - `PUBLIC_BASE_URL` 必須是 https，3D Secure 需要
+
+## ⚠️ Git 結構提醒
+
+`web/` 是**獨立 git repo**（不在 my-aibuild 主 repo 裡，root `.gitignore` 有 `web/`）。
+改 code 後的 commit / push 要在 `web/` 目錄裡單獨做：
+
+```
+cd ~/my-aibuild/web
+git add -A
+git commit -m "feat: ..."
+git push
+```
+
+不要期待 my-aibuild root git 會帶上 web/ 變更 — 它只 track `bot/` + root files。

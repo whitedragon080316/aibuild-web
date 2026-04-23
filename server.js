@@ -7,7 +7,9 @@ const fs = require('fs');
 
 const User = require('./models/User');
 const Payment = require('./models/Payment');
+const LumiSession = require('./models/LumiSession');
 const { initBot, webhookMiddleware, onPaymentSuccess } = require('./lib/line-bot');
+const { generateSessionId, askLumi, generateReport, pushReportToBot, DISCOVERY_QUESTIONS } = require('./lib/lumi');
 
 const app = express();
 
@@ -465,6 +467,187 @@ ${Object.keys(data.waveStats).length > 0 ? `
 </div>
 </body>
 </html>`);
+});
+
+// ============ LUMI — AI 顧問 7 題 coaching ============
+
+// LIFF 前端頁
+app.get('/lumi', (req, res) => {
+  servePage(res, 'lumi.html', {
+    LIFF_ID: process.env.LIFF_ID || '',
+  });
+});
+
+// 報告檢視頁（Markdown render）
+app.get('/lumi/report/:sessionId', async (req, res) => {
+  const session = await LumiSession.findOne({ sessionId: req.params.sessionId });
+  if (!session || !session.reportMarkdown) {
+    return res.status(404).send('<h1>報告不存在或尚未生成</h1>');
+  }
+  res.send(`<!DOCTYPE html>
+<html lang="zh-TW"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lumi 造局診斷報告</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+body{font-family:-apple-system,'Noto Sans TC',sans-serif;max-width:720px;margin:0 auto;padding:24px 20px;background:#fafafa;color:#1c1c1e;line-height:1.7;}
+h1,h2,h3{color:#2B44B0;margin-top:24px;}
+h1{font-size:22px;}h2{font-size:18px;}h3{font-size:16px;}
+ul,ol{padding-left:24px;}
+li{margin-bottom:6px;}
+a{color:#3B5BDB;}
+.footer{margin-top:40px;padding-top:20px;border-top:1px solid #e5e5ea;font-size:13px;color:#666;text-align:center;}
+</style>
+</head><body>
+<div id="content"></div>
+<div class="footer">生成時間：${session.reportGeneratedAt?.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) || '-'}</div>
+<script>
+document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(session.reportMarkdown)});
+</script>
+</body></html>`);
+});
+
+// 開始 session
+app.post('/api/lumi/session/start', async (req, res) => {
+  try {
+    const { lineUserId, displayName } = req.body;
+    if (!lineUserId) return res.status(400).json({ error: 'lineUserId required' });
+
+    // 如果同一 lineUserId 已有未完成 session，繼續用；否則開新的
+    let session = await LumiSession.findOne({
+      lineUserId,
+      reportGeneratedAt: { $exists: false },
+    }).sort({ createdAt: -1 });
+
+    if (!session) {
+      session = await LumiSession.create({
+        sessionId: generateSessionId(),
+        lineUserId,
+        displayName: displayName || '',
+      });
+    } else if (displayName && !session.displayName) {
+      session.displayName = displayName;
+      await session.save();
+    }
+
+    res.json({
+      sessionId: session.sessionId,
+      currentQuestion: session.currentQuestion,
+      history: session.chatHistory.map(m => ({ role: m.role, content: m.content })),
+    });
+  } catch (e) {
+    console.error('[lumi session/start]', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// 用戶發訊 → AI 回覆（同步 JSON，MVP 不做 SSE streaming）
+app.post('/api/lumi/chat/send', async (req, res) => {
+  try {
+    const { sessionId, text } = req.body;
+    if (!sessionId || !text) return res.status(400).json({ error: 'sessionId + text required' });
+
+    const session = await LumiSession.findOne({ sessionId });
+    if (!session) return res.status(404).json({ error: 'session not found' });
+
+    // 如果報告已生成，不再走 discovery 流程
+    if (session.reportGeneratedAt) {
+      // 一般對話（不再記 answers，不推進題號）
+      session.chatHistory.push({ role: 'user', content: text, ts: Date.now() });
+      const reply = await askLumi(session, text);
+      session.chatHistory.push({ role: 'assistant', content: reply, ts: Date.now() });
+      await session.save();
+      return res.json({ reply, currentQuestion: 8, reportGenerated: true });
+    }
+
+    // 記錄用戶這則答案到對應題號（code-enforced）
+    const curQ = session.currentQuestion;
+    if (curQ >= 1 && curQ <= 7) {
+      session.answers[`q${curQ}`] = text;
+      session.markModified('answers');
+    }
+    session.chatHistory.push({ role: 'user', content: text, ts: Date.now() });
+
+    // Q7 答完 → 產報告（不再走 AI 閒聊）
+    if (curQ === 7) {
+      session.currentQuestion = 8;
+      await session.save();
+
+      // 產報告
+      let reportMd = '';
+      try {
+        reportMd = await generateReport(session);
+      } catch (err) {
+        console.error('[lumi generateReport]', err);
+        reportMd = '報告生成暫時出錯，請稍後重試。';
+      }
+      session.reportMarkdown = reportMd;
+      session.reportGeneratedAt = new Date();
+      session.chatHistory.push({
+        role: 'assistant',
+        content: reportMd,
+        ts: Date.now(),
+      });
+      await session.save();
+
+      // 推到 LINE bot（async，不等）
+      const publicBase = process.env.PUBLIC_BASE_URL || '';
+      const reportUrl = publicBase
+        ? `${publicBase.replace(/\/$/, '')}/lumi/report/${session.sessionId}`
+        : `/lumi/report/${session.sessionId}`;
+      pushReportToBot(session.lineUserId, reportUrl).then(result => {
+        if (result.ok) {
+          LumiSession.updateOne({ sessionId }, { reportPushedAt: new Date() }).catch(() => {});
+        }
+      });
+
+      return res.json({
+        reply: reportMd,
+        currentQuestion: 8,
+        reportGenerated: true,
+        reportUrl,
+      });
+    }
+
+    // 一般 Q1-Q6：呼 AI 得回覆 + 推進到下一題
+    let reply;
+    try {
+      reply = await askLumi(session, text);
+    } catch (err) {
+      console.error('[lumi askLumi]', err);
+      reply = '（Lumi 暫時思考不過來，等我一下再試試～）';
+    }
+    session.chatHistory.push({ role: 'assistant', content: reply, ts: Date.now() });
+
+    // 推進題號
+    if (curQ >= 1 && curQ <= 6) {
+      session.currentQuestion = curQ + 1;
+    }
+    await session.save();
+
+    res.json({
+      reply,
+      currentQuestion: session.currentQuestion,
+      reportGenerated: false,
+    });
+  } catch (e) {
+    console.error('[lumi chat/send]', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Session 狀態 polling（選用）
+app.get('/api/lumi/session/:sessionId/status', async (req, res) => {
+  const session = await LumiSession.findOne({ sessionId: req.params.sessionId });
+  if (!session) return res.status(404).json({ error: 'not found' });
+  res.json({
+    sessionId: session.sessionId,
+    currentQuestion: session.currentQuestion,
+    reportGenerated: !!session.reportGeneratedAt,
+    reportUrl: session.reportGeneratedAt
+      ? `/lumi/report/${session.sessionId}`
+      : null,
+  });
 });
 
 // Health check
