@@ -45,6 +45,7 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -602,6 +603,19 @@ const inputEl = document.getElementById('input');
 const sendBtn = document.getElementById('send-btn');
 const progressBar = document.getElementById('progress-bar');
 const progressLabel = document.getElementById('progress-label');
+
+// Mobile keyboard handling — keep latest message visible when keyboard opens
+inputEl.addEventListener('focus', () => {
+  setTimeout(() => {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    inputEl.scrollIntoView({ block: 'end', behavior: 'smooth' });
+  }, 300);
+});
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  });
+}
 
 function addMsg(role, text, opts = {}) {
   if (role === 'system') {
