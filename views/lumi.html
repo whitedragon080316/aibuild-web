@@ -667,14 +667,18 @@ async function initLiff() {
   }
   try {
     await liff.init({ liffId: LIFF_ID });
-    // 只有在 LINE app 裡 + 已登入才用 LIFF profile，否則讓用戶用訪客模式
-    if (liff.isInClient() && liff.isLoggedIn()) {
+    if (liff.isInClient()) {
+      // 在 LINE app 內 — 走 LIFF，自動取 userId（login 對 in-client 是 transparent）
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
       const profile = await liff.getProfile();
       lineUserId = profile.userId;
       displayName = profile.displayName;
       await startSession();
     } else {
-      // 網頁版（外部瀏覽器）→ 不強迫 LINE 登入，直接訪客模式
+      // 外部瀏覽器（桌機 or 手機瀏覽器）→ 訪客模式，不強迫 LINE 登入
       showFallback();
     }
   } catch (e) {
