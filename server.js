@@ -673,6 +673,37 @@ app.get('/api/lumi/session/:sessionId/status', async (req, res) => {
   });
 });
 
+// === Internal：bot 查某 lineUserId 有沒有最近完成的 Lumi session ===
+// 用 shared secret 驗證。bot follow event 用來分流熱 lead vs 冷 follower。
+app.get('/internal/lumi-session-status', async (req, res) => {
+  try {
+    const { userId, sharedSecret } = req.query;
+    const expected = process.env.LUMI_SHARED_SECRET;
+    if (!expected) return res.status(503).json({ error: 'LUMI_SHARED_SECRET not configured' });
+    if (sharedSecret !== expected) return res.status(403).json({ error: 'invalid secret' });
+    if (!userId) return res.status(400).json({ error: 'userId required' });
+
+    const session = await LumiSession.findOne({
+      lineUserId: userId,
+      reportGeneratedAt: { $exists: true, $ne: null },
+    }).sort({ reportGeneratedAt: -1 });
+
+    if (!session) return res.json({ hasReport: false });
+
+    const ageMs = Date.now() - new Date(session.reportGeneratedAt).getTime();
+    const within24h = ageMs < 24 * 60 * 60 * 1000;
+    res.json({
+      hasReport: true,
+      within24h,
+      reportGeneratedAt: session.reportGeneratedAt,
+      sessionId: session.sessionId,
+    });
+  } catch (e) {
+    console.error('[internal lumi-session-status]', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'knowu-web', time: new Date().toISOString() });
