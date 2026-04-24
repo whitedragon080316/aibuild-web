@@ -203,8 +203,8 @@ tailwind.config = {
       <div class="inline-block bg-orange-100 rounded-full px-4 py-1.5 mb-4">
         <span class="text-orange-700 text-sm font-bold">Cohort 1 方案 · 5/28 直播當天開放 48 小時</span>
       </div>
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">兩套方案，看你要走哪條路</h2>
-      <p class="text-gray-500 text-lg max-w-2xl mx-auto">變現型 AI 把你的專業變成課程，賣 N 次。成交型 AI 替你跑成交流程。兩個都買 = 最完整。</p>
+      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">兩個方案，看你要走多遠</h2>
+      <p class="text-gray-500 text-lg max-w-2xl mx-auto">變現型 AI 把你的專業打包成可複製的課程 —— 這是基礎。<br>加 19,000 升級完整版，再拿到 AI 替你跑成交的整套 stack。</p>
     </div>
 
     <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -212,13 +212,16 @@ tailwind.config = {
       <!-- 變現型 AI -->
       <div class="card border-2 border-accent-300 rounded-3xl p-8 md:p-10 relative overflow-hidden">
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-accent-400 to-accent-500"></div>
-        <div class="text-accent-500 font-bold text-sm mb-2 tracking-wider">變現型 AI</div>
+        <div class="flex items-center gap-2 mb-2">
+          <div class="text-accent-500 font-bold text-sm tracking-wider">變現型 AI</div>
+          <span class="text-[10px] font-black tracking-widest bg-amber-100 text-amber-700 border border-amber-200 rounded-full px-2.5 py-1">入門 · 基礎建設</span>
+        </div>
         <h3 class="text-2xl md:text-3xl font-black text-gray-900 mb-1">把你的專業變成課程，賣 N 次</h3>
         <p class="text-gray-500 text-base mb-6">核心：1 次錄 → 賣 N 次</p>
 
         <div class="mb-6">
-          <span class="text-4xl font-black text-gray-900">NT$69,800</span>
-          <span class="text-accent-600 text-sm font-bold ml-2">（特價）</span>
+          <span class="text-4xl font-black text-gray-900">NT$79,800</span>
+          <span class="text-accent-600 text-sm font-bold ml-2">（單買）</span>
         </div>
 
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
@@ -243,32 +246,34 @@ tailwind.config = {
         <a href="{{LINE_ADD_URL}}" class="block w-full bg-accent-500 hover:bg-accent-600 text-white font-bold py-4 rounded-2xl text-center transition glow-orange" onclick="fbq('track','Lead');">5/28 直播當天開放報名</a>
       </div>
 
-      <!-- 成交型 AI -->
+      <!-- 1+1 完整方案 -->
       <div class="card border-2 border-purple-400 rounded-3xl p-8 md:p-10 relative overflow-hidden glow-purple">
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-500 to-brand-500"></div>
-        <div class="text-purple-600 font-bold text-sm mb-2 tracking-wider">成交型 AI</div>
-        <h3 class="text-2xl md:text-3xl font-black text-gray-900 mb-1">AI 替你跑成交流程</h3>
-        <p class="text-gray-500 text-base mb-6">核心：1 次訓 → 跟 N 個客戶同時互動</p>
-
-        <div class="mb-6">
-          <span class="text-4xl font-black text-gray-900">NT$99,800</span>
-          <span class="text-purple-600 text-sm font-bold ml-2">（特價）</span>
+        <div class="flex items-center gap-2 mb-2">
+          <div class="text-purple-600 font-bold text-sm tracking-wider">變現型 + 成交型</div>
+          <span class="text-[10px] font-black tracking-widest bg-purple-600 text-white rounded-full px-2.5 py-1">完整 · 最多人選</span>
         </div>
+        <h3 class="text-2xl md:text-3xl font-black text-gray-900 mb-1">1+1 完整方案</h3>
+        <p class="text-gray-500 text-base mb-6">變現 + AI 替你跑成交，一次建完整套</p>
+
+        <div class="mb-2">
+          <span class="text-4xl font-black text-gray-900">NT$98,800</span>
+          <span class="text-purple-600 text-sm font-bold ml-2">（bundle）</span>
+        </div>
+        <p class="text-purple-700 text-sm font-bold mb-6">加 19,000 再拿到 AI 成交 stack</p>
 
         <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
           <div class="text-purple-700 text-xs font-bold mb-2 tracking-widest">適合你如果</div>
-          <p class="text-gray-700 text-sm leading-relaxed">不想教人，要 AI 直接替你做事。</p>
+          <p class="text-gray-700 text-sm leading-relaxed">想把專業打包成課程，同時讓 AI 替你跑整條成交流程。</p>
         </div>
 
-        <div class="text-sm font-bold text-gray-900 mb-3">應用場景：</div>
+        <div class="text-sm font-bold text-gray-900 mb-3">包含變現型 AI 全部內容：</div>
         <ul class="space-y-2 mb-6 text-sm">
-          <li class="flex items-start gap-2"><span class="text-purple-500 font-bold flex-shrink-0">→</span><span class="text-gray-700"><strong>專業服務者</strong>：AI 分身做前期諮詢 / qualify / FAQ</span></li>
-          <li class="flex items-start gap-2"><span class="text-purple-500 font-bold flex-shrink-0">→</span><span class="text-gray-700"><strong>廣告代操</strong>：AI 分身寫文案 / 跟客戶溝通</span></li>
-          <li class="flex items-start gap-2"><span class="text-purple-500 font-bold flex-shrink-0">→</span><span class="text-gray-700"><strong>企業顧問</strong>：AI 分身 embedded 到客戶端</span></li>
-          <li class="flex items-start gap-2"><span class="text-purple-500 font-bold flex-shrink-0">→</span><span class="text-gray-700"><strong>agency</strong>：AI 分身服務 N 個 client</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-700">從你的專業提取教學架構 → 課程大綱 + 銷售頁 + 廣告</span></li>
+          <li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-700">課程銷售 bot（LINE qualifier + 轉單）+ 課程平台 deploy</span></li>
         </ul>
 
-        <div class="text-sm font-bold text-gray-900 mb-3">你會做到：</div>
+        <div class="text-sm font-bold text-gray-900 mb-3">再加上成交型 AI 的整套 stack：</div>
         <ul class="space-y-3 mb-6 text-sm">
           <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-700">策展你 30-50 精華對話 → encode judgment 進 AI</span></li>
           <li class="flex items-start gap-3"><svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-gray-700">建客戶筆記本系統（跨 session memory）</span></li>
@@ -280,29 +285,29 @@ tailwind.config = {
 
         <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
           <div class="text-purple-700 text-xs font-bold mb-1 tracking-widest">你會拿到</div>
-          <p class="text-gray-900 font-bold">一個替你跑的 AI 分身</p>
+          <p class="text-gray-900 font-bold">一套可以自動賣的線上課程 + 一個替你跑的 AI 分身</p>
         </div>
 
         <a href="{{LINE_ADD_URL}}" class="block w-full bg-gradient-to-r from-purple-500 to-brand-500 hover:from-purple-600 hover:to-brand-600 text-white font-bold py-4 rounded-2xl text-center transition shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40" onclick="fbq('track','Lead');">5/28 直播當天開放報名</a>
       </div>
     </div>
 
-    <!-- 3 種買法 -->
+    <!-- 2 種買法 -->
     <div class="max-w-3xl mx-auto mt-12">
-      <h3 class="text-xl font-black text-gray-900 text-center mb-6">3 種買法</h3>
-      <div class="grid md:grid-cols-3 gap-4">
+      <h3 class="text-xl font-black text-gray-900 text-center mb-6">2 種買法</h3>
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
-          <div class="text-accent-600 text-xs font-bold mb-2 tracking-widest">只買變現型 AI</div>
-          <p class="text-gray-700 text-sm">想教人、想靠課程變現</p>
-        </div>
-        <div class="bg-purple-50 border border-purple-200 rounded-xl p-5">
-          <div class="text-purple-600 text-xs font-bold mb-2 tracking-widest">只買成交型 AI</div>
-          <p class="text-gray-700 text-sm">已有客戶、想 AI 替你跑成交</p>
+          <div class="text-accent-600 text-xs font-bold mb-2 tracking-widest">79,800｜變現型 AI（入門）</div>
+          <p class="text-gray-700 text-sm leading-relaxed">把你的專業變成可複製的課程。這是基礎。</p>
         </div>
         <div class="bg-gradient-to-br from-amber-50 to-purple-50 border-2 border-purple-300 rounded-xl p-5">
-          <div class="text-purple-700 text-xs font-bold mb-2 tracking-widest">兩個都買（最完整）</div>
-          <p class="text-gray-700 text-sm">教學變現 + AI 跑成交</p>
+          <div class="text-purple-700 text-xs font-bold mb-2 tracking-widest">98,800｜變現型 + 成交型（完整）</div>
+          <p class="text-gray-700 text-sm leading-relaxed">加 19,000 再拿到 AI 替你跑成交的整套 stack。</p>
         </div>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-5">
+        <div class="text-gray-900 text-sm font-bold mb-2">為什麼不單賣成交型？</div>
+        <p class="text-gray-600 text-sm leading-relaxed">因為沒有「可複製的交付物」，AI 也沒東西可以替你跑成交。<br>先把專業打包成課程（變現型），再讓 AI 跑它。</p>
       </div>
     </div>
   </div>
