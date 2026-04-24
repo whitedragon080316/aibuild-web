@@ -85,20 +85,19 @@ tailwind.config = {
         <div class="text-amber-300/90 text-sm md:text-base font-bold tracking-widest mb-5">你的事業，始於自己，終於 AI</div>
 
         <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
-          10 分鐘 AI 對談，換一份 ——<br>
-          <span class="gradient-text-gold">你的專屬造局診斷報告</span>
+          5/28 晚 8 點 · 60 分鐘免費直播<br>
+          <span class="gradient-text-gold">怎麼把你的專業複製給 AI</span>
         </h1>
 
         <p class="text-white/80 text-base md:text-lg mb-8 leading-relaxed">
-          你是哪一型造局者？下週該動哪一步？<br>
-          一個月內會撞上哪道牆？<br>
-          <strong class="text-amber-300">Lumi 會用 10 分鐘對談，給你一份具體的診斷書。</strong>
+          5/28 晚 8 點｜60 分鐘免費直播｜{{SESSION_TIME}}<br>
+          <strong class="text-amber-300">加 LINE，我直接推你直播連結。</strong>
         </p>
 
-        <a href="{{LUMI_LIFF_URL}}" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-black px-10 py-4 rounded-2xl text-xl transition glow-orange" onclick="fbq('track','Lead');">
-          🎯 免費 AI 造局診斷 · 10 分鐘
+        <a href="{{LINE_ADD_URL}}" class="inline-block bg-green-500 hover:bg-green-600 text-white font-black px-10 py-4 rounded-2xl text-xl transition glow-btn" onclick="fbq('track','Lead');">
+          加 LINE 預約 5/28 直播 →
         </a>
-        <div class="text-white/40 text-sm mt-2">診斷完會自動通知你 {{SESSION_TIME}} 的直播連結</div>
+        <div class="mt-3"><a href="{{LUMI_LIFF_URL}}" class="text-white/70 text-sm underline hover:text-white/90">或先試 10 分鐘 AI 造局診斷 →</a></div>
       </div>
 
       <div class="md:col-span-2 flex justify-center md:justify-end">
@@ -357,11 +356,11 @@ tailwind.config = {
     </h2>
     <p class="text-white/80 text-lg mb-8">10 分鐘 Lumi 對談，換一份造局診斷 + 直播入場券。</p>
 
-    <a href="{{LUMI_LIFF_URL}}" class="inline-block bg-white hover:bg-gray-100 text-brand-600 font-bold px-10 py-4 rounded-2xl text-xl transition shadow-xl" onclick="fbq('track','Lead');">
-      🎯 免費 AI 造局診斷 · 10 分鐘
+    <a href="{{LINE_ADD_URL}}" class="inline-block bg-white hover:bg-gray-100 text-brand-600 font-bold px-10 py-4 rounded-2xl text-xl transition shadow-xl" onclick="fbq('track','Lead');">
+      加 LINE 預約直播 →
     </a>
     <div class="text-white/50 text-sm mt-4">{{LIVESTREAM_DATE}} ｜ {{SESSION_TIME}}</div>
-    <div class="mt-3"><a href="{{LINE_ADD_URL}}" class="text-white/60 text-sm underline hover:text-white/80">不想對話？先加 LINE 收通知 →</a></div>
+    <div class="mt-3"><a href="{{LUMI_LIFF_URL}}" class="text-white/60 text-sm underline hover:text-white/80">或先試 10 分鐘 AI 造局診斷 →</a></div>
   </div>
 </section>
 
