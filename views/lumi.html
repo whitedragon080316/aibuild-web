@@ -194,28 +194,25 @@
     .sidebar-cta .cta-line { font-size: 14px; }
     .sidebar-cta .cta-sub { font-size: 12.5px; }
   }
-  /* Mobile: compress sidebar — hide founder + deliver list, keep title + CTA only */
+  /* Mobile: 壓縮版 sidebar，scrollable，max 30vh — 留空間給 fallback panel + chat */
   @media (max-width: 767px) {
     #sidebar {
+      max-height: 30vh;
       padding: 10px 14px;
       flex: 0 0 auto;
-      max-height: 38vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
-    #sidebar h2 {
-      font-size: 13.5px;
-      margin-bottom: 6px;
-    }
-    .sidebar-founder {
-      font-size: 12px;
-      padding: 8px 10px;
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-    .sidebar-deliver-list { display: none; }
-    .sidebar-tagline { font-size: 12px; margin-bottom: 8px; }
-    .sidebar-cta { padding: 10px 12px; margin-top: 10px; }
-    .sidebar-cta .cta-line { font-size: 12.5px; }
-    .sidebar-cta .cta-sub { font-size: 11px; }
+    #sidebar h2 { font-size: 13.5px; margin-bottom: 6px; }
+    .sidebar-tagline { font-size: 11.5px; margin-bottom: 6px; line-height: 1.5; }
+    .sidebar-founder { font-size: 11.5px; padding: 7px 9px; margin-bottom: 6px; line-height: 1.5; }
+    .sidebar-deliver-title { display: block; font-size: 10.5px; margin-bottom: 4px; letter-spacing: 0.04em; }
+    .sidebar-deliver-list { display: grid; gap: 3px; margin-bottom: 6px; }
+    .sidebar-deliver-list li { font-size: 11.5px; line-height: 1.4; }
+    .sidebar-audience { font-size: 11px; margin-bottom: 6px; line-height: 1.4; }
+    .sidebar-cta { padding: 9px 11px; margin-top: 6px; }
+    .sidebar-cta .cta-line { font-size: 12px; }
+    .sidebar-cta .cta-sub { font-size: 10.5px; line-height: 1.45; }
   }
   body.keyboard-open #sidebar { display: none; }
 
@@ -527,6 +524,48 @@
     border-radius: 999px;
     font-weight: 500;
     letter-spacing: 0.02em;
+  }
+
+  /* 報告完成 → 引導切回 LINE chat 看 bot push 卡片 */
+  .msg.report-cta {
+    align-self: stretch;
+    background: linear-gradient(135deg, #FDF6E7 0%, #F8E5B8 100%);
+    border: 1px solid #E8C97A;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin: 12px 0 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    text-align: center;
+  }
+  .msg.report-cta .report-cta-text {
+    color: var(--brand-900);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .msg.report-cta .report-cta-text strong { font-size: 15px; }
+  .msg.report-cta .report-cta-text span {
+    color: var(--ink-700);
+    font-size: 12.5px;
+  }
+  .msg.report-cta .report-cta-btn {
+    background: linear-gradient(135deg, #3B5BDB 0%, #2B44B0 100%);
+    color: #fff;
+    border: 0;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: var(--shadow-brand);
+    transition: transform 0.15s ease;
+  }
+  .msg.report-cta .report-cta-btn:hover,
+  .msg.report-cta .report-cta-btn:active {
+    transform: translateY(-1px);
   }
 
   .report-done {
@@ -862,8 +901,8 @@
     </div>
 
     <a class="sidebar-cta" href="{{LINE_ADD_URL}}" target="_blank" rel="noopener">
-      <div class="cta-line">→ 加 LINE，收 5/28 直播連結</div>
-      <div class="cta-sub">5/28 直播 60 分鐘<br>看怎麼讓事業 24/7 自己跑、AI 替你接客<br>不再被「時間」綁住</div>
+      <div class="cta-line">報名直播 聽 Bago 老師拆解 →</div>
+      <div class="cta-sub">怎麼讓事業 24/7 自己跑、AI 替你接客<br>不再被「時間」綁住<br><br>填完報告，LINE 會自動推完整版 + 直播卡片給你</div>
     </a>
   </aside>
 
@@ -1033,6 +1072,29 @@ function showQuickChips(show) {
   quickChipsEl.setAttribute('aria-hidden', show ? 'false' : 'true');
 }
 
+// 報告生成後加 prominent CTA 引導用戶切回 LINE chat 看 bot push 的 Flex 卡片
+function addRedirectCTA() {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg report-cta';
+  wrap.innerHTML = `
+    <div class="report-cta-text">
+      <strong>→ 切回 LINE 聽 Bago 老師拆解</strong><br>
+      <span>完整報告 + 直播卡片已推到你的 LINE @</span>
+    </div>
+    <button type="button" class="report-cta-btn">回 LINE 看更多</button>
+  `;
+  messagesEl.appendChild(wrap);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  wrap.querySelector('.report-cta-btn').addEventListener('click', () => {
+    // 在 LIFF 環境關 webview 切回 LINE 主畫面（用戶看到 bot push 的 Flex 卡片）
+    if (typeof liff !== 'undefined' && liff.closeWindow) {
+      try { liff.closeWindow(); return; } catch (_) {}
+    }
+    // 非 LIFF 環境（桌機 browser preview）：跳 LINE @ 加好友頁
+    window.location.href = '{{LINE_ADD_URL}}';
+  });
+}
+
 // Wire chip clicks: fill input + focus, do not auto-send so user can edit
 quickChipsEl.querySelectorAll('.chip').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1161,11 +1223,15 @@ async function sendMessage(ev) {
       if (data.reportGenerated && !reportShown) {
         reportShown = true;
         if (data.reportUrl) {
-          addMsg('report-done', '報告已生成，也會傳到你的 LINE');
+          addMsg('report-done', '報告已生成');
           addMsg('ai', `完整報告：[點我看報告](${data.reportUrl})`);
         } else {
           addMsg('report-done', '報告已生成');
         }
+        // 報告完成 → 引導用戶切回 LINE chat 看 bot push 的 Flex 卡片
+        // LIFF 環境用 liff.closeWindow() 關 webview 切回 LINE 主畫面
+        // 非 LIFF 環境用 LINE_ADD_URL 跳 LINE @ 加好友頁
+        addRedirectCTA();
       }
     }
   } catch (e) {
