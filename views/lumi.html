@@ -744,15 +744,7 @@
   </div>
 </header>
 
-<div id="fallback-panel">
-  <h2>開始你的造局診斷</h2>
-  <p>7 題問完，你會知道你的下一步。</p>
-  <input id="fallback-name" placeholder="你叫什麼名字？">
-  <button onclick="startWithFallback()">開始（約 10 分鐘）</button>
-  <div class="hint">做完想收報告到 LINE？結尾會引導你加好友</div>
-</div>
-
-<div id="main-grid" style="display:none;">
+<div id="main-grid">
   <aside id="sidebar">
     <h2>✨ Lumi｜Bago 老師的 AI 顧問</h2>
     <div class="sidebar-founder">
@@ -768,20 +760,30 @@
     <div class="sidebar-cta">📍 5/28 晚 8 點直播 60 分鐘 Cohort 1 限額</div>
   </aside>
 
-  <div id="chat-container">
-    <div id="messages"></div>
-    <div class="typing" id="typing"><span></span><span></span><span></span></div>
-    <div id="quick-chips" aria-hidden="true">
-      <div class="chip-label">不知道怎麼說？挑一個開始：</div>
-      <button type="button" class="chip" data-chip="時間自由">時間自由</button>
-      <button type="button" class="chip" data-chip="品牌規模化">品牌規模化</button>
-      <button type="button" class="chip" data-chip="擺脫接案">擺脫接案</button>
-      <button type="button" class="chip" data-chip="影響力擴大">影響力擴大</button>
+  <div id="right-col">
+    <div id="fallback-panel" class="show">
+      <h2>開始你的造局診斷</h2>
+      <p>7 題問完，你會知道你的下一步。</p>
+      <input id="fallback-name" placeholder="你叫什麼名字？">
+      <button onclick="startWithFallback()">開始（約 10 分鐘）</button>
+      <div class="hint">做完想收報告到 LINE？結尾會引導你加好友</div>
     </div>
-    <form id="input-area" onsubmit="sendMessage(event)">
-      <input id="input" placeholder="跟 Lumi 說說你的想法..." autocomplete="off" disabled>
-      <button id="send-btn" type="submit" disabled aria-label="送出"></button>
-    </form>
+
+    <div id="chat-container" style="display:none;">
+      <div id="messages"></div>
+      <div class="typing" id="typing"><span></span><span></span><span></span></div>
+      <div id="quick-chips" aria-hidden="true">
+        <div class="chip-label">不知道怎麼說？挑一個開始：</div>
+        <button type="button" class="chip" data-chip="時間自由">時間自由</button>
+        <button type="button" class="chip" data-chip="品牌規模化">品牌規模化</button>
+        <button type="button" class="chip" data-chip="擺脫接案">擺脫接案</button>
+        <button type="button" class="chip" data-chip="影響力擴大">影響力擴大</button>
+      </div>
+      <form id="input-area" onsubmit="sendMessage(event)">
+        <input id="input" placeholder="跟 Lumi 說說你的想法..." autocomplete="off" disabled>
+        <button id="send-btn" type="submit" disabled aria-label="送出"></button>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -801,6 +803,8 @@ const sendBtn = document.getElementById('send-btn');
 const progressBar = document.getElementById('progress-bar');
 const progressLabel = document.getElementById('progress-label');
 const mainGridEl = document.getElementById('main-grid');
+const fallbackPanelEl = document.getElementById('fallback-panel');
+const chatContainerEl = document.getElementById('chat-container');
 const quickChipsEl = document.getElementById('quick-chips');
 
 // Mobile keyboard: collapse header when focused so more room for messages; scroll to bottom
@@ -882,8 +886,8 @@ async function initLiff() {
 }
 
 function showFallback() {
-  document.getElementById('fallback-panel').classList.add('show');
-  mainGridEl.style.display = 'none';
+  fallbackPanelEl.classList.add('show');
+  chatContainerEl.style.display = 'none';
 }
 
 async function startWithFallback() {
@@ -891,8 +895,8 @@ async function startWithFallback() {
   // 訪客模式：生成隨機 guest userId（不綁 LINE）
   lineUserId = 'guest_' + Math.random().toString(36).slice(2, 12);
   displayName = name;
-  document.getElementById('fallback-panel').classList.remove('show');
-  mainGridEl.style.display = '';
+  fallbackPanelEl.classList.remove('show');
+  chatContainerEl.style.display = '';
   await startSession();
 }
 
@@ -914,7 +918,8 @@ quickChipsEl.querySelectorAll('.chip').forEach(btn => {
 });
 
 async function startSession() {
-  mainGridEl.style.display = '';
+  fallbackPanelEl.classList.remove('show');
+  chatContainerEl.style.display = '';
   try {
     const resp = await fetch('/api/lumi/session/start', {
       method: 'POST',
