@@ -1105,26 +1105,15 @@ function showQuickChips(show) {
   quickChipsEl.setAttribute('aria-hidden', show ? 'false' : 'true');
 }
 
-// 報告生成後加 prominent CTA 引導用戶切回 LINE chat 看 bot push 的 Flex 卡片
-function addRedirectCTA() {
+// 報告生成後唯一 CTA：點擊看完整報告書
+function addReportCTA(reportUrl) {
   const wrap = document.createElement('div');
   wrap.className = 'msg report-cta';
-  wrap.innerHTML = `
-    <div class="report-cta-text">
-      <strong>→ 切回 LINE 聽 Bago 老師拆解</strong><br>
-      <span>完整報告 + 直播卡片已推到你的 LINE @</span>
-    </div>
-    <button type="button" class="report-cta-btn">回 LINE 看更多</button>
-  `;
+  wrap.innerHTML = `<button type="button" class="report-cta-btn">報告出爐了！點擊看完整報告書</button>`;
   messagesEl.appendChild(wrap);
   messagesEl.scrollTop = messagesEl.scrollHeight;
   wrap.querySelector('.report-cta-btn').addEventListener('click', () => {
-    // 在 LIFF 環境關 webview 切回 LINE 主畫面（用戶看到 bot push 的 Flex 卡片）
-    if (typeof liff !== 'undefined' && liff.closeWindow) {
-      try { liff.closeWindow(); return; } catch (_) {}
-    }
-    // 非 LIFF 環境（桌機 browser preview）：跳 LINE @ 加好友頁
-    window.location.href = '{{LINE_ADD_URL}}';
+    window.open(reportUrl, '_blank', 'noopener');
   });
 }
 
@@ -1250,23 +1239,21 @@ async function sendMessage(ev) {
     if (data.error) {
       addMsg('system', '出錯了：' + data.error);
     } else {
-      if (data.reply) addMsg('ai', data.reply);
-      if (data.currentQuestion) setProgress(data.currentQuestion);
       if (data.reportGenerated && !reportShown) {
         reportShown = true;
-        if (data.reportUrl) {
-          addMsg('report-done', '報告已生成');
-          addMsg('ai', `完整報告：[點我看報告](${data.reportUrl})`);
-        } else {
-          addMsg('report-done', '報告已生成');
+        setProgress(8);
+        showQuickChips(false);
+        // 報告生成後砍輸入區（不再接受訊息） + back-row（不能回上一題）
+        document.getElementById('input-area').style.display = 'none';
+        document.getElementById('back-row').classList.remove('show');
+        addMsg('report-done', '報告已生成');
+        if (data.reportUrl) addReportCTA(data.reportUrl);
+      } else {
+        if (data.reply) addMsg('ai', data.reply);
+        if (data.currentQuestion) setProgress(data.currentQuestion);
+        if (data.currentQuestion >= 1 && data.currentQuestion <= 7 && !reportShown) {
+          showQuickChips(true);
         }
-        // 報告完成 → 引導用戶切回 LINE chat 看 bot push 的 Flex 卡片
-        // LIFF 環境用 liff.closeWindow() 關 webview 切回 LINE 主畫面
-        // 非 LIFF 環境用 LINE_ADD_URL 跳 LINE @ 加好友頁
-        addRedirectCTA();
-      } else if (data.currentQuestion >= 1 && data.currentQuestion <= 7 && !reportShown) {
-        // 推進到下一題後自動 show 對應 chips（renderQuickChips 已在 setProgress 內 fire）
-        showQuickChips(true);
       }
     }
   } catch (e) {
