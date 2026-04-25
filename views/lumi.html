@@ -171,6 +171,13 @@
     padding: 12px 14px;
     border-radius: var(--radius-sm);
     line-height: 1.5;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  a.sidebar-cta:hover, a.sidebar-cta:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(217, 154, 43, 0.25);
+    border-color: var(--accent-500);
   }
   .sidebar-cta .cta-line {
     font-size: 13px;
@@ -854,10 +861,10 @@
       <span class="audience-list">（專家、顧問、講師、代操、副業…）</span>
     </div>
 
-    <div class="sidebar-cta">
-      <div class="cta-line">完成後加 LINE，收 5/28 直播連結</div>
-      <div class="cta-sub">直播拆 3 件事：自動化獲客 ／ 可複製交付 ／ AI 顧問</div>
-    </div>
+    <a class="sidebar-cta" href="{{LINE_ADD_URL}}" target="_blank" rel="noopener">
+      <div class="cta-line">→ 加 LINE，收 5/28 直播連結</div>
+      <div class="cta-sub">5/28 直播 60 分鐘<br>看怎麼讓事業 24/7 自己跑、AI 替你接客<br>不再被「時間」綁住</div>
+    </a>
   </aside>
 
   <div id="right-col">
