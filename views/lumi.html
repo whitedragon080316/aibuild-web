@@ -716,6 +716,61 @@
     line-height: 1.5;
   }
 
+  /* ===== Header reset button ===== */
+  #reset-btn {
+    position: absolute;
+    top: calc(12px + env(safe-area-inset-top));
+    right: 14px;
+    z-index: 2;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.28);
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.15s, transform 0.1s;
+  }
+  #reset-btn:hover, #reset-btn:active { background: rgba(255,255,255,0.26); }
+  #reset-btn:active { transform: scale(0.94); }
+  #reset-btn svg { width: 16px; height: 16px; stroke: #fff; }
+
+  /* ===== Back button (above input) ===== */
+  #back-row {
+    display: none;
+    padding: 6px 14px 0;
+    background: var(--surface);
+    border-top: 1px solid var(--ink-200);
+  }
+  #back-row.show { display: flex; }
+  #back-btn {
+    background: transparent;
+    border: 1px solid var(--ink-300);
+    color: var(--ink-700);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    letter-spacing: 0.02em;
+  }
+  #back-btn:hover, #back-btn:active {
+    background: var(--ink-100);
+    border-color: var(--brand-500);
+    color: var(--brand-700);
+  }
+  #back-btn svg { width: 12px; height: 12px; stroke: currentColor; }
+  #back-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
   /* ===== Small screen adjustments ===== */
   @media (max-width: 360px) {
     .msg { font-size: 14.5px; max-width: 88%; }
@@ -727,6 +782,12 @@
 <body>
 
 <header>
+  <button id="reset-btn" type="button" aria-label="重新開始" title="重新開始" onclick="resetSession()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 12a9 9 0 1 0 3-6.7"/>
+      <path d="M3 4v5h5"/>
+    </svg>
+  </button>
   <div class="header-inner">
     <div class="brand-mark" aria-hidden="true"><img src="/public/img/lumi-avatar.png" alt="Lumi"></div>
     <div class="brand-text">
@@ -779,6 +840,15 @@
         <button type="button" class="chip" data-chip="擺脫接案">擺脫接案</button>
         <button type="button" class="chip" data-chip="影響力擴大">影響力擴大</button>
       </div>
+      <div id="back-row">
+        <button id="back-btn" type="button" onclick="goBack()">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5"/>
+            <path d="M11 18l-6-6 6-6"/>
+          </svg>
+          上一題
+        </button>
+      </div>
       <form id="input-area" onsubmit="sendMessage(event)">
         <input id="input" placeholder="跟 Lumi 說說你的想法..." autocomplete="off" disabled>
         <button id="send-btn" type="submit" disabled aria-label="送出"></button>
@@ -806,6 +876,10 @@ const mainGridEl = document.getElementById('main-grid');
 const fallbackPanelEl = document.getElementById('fallback-panel');
 const chatContainerEl = document.getElementById('chat-container');
 const quickChipsEl = document.getElementById('quick-chips');
+const backRowEl = document.getElementById('back-row');
+const backBtnEl = document.getElementById('back-btn');
+
+let currentQuestion = 1;
 
 // Mobile keyboard: collapse header when focused so more room for messages; scroll to bottom
 function onKbOpen() {
@@ -850,11 +924,19 @@ function setTyping(on) {
   if (on) messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-function setProgress(currentQuestion) {
-  const answered = Math.max(0, Math.min(7, currentQuestion - 1));
+function setProgress(q) {
+  currentQuestion = q;
+  const answered = Math.max(0, Math.min(7, q - 1));
   const pct = (answered / 7) * 100;
   progressBar.style.width = pct + '%';
   if (progressLabel) progressLabel.textContent = answered + ' / 7';
+  updateBackButton();
+}
+
+function updateBackButton() {
+  // 報告生成後 (currentQuestion >= 8) 不顯示；Q1 也不顯示
+  const show = currentQuestion > 1 && currentQuestion <= 7 && !reportShown;
+  backRowEl.classList.toggle('show', show);
 }
 
 async function initLiff() {
@@ -951,6 +1033,58 @@ async function startSession() {
     console.error(e);
     addMsg('system', '連線失敗：' + e.message);
   }
+}
+
+async function goBack() {
+  if (!sessionId || backBtnEl.disabled) return;
+  backBtnEl.disabled = true;
+  inputEl.disabled = true;
+  sendBtn.disabled = true;
+  try {
+    const resp = await fetch('/api/lumi/session/back', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      addMsg('system', data.error || '回上一題失敗');
+      return;
+    }
+    // 重新繪製訊息
+    messagesEl.innerHTML = '';
+    if (Array.isArray(data.history) && data.history.length) {
+      data.history.forEach(m => addMsg(m.role === 'user' ? 'user' : 'ai', m.content));
+    } else {
+      addMsg('ai', `嗨 ${displayName || '你'}～我是 Lumi，Bago 老師的 AI 顧問。\n\n7 題問完，你會知道你的下一步。\n\n**第 1 題**：你的目標是什麼？理想中的樣子長什麼樣？`);
+    }
+    setProgress(data.currentQuestion || 1);
+    showQuickChips((data.currentQuestion || 1) === 1);
+    inputEl.value = '';
+    inputEl.focus();
+  } catch (e) {
+    addMsg('system', '網路錯誤：' + e.message);
+  } finally {
+    backBtnEl.disabled = false;
+    inputEl.disabled = false;
+    sendBtn.disabled = false;
+  }
+}
+
+async function resetSession() {
+  if (!confirm('確定要重新開始嗎？目前的答案會清掉。')) return;
+  try {
+    if (lineUserId) {
+      await fetch('/api/lumi/session/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lineUserId }),
+      });
+    }
+  } catch (e) {
+    console.error('reset failed', e);
+  }
+  location.reload();
 }
 
 async function sendMessage(ev) {

@@ -659,6 +659,66 @@ app.post('/api/lumi/chat/send', async (req, res) => {
   }
 });
 
+// 回上一題：把 currentQuestion -1, 拿掉對應 answer + 最後 2 則 chatHistory
+app.post('/api/lumi/session/back', async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+    if (!sessionId) return res.status(400).json({ error: 'sessionId required' });
+
+    const session = await LumiSession.findOne({ sessionId });
+    if (!session) return res.status(404).json({ error: 'session not found' });
+
+    if (session.reportGeneratedAt) {
+      return res.status(400).json({ error: '報告已生成，無法回上一題' });
+    }
+    if ((session.currentQuestion || 1) <= 1) {
+      return res.status(400).json({ error: '已是第一題' });
+    }
+
+    const oldQ = session.currentQuestion;
+    session.currentQuestion = oldQ - 1;
+
+    // 拿掉對應題號 answer（讓用戶可以重答）
+    if (session.answers && typeof session.answers === 'object') {
+      delete session.answers[`q${oldQ}`];
+      // 也移除上一題（剛要重答的那題）的舊答案，這樣 send 時才會正確覆寫
+      delete session.answers[`q${oldQ - 1}`];
+      session.markModified('answers');
+    }
+
+    // 拿掉最後 2 則 chatHistory（user + assistant pair）
+    if (Array.isArray(session.chatHistory) && session.chatHistory.length >= 2) {
+      session.chatHistory.splice(-2, 2);
+    } else if (Array.isArray(session.chatHistory)) {
+      session.chatHistory = [];
+    }
+
+    await session.save();
+
+    res.json({
+      ok: true,
+      currentQuestion: session.currentQuestion,
+      history: session.chatHistory.map(m => ({ role: m.role, content: m.content })),
+    });
+  } catch (e) {
+    console.error('[lumi session/back]', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// 重新開始：刪掉該 lineUserId 所有 session，下次 /start 會建新
+app.post('/api/lumi/session/reset', async (req, res) => {
+  try {
+    const { lineUserId } = req.body;
+    if (!lineUserId) return res.status(400).json({ error: 'lineUserId required' });
+    await LumiSession.deleteMany({ lineUserId });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[lumi session/reset]', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Session 狀態 polling（選用）
 app.get('/api/lumi/session/:sessionId/status', async (req, res) => {
   const session = await LumiSession.findOne({ sessionId: req.params.sessionId });
