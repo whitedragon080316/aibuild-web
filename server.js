@@ -618,7 +618,7 @@ app.post('/api/lumi/chat/send', async (req, res) => {
       const reportUrl = publicBase
         ? `${publicBase.replace(/\/$/, '')}/lumi/report/${session.sessionId}`
         : `/lumi/report/${session.sessionId}`;
-      pushReportToBot(session.lineUserId, reportUrl, session.displayName).then(result => {
+      pushReportToBot(session.lineUserId, reportUrl).then(result => {
         if (result.ok) {
           LumiSession.updateOne({ sessionId }, { reportPushedAt: new Date() }).catch(() => {});
         }
@@ -671,80 +671,6 @@ app.get('/api/lumi/session/:sessionId/status', async (req, res) => {
       ? `/lumi/report/${session.sessionId}`
       : null,
   });
-});
-
-// === Bago 後台：列出所有完成診斷的 leads ===
-// 解掉「客戶跑完診斷加 LINE 但沒主動講話 → Bago 後台看不到」的痛點。
-// 沒密碼保護（同 /dashboard pattern），url 不公開即可。
-app.get('/lumi/leads', async (req, res) => {
-  const leads = await LumiSession.find({
-    reportGeneratedAt: { $exists: true, $ne: null },
-  })
-    .sort({ reportGeneratedAt: -1 })
-    .limit(200)
-    .lean();
-
-  const total = leads.length;
-  const last24h = leads.filter(l => Date.now() - new Date(l.reportGeneratedAt).getTime() < 86400000).length;
-  const pushedCount = leads.filter(l => l.reportPushedAt).length;
-
-  const rows = leads.map(l => {
-    const ts = new Date(l.reportGeneratedAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
-    const userIdShort = (l.lineUserId || '').slice(-6);
-    const name = l.displayName || '（無名）';
-    const pushed = l.reportPushedAt ? '✅' : '—';
-    return `<tr>
-      <td>${ts}</td>
-      <td><strong>${name}</strong></td>
-      <td><code>${userIdShort}</code></td>
-      <td>${pushed}</td>
-      <td><a href="/lumi/report/${l.sessionId}" target="_blank">看報告 →</a></td>
-    </tr>`;
-  }).join('');
-
-  res.send(`<!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"><title>Lumi Leads</title>
-<style>
-body{font-family:-apple-system,'Noto Sans TC',sans-serif;max-width:900px;margin:0 auto;padding:24px;background:#fafafa;color:#1c1c1e;}
-h1{color:#2B44B0;margin-bottom:8px;}
-.stats{display:flex;gap:20px;margin:20px 0;}
-.stat{background:#fff;padding:16px 24px;border-radius:8px;border:1px solid #e5e5ea;flex:1;text-align:center;}
-.stat .num{font-size:28px;font-weight:700;color:#2B44B0;}
-.stat .label{font-size:13px;color:#666;margin-top:4px;}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e5e5ea;}
-th{background:#f5f5f7;padding:12px;text-align:left;font-size:13px;color:#666;border-bottom:1px solid #e5e5ea;}
-td{padding:12px;border-bottom:1px solid #f0f0f3;font-size:14px;}
-tr:last-child td{border-bottom:none;}
-a{color:#3B5BDB;text-decoration:none;}
-a:hover{text-decoration:underline;}
-code{background:#f5f5f7;padding:2px 6px;border-radius:4px;font-size:12px;}
-.empty{text-align:center;padding:40px;color:#999;}
-.refresh{margin-top:20px;text-align:center;}
-</style></head><body>
-<h1>📋 Lumi 造局診斷 Leads</h1>
-<div style="color:#666;font-size:14px;">完成 7 題診斷的客戶清單（最新 200 筆）</div>
-
-<div class="stats">
-  <div class="stat"><div class="num">${total}</div><div class="label">總完成數</div></div>
-  <div class="stat"><div class="num">${last24h}</div><div class="label">過去 24h</div></div>
-  <div class="stat"><div class="num">${pushedCount}/${total}</div><div class="label">LINE 已推</div></div>
-</div>
-
-${total === 0
-  ? '<div class="empty">尚無完成的診斷。</div>'
-  : `<table>
-      <thead><tr>
-        <th>完成時間</th>
-        <th>名字</th>
-        <th>LINE ID 後 6 碼</th>
-        <th>已 push</th>
-        <th>報告</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`}
-
-<div class="refresh"><a href="/lumi/leads">🔄 重新整理</a></div>
-</body></html>`);
 });
 
 // === Internal：bot 查某 lineUserId 有沒有最近完成的 Lumi session ===
