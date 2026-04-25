@@ -1105,16 +1105,13 @@ function showQuickChips(show) {
   quickChipsEl.setAttribute('aria-hidden', show ? 'false' : 'true');
 }
 
-// 報告生成後唯一 CTA：點擊看完整報告書
+// 報告生成後唯一 CTA：點擊跳 LINE @，bot 已 push Flex 卡片在那（卡片內 button 才連到報告 URL）
 function addReportCTA(reportUrl) {
   const wrap = document.createElement('div');
   wrap.className = 'msg report-cta';
-  wrap.innerHTML = `<button type="button" class="report-cta-btn">報告出爐了！點擊看完整報告書</button>`;
+  wrap.innerHTML = `<a class="report-cta-btn" href="{{LINE_ADD_URL}}" target="_blank" rel="noopener">報告出爐了！點擊看完整報告書</a>`;
   messagesEl.appendChild(wrap);
   messagesEl.scrollTop = messagesEl.scrollHeight;
-  wrap.querySelector('.report-cta-btn').addEventListener('click', () => {
-    window.open(reportUrl, '_blank', 'noopener');
-  });
 }
 
 // Wire chip clicks: fill input + focus, do not auto-send so user can edit
