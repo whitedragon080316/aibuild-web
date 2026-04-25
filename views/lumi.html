@@ -144,27 +144,48 @@
     .sidebar-deliver-list li { font-size: 14px; line-height: 1.55; }
   }
   .sidebar-deliver-list li::before {
-    content: "✅";
+    content: "·";
     flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--brand-500);
+    font-weight: 700;
+    width: 12px;
+    text-align: center;
+  }
+  .sidebar-tagline {
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.55;
+    color: var(--ink-700);
+    margin: 0 0 12px;
+  }
+  @media (min-width: 768px) {
+    .sidebar-tagline { font-size: 14px; margin-bottom: 16px; }
   }
   .sidebar-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: block;
+    margin-top: 12px;
     background: linear-gradient(135deg, #FDF6E7 0%, #F8E5B8 100%);
     color: var(--brand-900);
     border: 1px solid #E8C97A;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    line-height: 1.4;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    line-height: 1.5;
+  }
+  .sidebar-cta .cta-line {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .sidebar-cta .cta-sub {
+    font-size: 11.5px;
+    color: var(--ink-700);
+    line-height: 1.5;
   }
   @media (min-width: 768px) {
-    .sidebar-cta { font-size: 13px; padding: 10px 14px; }
+    .sidebar-cta { padding: 14px 16px; margin-top: 16px; }
+    .sidebar-cta .cta-line { font-size: 14px; }
+    .sidebar-cta .cta-sub { font-size: 12.5px; }
   }
   /* Mobile: compress sidebar — hide founder + deliver list, keep title + CTA only */
   @media (max-width: 767px) {
@@ -184,7 +205,10 @@
       line-height: 1.5;
     }
     .sidebar-deliver-list { display: none; }
-    .sidebar-cta { font-size: 11.5px; padding: 6px 10px; }
+    .sidebar-tagline { font-size: 12px; margin-bottom: 8px; }
+    .sidebar-cta { padding: 10px 12px; margin-top: 10px; }
+    .sidebar-cta .cta-line { font-size: 12.5px; }
+    .sidebar-cta .cta-sub { font-size: 11px; }
   }
   body.keyboard-open #sidebar { display: none; }
 
@@ -808,21 +832,32 @@
 <div id="main-grid">
   <aside id="sidebar">
     <h2>Lumi｜Bago 老師的 AI 顧問</h2>
+
+    <div class="sidebar-tagline">
+      幫專業工作者看清自己的事業卡點
+    </div>
+
     <div class="sidebar-founder">
       <strong>Bago</strong>：用 AI 協助發展事業
     </div>
-    <div class="sidebar-deliver-title">7 題大約 10 分鐘，完成後你會看到</div>
+
+    <div class="sidebar-deliver-title">7 題 10 分鐘，邊聊邊釐清</div>
     <ul class="sidebar-deliver-list">
-      <li>你的造局類型</li>
-      <li>你沒意識到的盲點</li>
-      <li>下週可以做的 1 件具體事</li>
-      <li>接下來 1 個月可能撞的牆</li>
+      <li>你目前卡在哪</li>
+      <li>你沒看見的問題</li>
+      <li>下週可以從哪突破</li>
+      <li>未來會撞到的牆</li>
     </ul>
+
     <div class="sidebar-audience">
       專業事業升級<br>
       <span class="audience-list">（專家、顧問、講師、代操、副業…）</span>
     </div>
-    <div class="sidebar-cta">📅 5/28 晚 8 點線上直播　跑完報告會引導加 LINE 收連結</div>
+
+    <div class="sidebar-cta">
+      <div class="cta-line">完成後加 LINE，收 5/28 直播連結</div>
+      <div class="cta-sub">直播拆 3 件事：自動化獲客 ／ 可複製交付 ／ AI 顧問</div>
+    </div>
   </aside>
 
   <div id="right-col">
