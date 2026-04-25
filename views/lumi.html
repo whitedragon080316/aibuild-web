@@ -920,10 +920,7 @@
       <div class="typing" id="typing"><span></span><span></span><span></span></div>
       <div id="quick-chips" aria-hidden="true">
         <div class="chip-label">不知道怎麼說？挑一個開始：</div>
-        <button type="button" class="chip" data-chip="時間自由">時間自由</button>
-        <button type="button" class="chip" data-chip="品牌規模化">品牌規模化</button>
-        <button type="button" class="chip" data-chip="擺脫接案">擺脫接案</button>
-        <button type="button" class="chip" data-chip="影響力擴大">影響力擴大</button>
+        <div id="chips-row"></div>
       </div>
       <div id="back-row">
         <button id="back-btn" type="button" onclick="goBack()">
@@ -967,7 +964,9 @@ const backBtnEl = document.getElementById('back-btn');
 let currentQuestion = 1;
 
 // Mobile keyboard: collapse header when focused so more room for messages; scroll to bottom
+// 桌機 (>= 768px) 不該 trigger keyboard-open（focus input 沒有 viewport 變化、且 sidebar 會被誤 hide）
 function onKbOpen() {
+  if (window.innerWidth >= 768) return;
   document.body.classList.add('keyboard-open');
   setTimeout(() => { messagesEl.scrollTop = messagesEl.scrollHeight; }, 100);
 }
@@ -1009,6 +1008,38 @@ function setTyping(on) {
   if (on) messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
+// Q1-Q7 each has 4 quick chips (對應 7 題的常見答案 anchor，user click 可填入再編輯)
+const Q_CHIPS = {
+  1: ['時間自由', '品牌規模化', '擺脫接案', '影響力擴大'],
+  2: ['時間不夠', '客源不穩', '沒系統', '不會行銷'],
+  3: ['不知怎麼開始', '一個人忙不過來', '怕投資打水漂', '缺商業思維'],
+  4: ['真實成果', '獨特方法', '客戶信任', '長期陪伴'],
+  5: ['我的判斷', '我的經驗', '我的整合力', '我看人的眼光'],
+  6: ['重複諮詢', '行銷貼文', '客戶服務', '內容產製'],
+  7: ['應該會', '不確定', '還差很遠', '我覺得會'],
+};
+
+function renderQuickChips(q) {
+  const chips = Q_CHIPS[q];
+  const row = document.getElementById('chips-row');
+  if (!row) return;
+  row.innerHTML = '';
+  if (!chips) return;
+  chips.forEach(text => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'chip';
+    btn.setAttribute('data-chip', text);
+    btn.textContent = text;
+    btn.addEventListener('click', () => {
+      inputEl.value = text;
+      inputEl.focus();
+      try { inputEl.setSelectionRange(text.length, text.length); } catch (_) {}
+    });
+    row.appendChild(btn);
+  });
+}
+
 function setProgress(q) {
   currentQuestion = q;
   const answered = Math.max(0, Math.min(7, q - 1));
@@ -1016,6 +1047,8 @@ function setProgress(q) {
   progressBar.style.width = pct + '%';
   if (progressLabel) progressLabel.textContent = answered + ' / 7';
   updateBackButton();
+  // 每題切換時重新 render 對應的 quick chips
+  renderQuickChips(q);
 }
 
 function updateBackButton() {
@@ -1131,10 +1164,9 @@ async function startSession() {
       addMsg('ai', `嗨 ${displayName || '你'}～我是 Lumi，Bago 老師的 AI 顧問。\n\n7 題問完，你會知道你的下一步。\n\n**第 1 題**：你的目標是什麼？理想中的樣子長什麼樣？`);
     }
 
-    // Show Q1 chips only when on Q1 and user hasn't answered yet
-    const onQ1 = (data.currentQuestion || 1) === 1;
-    const userHasAnswered = hasHistory && data.history.some(m => m.role === 'user');
-    showQuickChips(onQ1 && !userHasAnswered);
+    // 每題都顯示對應 chips（Q1-Q7），完成報告後自動 hide
+    const q = data.currentQuestion || 1;
+    showQuickChips(q >= 1 && q <= 7 && !reportShown);
 
     inputEl.focus();
   } catch (e) {
@@ -1232,6 +1264,9 @@ async function sendMessage(ev) {
         // LIFF 環境用 liff.closeWindow() 關 webview 切回 LINE 主畫面
         // 非 LIFF 環境用 LINE_ADD_URL 跳 LINE @ 加好友頁
         addRedirectCTA();
+      } else if (data.currentQuestion >= 1 && data.currentQuestion <= 7 && !reportShown) {
+        // 推進到下一題後自動 show 對應 chips（renderQuickChips 已在 setProgress 內 fire）
+        showQuickChips(true);
       }
     }
   } catch (e) {
