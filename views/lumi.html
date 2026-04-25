@@ -53,6 +53,141 @@
     letter-spacing: 0.01em;
   }
 
+  /* ===== Main grid (sidebar + chat) ===== */
+  #main-grid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    #main-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 33%) 1fr;
+    }
+  }
+
+  /* ===== Sidebar ===== */
+  #sidebar {
+    background: linear-gradient(180deg, #FAFBFE 0%, #F0F3FB 100%);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 16px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (min-width: 768px) {
+    #sidebar {
+      border-bottom: 0;
+      border-right: 1px solid var(--ink-200);
+      padding: 28px 26px;
+    }
+  }
+  #sidebar h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-900);
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  @media (min-width: 768px) {
+    #sidebar h2 { font-size: 18px; margin-bottom: 12px; }
+  }
+  .sidebar-founder {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-700);
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-left: 3px solid var(--accent-400);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  @media (min-width: 768px) {
+    .sidebar-founder { font-size: 14px; padding: 14px 16px; margin-bottom: 18px; }
+  }
+  .sidebar-founder strong { color: var(--brand-700); font-weight: 700; }
+  .sidebar-deliver-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-700);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .sidebar-deliver-title { display: block; }
+  }
+  .sidebar-deliver-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+    display: grid;
+    gap: 6px;
+  }
+  @media (min-width: 768px) {
+    .sidebar-deliver-list { gap: 10px; margin-bottom: 18px; }
+  }
+  .sidebar-deliver-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-900);
+  }
+  @media (min-width: 768px) {
+    .sidebar-deliver-list li { font-size: 14px; line-height: 1.55; }
+  }
+  .sidebar-deliver-list li::before {
+    content: "✅";
+    flex-shrink: 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .sidebar-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #FDF6E7 0%, #F8E5B8 100%);
+    color: var(--brand-900);
+    border: 1px solid #E8C97A;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  @media (min-width: 768px) {
+    .sidebar-cta { font-size: 13px; padding: 10px 14px; }
+  }
+  /* Mobile: compress sidebar — hide founder + deliver list, keep title + CTA only */
+  @media (max-width: 767px) {
+    #sidebar {
+      padding: 10px 14px;
+      flex: 0 0 auto;
+      max-height: 38vh;
+    }
+    #sidebar h2 {
+      font-size: 13.5px;
+      margin-bottom: 6px;
+    }
+    .sidebar-founder {
+      font-size: 12px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .sidebar-deliver-list { display: none; }
+    .sidebar-cta { font-size: 11.5px; padding: 6px 10px; }
+  }
+  body.keyboard-open #sidebar { display: none; }
+
   /* ===== Header ===== */
   header {
     position: relative;
@@ -177,6 +312,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    background: var(--bg);
   }
   #messages {
     flex: 1;
@@ -419,6 +555,43 @@
     35% { transform: translateY(-6px) scale(1); opacity: 1; }
   }
 
+  /* ===== Quick chips (Q1 only) ===== */
+  #quick-chips {
+    display: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 14px 10px;
+    background: var(--surface);
+    border-top: 1px solid var(--ink-200);
+  }
+  #quick-chips.show { display: flex; padding-top: 12px; border-top: 1px solid var(--ink-200); }
+  #quick-chips .chip-label {
+    width: 100%;
+    font-size: 11.5px;
+    color: var(--ink-500);
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  .chip {
+    background: transparent;
+    color: var(--brand-700);
+    border: 1.5px solid var(--brand-700);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .chip:hover, .chip:active {
+    background: var(--brand-700);
+    color: #fff;
+  }
+  .chip:active { transform: scale(0.96); }
+
   /* ===== Input ===== */
   #input-area {
     display: flex;
@@ -579,13 +752,37 @@
   <div class="hint">做完想收報告到 LINE？結尾會引導你加好友</div>
 </div>
 
-<div id="chat-container" style="display:none;">
-  <div id="messages"></div>
-  <div class="typing" id="typing"><span></span><span></span><span></span></div>
-  <form id="input-area" onsubmit="sendMessage(event)">
-    <input id="input" placeholder="跟 Lumi 說說你的想法..." autocomplete="off" disabled>
-    <button id="send-btn" type="submit" disabled aria-label="送出"></button>
-  </form>
+<div id="main-grid" style="display:none;">
+  <aside id="sidebar">
+    <h2>✨ Lumi｜Bago 老師的 AI 顧問</h2>
+    <div class="sidebar-founder">
+      <strong>Bago</strong>：15 年 1-on-1 整復師。剛從一場 1 單做到一場 10 單。
+    </div>
+    <div class="sidebar-deliver-title">你會拿到什麼</div>
+    <ul class="sidebar-deliver-list">
+      <li>你的造局類型（4 型挑 1）</li>
+      <li>你真正卡在哪（鏡子模式）</li>
+      <li>下週 1 件具體事（不是空話）</li>
+      <li>1 個月會撞的牆 + 為什麼不該自己慢慢試</li>
+    </ul>
+    <div class="sidebar-cta">📍 5/28 晚 8 點直播 60 分鐘 Cohort 1 限額</div>
+  </aside>
+
+  <div id="chat-container">
+    <div id="messages"></div>
+    <div class="typing" id="typing"><span></span><span></span><span></span></div>
+    <div id="quick-chips" aria-hidden="true">
+      <div class="chip-label">不知道怎麼說？挑一個開始：</div>
+      <button type="button" class="chip" data-chip="時間自由">時間自由</button>
+      <button type="button" class="chip" data-chip="品牌規模化">品牌規模化</button>
+      <button type="button" class="chip" data-chip="擺脫接案">擺脫接案</button>
+      <button type="button" class="chip" data-chip="影響力擴大">影響力擴大</button>
+    </div>
+    <form id="input-area" onsubmit="sendMessage(event)">
+      <input id="input" placeholder="跟 Lumi 說說你的想法..." autocomplete="off" disabled>
+      <button id="send-btn" type="submit" disabled aria-label="送出"></button>
+    </form>
+  </div>
 </div>
 
 <script>
@@ -603,6 +800,8 @@ const inputEl = document.getElementById('input');
 const sendBtn = document.getElementById('send-btn');
 const progressBar = document.getElementById('progress-bar');
 const progressLabel = document.getElementById('progress-label');
+const mainGridEl = document.getElementById('main-grid');
+const quickChipsEl = document.getElementById('quick-chips');
 
 // Mobile keyboard: collapse header when focused so more room for messages; scroll to bottom
 function onKbOpen() {
@@ -684,7 +883,7 @@ async function initLiff() {
 
 function showFallback() {
   document.getElementById('fallback-panel').classList.add('show');
-  document.getElementById('chat-container').style.display = 'none';
+  mainGridEl.style.display = 'none';
 }
 
 async function startWithFallback() {
@@ -693,12 +892,29 @@ async function startWithFallback() {
   lineUserId = 'guest_' + Math.random().toString(36).slice(2, 12);
   displayName = name;
   document.getElementById('fallback-panel').classList.remove('show');
-  document.getElementById('chat-container').style.display = 'flex';
+  mainGridEl.style.display = '';
   await startSession();
 }
 
+function showQuickChips(show) {
+  quickChipsEl.classList.toggle('show', !!show);
+  quickChipsEl.setAttribute('aria-hidden', show ? 'false' : 'true');
+}
+
+// Wire chip clicks: fill input + focus, do not auto-send so user can edit
+quickChipsEl.querySelectorAll('.chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const v = btn.getAttribute('data-chip') || btn.textContent.trim();
+    inputEl.value = v;
+    inputEl.focus();
+    // Move caret to end
+    const len = inputEl.value.length;
+    try { inputEl.setSelectionRange(len, len); } catch (_) {}
+  });
+});
+
 async function startSession() {
-  document.getElementById('chat-container').style.display = 'flex';
+  mainGridEl.style.display = '';
   try {
     const resp = await fetch('/api/lumi/session/start', {
       method: 'POST',
@@ -713,11 +929,18 @@ async function startSession() {
     setProgress(data.currentQuestion || 1);
 
     // Show intro + restore history if any
-    if (data.history && data.history.length > 0) {
+    const hasHistory = data.history && data.history.length > 0;
+    if (hasHistory) {
       data.history.forEach(m => addMsg(m.role === 'user' ? 'user' : 'ai', m.content));
     } else {
       addMsg('ai', `嗨 ${displayName || '你'}～我是 Lumi，Bago 老師的 AI 顧問。\n\n7 題問完，你會知道你的下一步。\n\n**第 1 題**：你的目標是什麼？理想中的樣子長什麼樣？`);
     }
+
+    // Show Q1 chips only when on Q1 and user hasn't answered yet
+    const onQ1 = (data.currentQuestion || 1) === 1;
+    const userHasAnswered = hasHistory && data.history.some(m => m.role === 'user');
+    showQuickChips(onQ1 && !userHasAnswered);
+
     inputEl.focus();
   } catch (e) {
     console.error(e);
@@ -733,6 +956,7 @@ async function sendMessage(ev) {
   inputEl.value = '';
   inputEl.disabled = true;
   sendBtn.disabled = true;
+  showQuickChips(false);
   setTyping(true);
 
   try {
