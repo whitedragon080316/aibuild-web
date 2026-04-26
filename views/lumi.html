@@ -222,6 +222,48 @@
     .sidebar-cta { padding: 9px 11px; margin-top: 6px; }
     .sidebar-cta .cta-line { font-size: 12px; }
     .sidebar-cta .cta-sub { font-size: 10.5px; line-height: 1.45; }
+
+    /* 答題中 collapse 成 sticky pill — 不擠壓 chat 但保留 funnel entry */
+    body.chatting #sidebar {
+      max-height: 44px;
+      padding: 0;
+      overflow: hidden;
+      cursor: pointer;
+      border-bottom: 1px solid var(--ink-200);
+      position: relative;
+    }
+    body.chatting #sidebar > * { display: none; }
+    body.chatting #sidebar::before {
+      content: "Lumi｜Bago 老師的 AI 顧問  ▾ 點開";
+      display: block;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--brand-700);
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+    body.chatting.sidebar-expanded #sidebar {
+      max-height: 60vh;
+      padding: 10px 14px;
+      overflow-y: auto;
+      cursor: default;
+    }
+    body.chatting.sidebar-expanded #sidebar > * { display: revert; }
+    body.chatting.sidebar-expanded #sidebar::before {
+      content: "▴ 收起";
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, #FAFBFE 0%, #F0F3FB 100%);
+      padding: 8px 14px;
+      margin: -10px -14px 8px;
+      font-size: 12px;
+      color: var(--brand-500);
+      cursor: pointer;
+      z-index: 10;
+      text-align: center;
+    }
+    body.chatting.sidebar-expanded #sidebar > .sidebar-deliver-list { display: grid; }
   }
   body.keyboard-open #sidebar { display: none; }
 
@@ -981,6 +1023,13 @@ function onKbOpen() {
 function onKbClose() { document.body.classList.remove('keyboard-open'); }
 inputEl.addEventListener('focus', onKbOpen);
 inputEl.addEventListener('blur', onKbClose);
+
+// 手機 collapsed sidebar：點 pill expand 看完整 funnel；點 ▴ 收起 collapse
+document.getElementById('sidebar').addEventListener('click', (e) => {
+  if (window.innerWidth >= 768) return;
+  if (!document.body.classList.contains('chatting')) return;
+  document.body.classList.toggle('sidebar-expanded');
+});
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', () => {
     messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -1131,6 +1180,7 @@ quickChipsEl.querySelectorAll('.chip').forEach(btn => {
 async function startSession() {
   fallbackPanelEl.classList.remove('show');
   chatContainerEl.style.display = '';
+  document.body.classList.add('chatting');
   try {
     const resp = await fetch('/api/lumi/session/start', {
       method: 'POST',
