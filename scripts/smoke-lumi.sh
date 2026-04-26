@@ -55,7 +55,8 @@ HTTP=$(curl -sS -o /tmp/smoke-report.html -w "%{http_code}" "$FULL_URL")
 [ "$HTTP" = "200" ] || fail "Layer 4: GET reportUrl → HTTP $HTTP"
 grep -q "造局診斷報告" /tmp/smoke-report.html || fail "Layer 4: report HTML missing title"
 grep -q "lin.ee\|加 LINE" /tmp/smoke-report.html || fail "Layer 4: report HTML missing LINE @ CTA"
-pass "Layer 4: report HTML renders + has LINE @ CTA"
+grep -q 'href="/live"\|報名 Bago 直播' /tmp/smoke-report.html || fail "Layer 4: report HTML missing 報名直播 CTA → /live"
+pass "Layer 4: report HTML has LINE @ CTA + 報名直播 CTA"
 
 # Layer 5: appears in leads dashboard
 sleep 1

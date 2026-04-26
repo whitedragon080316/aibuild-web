@@ -508,16 +508,26 @@ a{color:#3B5BDB;}
 .qr-block img{display:block;margin:12px auto;border:1px solid #e5e5ea;border-radius:8px;}
 .qr-block .hint{font-size:12.5px;color:#888;margin-top:8px;}
 .qr-block a{display:inline-block;margin-top:8px;font-weight:600;}
+.live-cta{margin-top:32px;padding:24px;background:linear-gradient(135deg,#FDF6E7 0%,#F8E5B8 100%);border:1px solid #E8C97A;border-radius:12px;text-align:center;}
+.live-cta h3{color:#2B44B0;margin:0 0 8px;font-size:17px;}
+.live-cta p{color:#5a5a5e;font-size:13.5px;line-height:1.55;margin:0 0 14px;}
+.live-cta a{display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#3B5BDB 0%,#2B44B0 100%);color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:14.5px;box-shadow:0 6px 16px rgba(43,68,176,0.25);}
 </style>
 </head><body>
 <div id="content"></div>
 
+<div class="live-cta">
+  <h3>看完報告 → 來看 Bago 親自示範拆解</h3>
+  <p>看完了你的造局診斷，下一步來看 Bago 老師親自直播拆解 — 真實案例怎麼從一場 1 單做到一場 10 單。</p>
+  <a href="/live" target="_blank" rel="noopener">報名 Bago 直播 →</a>
+</div>
+
 <div class="qr-block">
-  <h3>👉 加 LINE 預約 5/28 直播</h3>
+  <h3>還沒加 LINE？掃 QR 加入</h3>
   <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=4&data=https%3A%2F%2Flin.ee%2FuRKyXnW" alt="加 LINE QR Code" width="180" height="180">
   <div>手機點連結 · 桌機掃 QR</div>
   <a href="https://lin.ee/uRKyXnW" target="_blank" rel="noopener">https://lin.ee/uRKyXnW</a>
-  <div class="hint">沒加的不會收到當天直播連結</div>
+  <div class="hint">加好友後 Bago 會推完整報告 + 直播連結</div>
 </div>
 
 <div class="footer">
