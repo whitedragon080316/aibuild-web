@@ -1245,9 +1245,10 @@ async function sendMessage(ev) {
         // 報告生成後砍輸入區（不再接受訊息） + back-row（不能回上一題）
         document.getElementById('input-area').style.display = 'none';
         document.getElementById('back-row').classList.remove('show');
-        // CTA 永遠跳 web 報告頁 — 報告頁底部有 LINE @ QR / link 引導加好友
-        // (LINE bot pushMessage 要用戶已是好友才能推，新 funnel 用戶都還不是好友 → push 必 fail)
-        const ctaHref = data.reportUrl || '{{LINE_ADD_URL}}';
+        // 分流：guest（電腦 fallback）→ web 報告頁（頁底有 LINE @ QR）
+        //       LIFF 真實 lineUserId → 跳 LINE @（friend 看 bot push 的 Flex / 非 friend 加好友）
+        const isGuest = (lineUserId || '').startsWith('guest_');
+        const ctaHref = isGuest && data.reportUrl ? data.reportUrl : '{{LINE_ADD_URL}}';
         addMsg('report-done', '報告已生成 點我看完整報告書', { href: ctaHref });
       } else {
         if (data.reply) addMsg('ai', data.reply);

@@ -734,29 +734,6 @@ app.get('/api/lumi/session/:sessionId/status', async (req, res) => {
   });
 });
 
-// Debug: manually retry push for a session, return raw bot response
-app.get('/lumi/debug-push/:sessionId', async (req, res) => {
-  const session = await LumiSession.findOne({ sessionId: req.params.sessionId });
-  if (!session) return res.status(404).json({ error: 'session not found' });
-  if (!session.reportGeneratedAt) return res.status(400).json({ error: 'report not generated' });
-  const publicBase = process.env.PUBLIC_BASE_URL || '';
-  const reportUrl = publicBase
-    ? `${publicBase.replace(/\/$/, '')}/lumi/report/${session.sessionId}`
-    : `/lumi/report/${session.sessionId}`;
-  const result = await pushReportToBot(session.lineUserId, reportUrl, session.displayName);
-  res.json({
-    sessionId: session.sessionId,
-    lineUserId: session.lineUserId,
-    lineUserIdPrefix: (session.lineUserId || '').slice(0, 8),
-    isGuest: (session.lineUserId || '').startsWith('guest_'),
-    displayName: session.displayName,
-    reportUrl,
-    botInternalUrl: process.env.BOT_INTERNAL_URL || '(not set)',
-    sharedSecretSet: !!process.env.LUMI_SHARED_SECRET,
-    pushResult: result,
-  });
-});
-
 // === Bago 後台：列出所有完成診斷的 leads ===
 // 解掉「客戶跑完診斷加 LINE 但沒主動講話 → Bago 後台看不到」的痛點。
 // 沒密碼保護（同 /dashboard pattern），url 不公開即可。
