@@ -996,7 +996,7 @@ function addMsg(role, text, opts = {}) {
   } else if (role === 'report-done') {
     const el = document.createElement('a');
     el.className = 'report-done';
-    el.href = '{{LINE_ADD_URL}}';
+    el.href = opts.href || '{{LINE_ADD_URL}}';
     el.target = '_blank';
     el.rel = 'noopener';
     el.textContent = text;
@@ -1245,7 +1245,11 @@ async function sendMessage(ev) {
         // 報告生成後砍輸入區（不再接受訊息） + back-row（不能回上一題）
         document.getElementById('input-area').style.display = 'none';
         document.getElementById('back-row').classList.remove('show');
-        addMsg('report-done', '報告已生成 點我看完整報告書');
+        // guest（電腦 fallback）→ 直接開報告 URL（報告頁底部已有 LINE @ QR）
+        // LIFF 真實 LINE userId → 跳 LINE @ 看 bot push 的 Flex 卡片
+        const isGuest = (lineUserId || '').startsWith('guest_');
+        const ctaHref = isGuest && data.reportUrl ? data.reportUrl : '{{LINE_ADD_URL}}';
+        addMsg('report-done', '報告已生成 點我看完整報告書', { href: ctaHref });
       } else {
         if (data.reply) addMsg('ai', data.reply);
         if (data.currentQuestion) setProgress(data.currentQuestion);
