@@ -66,6 +66,15 @@ lib/
 - TapPay production 需要在 Portal 綁定 IP
 - `PUBLIC_BASE_URL` 必須是 https，3D Secure 需要
 
+## Smoke test — 改完 Lumi 必跑
+
+```bash
+bash scripts/smoke-lumi.sh
+# 6 層 e2e：service alive / start session / 7Q answer / report 生成 / report URL render / 出現在 leads
+# Layer 6 (LINE @ Flex 實送 user) 是 LINE API + friend status 限制，automated 不到 — 仍需 user 親眼測
+# Pass ≠ end-to-end production-ready，但 fail 一定是 broken — 改完 deploy 完先跑這個再 claim「通了」
+```
+
 ## ⚠️ Git 結構提醒
 
 `web/` 是**獨立 git repo**（不在 my-aibuild 主 repo 裡，root `.gitignore` 有 `web/`）。
