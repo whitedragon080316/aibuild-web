@@ -581,31 +581,30 @@
     align-self: center;
     background: linear-gradient(135deg, #F5C15A 0%, #D99A2B 100%);
     color: #fff;
-    padding: 10px 18px;
+    padding: 14px 22px;
     border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
-    margin: 12px 0 4px;
-    box-shadow: 0 6px 16px rgba(217, 154, 43, 0.35);
+    font-size: 14px;
+    font-weight: 700;
+    margin: 16px 0 8px;
+    box-shadow: 0 8px 22px rgba(217, 154, 43, 0.42);
     letter-spacing: 0.03em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .report-done::before {
-    content: "";
-    width: 14px;
-    height: 14px;
-    background: #fff;
-    border-radius: 50%;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    color: var(--accent-500);
-    font-size: 10px;
+    gap: 10px;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    cursor: pointer;
+  }
+  .report-done:hover, .report-done:active {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(217, 154, 43, 0.5);
+    color: #fff;
+  }
+  .report-done::after {
+    content: "→";
+    font-size: 16px;
     font-weight: 900;
-    line-height: 14px;
-    text-align: center;
+    margin-left: 2px;
   }
 
   /* ===== Typing ===== */
@@ -995,8 +994,11 @@ function addMsg(role, text, opts = {}) {
     el.textContent = text;
     messagesEl.appendChild(el);
   } else if (role === 'report-done') {
-    const el = document.createElement('div');
+    const el = document.createElement('a');
     el.className = 'report-done';
+    el.href = '{{LINE_ADD_URL}}';
+    el.target = '_blank';
+    el.rel = 'noopener';
     el.textContent = text;
     messagesEl.appendChild(el);
   } else {
@@ -1112,15 +1114,6 @@ async function startWithFallback() {
 function showQuickChips(show) {
   quickChipsEl.classList.toggle('show', !!show);
   quickChipsEl.setAttribute('aria-hidden', show ? 'false' : 'true');
-}
-
-// 報告生成後唯一 CTA：點擊跳 LINE @，bot 已 push Flex 卡片在那（卡片內 button 才連到報告 URL）
-function addReportCTA(reportUrl) {
-  const wrap = document.createElement('div');
-  wrap.className = 'msg report-cta';
-  wrap.innerHTML = `<a class="report-cta-btn" href="{{LINE_ADD_URL}}" target="_blank" rel="noopener">報告出爐了！點擊看完整報告書</a>`;
-  messagesEl.appendChild(wrap);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 // Wire chip clicks: fill input + focus, do not auto-send so user can edit
@@ -1252,8 +1245,7 @@ async function sendMessage(ev) {
         // 報告生成後砍輸入區（不再接受訊息） + back-row（不能回上一題）
         document.getElementById('input-area').style.display = 'none';
         document.getElementById('back-row').classList.remove('show');
-        addMsg('report-done', '報告已生成');
-        if (data.reportUrl) addReportCTA(data.reportUrl);
+        addMsg('report-done', '報告已生成 點我看完整報告書');
       } else {
         if (data.reply) addMsg('ai', data.reply);
         if (data.currentQuestion) setProgress(data.currentQuestion);
