@@ -617,6 +617,7 @@ app.post('/api/lumi/chat/send', async (req, res) => {
       }
       session.reportMarkdown = reportMd;
       session.reportGeneratedAt = new Date();
+      session.status = 'completed_7q';
       session.chatHistory.push({
         role: 'assistant',
         content: reportMd,
@@ -816,6 +817,118 @@ ${total === 0
 
 <div class="refresh"><a href="/lumi/leads">🔄 重新整理</a></div>
 </body></html>`);
+});
+
+// ============ ADMIN PORTAL ============
+// /admin/lumi/* — Bago 派 portal v1：客戶管理 + 推訊息 + 啟動 Zeabur
+// Auth: query string ?token=xxx (env.ADMIN_TOKEN), 用 url 不公開 + token 雙保
+function checkAdminToken(req, res, next) {
+  const expected = process.env.ADMIN_TOKEN;
+  if (!expected) return res.status(503).json({ error: 'ADMIN_TOKEN not configured' });
+  const token = req.query.token || req.headers['x-admin-token'];
+  if (token !== expected) return res.status(403).json({ error: 'invalid token' });
+  next();
+}
+
+// Admin UI 頁
+app.get('/admin/lumi', checkAdminToken, (req, res) => {
+  servePage(res, 'admin-lumi.html', {
+    ADMIN_TOKEN: req.query.token,
+    LINE_ADD_URL: process.env.LINE_ADD_URL || 'https://lin.ee/uRKyXnW',
+    ZEABUR_DEPLOY_URL: process.env.ZEABUR_DEPLOY_URL || 'https://zeabur.com/dashboard',
+  });
+});
+
+// Admin API: list customers (with filter)
+app.get('/admin/lumi/api/customers', checkAdminToken, async (req, res) => {
+  try {
+    const { status, from, to } = req.query;
+    const filter = {};
+    if (status && status !== 'all') filter.status = status;
+    if (from || to) {
+      filter.reportGeneratedAt = {};
+      if (from) filter.reportGeneratedAt.$gte = new Date(from);
+      if (to) filter.reportGeneratedAt.$lte = new Date(to);
+    }
+    const customers = await LumiSession.find(filter)
+      .sort({ reportGeneratedAt: -1, createdAt: -1 })
+      .limit(200)
+      .lean();
+    const stats = {
+      total: customers.length,
+      byStatus: customers.reduce((acc, c) => {
+        const s = c.status || 'new';
+        acc[s] = (acc[s] || 0) + 1;
+        return acc;
+      }, {}),
+    };
+    res.json({ customers, stats });
+  } catch (e) {
+    console.error('[admin/customers]', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Admin API: single customer detail
+app.get('/admin/lumi/api/customers/:sessionId', checkAdminToken, async (req, res) => {
+  const session = await LumiSession.findOne({ sessionId: req.params.sessionId }).lean();
+  if (!session) return res.status(404).json({ error: 'not found' });
+  res.json({ session });
+});
+
+// Admin API: push text message to customer's LINE @
+app.post('/admin/lumi/api/customers/:sessionId/message', checkAdminToken, async (req, res) => {
+  try {
+    const { text } = req.body || {};
+    if (!text || !text.trim()) return res.status(400).json({ error: 'text required' });
+    const session = await LumiSession.findOne({ sessionId: req.params.sessionId });
+    if (!session) return res.status(404).json({ error: 'not found' });
+    if (!session.lineUserId || session.lineUserId.startsWith('guest_')) {
+      return res.status(400).json({ error: 'guest user — 沒真實 LINE userId 不能推訊息' });
+    }
+    const botUrl = process.env.BOT_INTERNAL_URL;
+    const sharedSecret = process.env.LUMI_SHARED_SECRET;
+    if (!botUrl || !sharedSecret) {
+      return res.status(503).json({ error: 'BOT_INTERNAL_URL or LUMI_SHARED_SECRET not configured' });
+    }
+    const resp = await fetch(`${botUrl.replace(/\/$/, '')}/internal/admin-push`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lineUserId: session.lineUserId, text: text.trim(), sharedSecret }),
+    });
+    const body = await resp.json().catch(() => ({}));
+    if (!resp.ok) return res.status(resp.status).json({ error: body.error || `bot returned ${resp.status}` });
+    session.lastAdminAction = new Date();
+    await session.save();
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[admin/message]', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Admin API: update customer status / adminNotes
+app.patch('/admin/lumi/api/customers/:sessionId', checkAdminToken, async (req, res) => {
+  try {
+    const { status, adminNotes } = req.body || {};
+    const update = { lastAdminAction: new Date() };
+    if (status) {
+      const valid = ['new', 'completed_7q', 'chatting', 'stuck', 'converted'];
+      if (!valid.includes(status)) return res.status(400).json({ error: 'invalid status' });
+      update.status = status;
+    }
+    if (adminNotes !== undefined) update.adminNotes = adminNotes;
+    const session = await LumiSession.findOneAndUpdate(
+      { sessionId: req.params.sessionId },
+      { $set: update },
+      { new: true }
+    );
+    if (!session) return res.status(404).json({ error: 'not found' });
+    res.json({ session });
+  } catch (e) {
+    console.error('[admin/patch]', e.message);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // === Internal：bot 查某 lineUserId 有沒有最近完成的 Lumi session ===

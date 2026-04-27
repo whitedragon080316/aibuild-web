@@ -13,6 +13,14 @@ const lumiSessionSchema = new mongoose.Schema({
   reportGeneratedAt: Date,
   reportPushedAt: Date,
   createdAt: { type: Date, default: Date.now },
+  status: {
+    type: String,
+    enum: ['new', 'completed_7q', 'chatting', 'stuck', 'converted'],
+    default: 'new',
+    index: true,
+  },
+  adminNotes: { type: String, default: '' },
+  lastAdminAction: Date,
 });
 
 module.exports = mongoose.model('LumiSession', lumiSessionSchema);

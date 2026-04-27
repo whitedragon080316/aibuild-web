@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bago 派 Portal — Lumi 客戶管理</title>
+<style>
+  :root {
+    --brand-700: #2B44B0;
+    --brand-500: #3B5BDB;
+    --accent: #D99A2B;
+    --ink-900: #1c1c1e;
+    --ink-700: #4a4a4e;
+    --ink-500: #888;
+    --ink-300: #c8c8cc;
+    --ink-200: #e5e5ea;
+    --ink-100: #f5f5f7;
+    --bg: #fafafa;
+    --surface: #fff;
+    --status-new: #888;
+    --status-7q: #3B5BDB;
+    --status-chatting: #D99A2B;
+    --status-stuck: #c62828;
+    --status-converted: #2e7d32;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink-900);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  /* ===== Sidebar ===== */
+  aside.sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--ink-200);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .brand {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ink-200);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+  }
+  .brand small { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 3px; letter-spacing: 0.04em; }
+  .nav { padding: 14px 8px; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--ink-700);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+  .nav-item:hover { background: var(--ink-100); }
+  .nav-item.active { background: #ECEFF8; color: var(--brand-700); font-weight: 600; }
+  .nav-item .icon { font-size: 15px; }
+  /* ===== Main ===== */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header.top h1 { font-size: 18px; color: var(--ink-900); font-weight: 700; }
+  header.top .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--brand-700);
+    color: #fff;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { background: var(--brand-500); }
+  .btn.secondary { background: var(--surface); color: var(--ink-900); border: 1px solid var(--ink-200); }
+  .btn.secondary:hover { background: var(--ink-100); }
+  .btn.accent { background: var(--accent); }
+  .btn.accent:hover { background: #c08a25; }
+  /* ===== Filter ===== */
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--ink-700);
+  }
+  .chip.active { background: var(--brand-700); color: #fff; border-color: var(--brand-700); }
+  .chip .count { margin-left: 6px; opacity: 0.7; font-size: 11px; }
+  /* ===== List ===== */
+  .list-area { flex: 1; overflow-y: auto; padding: 16px 24px; }
+  table.list { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--ink-200); }
+  table.list th { background: var(--ink-100); padding: 11px 14px; text-align: left; font-size: 12px; color: var(--ink-500); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border-bottom: 1px solid var(--ink-200); }
+  table.list td { padding: 13px 14px; border-bottom: 1px solid var(--ink-100); font-size: 13.5px; }
+  table.list tr { cursor: pointer; }
+  table.list tr:hover td { background: var(--ink-100); }
+  table.list tr:last-child td { border-bottom: 0; }
+  .name { font-weight: 600; color: var(--ink-900); }
+  .uid-short { font-family: 'SF Mono', Monaco, monospace; font-size: 11px; color: var(--ink-500); background: var(--ink-100); padding: 2px 6px; border-radius: 3px; }
+  .status-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .status-tag.new { background: var(--status-new); }
+  .status-tag.completed_7q { background: var(--status-7q); }
+  .status-tag.chatting { background: var(--status-chatting); }
+  .status-tag.stuck { background: var(--status-stuck); }
+  .status-tag.converted { background: var(--status-converted); }
+  .empty { padding: 60px 20px; text-align: center; color: var(--ink-500); font-size: 14px; }
+  /* ===== Drawer ===== */
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .drawer-overlay.show { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: -680px;
+    width: 660px;
+    max-width: 100%;
+    height: 100vh;
+    background: var(--surface);
+    box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+    z-index: 101;
+    overflow-y: auto;
+    transition: right 0.25s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .drawer.show { right: 0; }
+  .drawer-head {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--ink-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+  .drawer-head h2 { font-size: 17px; }
+  .drawer-close { background: 0; border: 0; font-size: 24px; cursor: pointer; color: var(--ink-500); padding: 0 6px; }
+  .drawer-body { padding: 18px 24px; flex: 1; }
+  .drawer-section { margin-bottom: 22px; }
+  .drawer-section h3 { font-size: 13px; color: var(--ink-500); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .meta-grid { display: grid; grid-template-columns: 110px 1fr; gap: 6px 14px; font-size: 13px; }
+  .meta-grid dt { color: var(--ink-500); }
+  .meta-grid dd { color: var(--ink-900); }
+  .answer-card {
+    background: var(--ink-100);
+    border-left: 3px solid var(--brand-500);
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .answer-card .q { color: var(--ink-500); font-size: 11.5px; margin-bottom: 4px; }
+  .timeline { background: var(--ink-100); border-radius: 6px; padding: 12px; max-height: 320px; overflow-y: auto; font-size: 13px; }
+  .msg-row { padding: 6px 0; border-bottom: 1px dashed var(--ink-200); }
+  .msg-row:last-child { border-bottom: 0; }
+  .msg-role { font-size: 11px; color: var(--ink-500); margin-bottom: 2px; font-weight: 600; }
+  .msg-role.user { color: var(--brand-500); }
+  .msg-role.assistant { color: var(--accent); }
+  .msg-content { white-space: pre-wrap; line-height: 1.5; }
+  textarea, select, input[type="text"] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--ink-200);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--surface);
+  }
+  textarea:focus, select:focus, input:focus { outline: none; border-color: var(--brand-500); }
+  textarea { resize: vertical; min-height: 80px; }
+  .form-row { display: flex; gap: 10px; margin-top: 8px; }
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--ink-900);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: var(--status-stuck); }
+  .toast.success { background: var(--status-converted); }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">Bago 派 Portal<small>v1 · Lumi 諮詢系統</small></div>
+  <nav class="nav">
+    <a class="nav-item active"><span class="icon">📋</span> 客戶管理</a>
+    <a class="nav-item" id="nav-zeabur"><span class="icon">🚀</span> 啟動 Zeabur</a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">📊</span> 自動化直播 <small style="font-size:10px;color:var(--ink-500)">v3</small></a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">📣</span> 自動化廣告 <small style="font-size:10px;color:var(--ink-500)">v4</small></a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">⚙️</span> 設定 <small style="font-size:10px;color:var(--ink-500)">v2</small></a>
+  </nav>
+</aside>
+
+<main>
+  <header class="top">
+    <h1>客戶管理</h1>
+    <div class="actions">
+      <a href="/lumi/leads" target="_blank" class="btn secondary">原 leads 頁</a>
+      <button class="btn accent" onclick="window.open('{{ZEABUR_DEPLOY_URL}}', '_blank')">🚀 啟動 Zeabur 部署</button>
+    </div>
+  </header>
+
+  <div class="toolbar" id="filter-bar">
+    <span class="chip active" data-status="all">全部</span>
+    <span class="chip" data-status="new">新進</span>
+    <span class="chip" data-status="completed_7q">7Q 完成</span>
+    <span class="chip" data-status="chatting">對話中</span>
+    <span class="chip" data-status="stuck">卡關</span>
+    <span class="chip" data-status="converted">已轉課程</span>
+  </div>
+
+  <div class="list-area" id="list-area">
+    <div class="empty">載入中...</div>
+  </div>
+</main>
+
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h2 id="drawer-title">客戶詳情</h2>
+    <button class="drawer-close" onclick="closeDrawer()">×</button>
+  </div>
+  <div class="drawer-body" id="drawer-body">載入中...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TOKEN = '{{ADMIN_TOKEN}}';
+const LINE_ADD_URL = '{{LINE_ADD_URL}}';
+let allCustomers = [];
+let currentFilter = 'all';
+
+const STATUS_LABEL = {
+  new: '新進',
+  completed_7q: '7Q 完成',
+  chatting: '對話中',
+  stuck: '卡關',
+  converted: '已轉課程',
+};
+
+async function api(path, opts = {}) {
+  const url = path + (path.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(TOKEN);
+  const resp = await fetch(url, {
+    method: opts.method || 'GET',
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+  return data;
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+async function loadList() {
+  try {
+    const data = await api('/admin/lumi/api/customers');
+    allCustomers = data.customers;
+    renderFilterCounts(data.stats);
+    render();
+  } catch (e) {
+    document.getElementById('list-area').innerHTML = `<div class="empty">載入失敗：${e.message}</div>`;
+  }
+}
+
+function renderFilterCounts(stats) {
+  const total = stats.total || 0;
+  document.querySelectorAll('.chip').forEach(c => {
+    const s = c.dataset.status;
+    let count = s === 'all' ? total : (stats.byStatus[s] || 0);
+    let label = c.textContent.split(' ')[0];
+    c.innerHTML = `${label} <span class="count">${count}</span>`;
+  });
+}
+
+function render() {
+  const list = currentFilter === 'all'
+    ? allCustomers
+    : allCustomers.filter(c => (c.status || 'new') === currentFilter);
+
+  const area = document.getElementById('list-area');
+  if (list.length === 0) {
+    area.innerHTML = `<div class="empty">沒有符合條件的客戶</div>`;
+    return;
+  }
+
+  const rows = list.map(c => {
+    const ts = c.reportGeneratedAt
+      ? new Date(c.reportGeneratedAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+      : new Date(c.createdAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+    const uidShort = (c.lineUserId || '').slice(-6);
+    const isGuest = (c.lineUserId || '').startsWith('guest_');
+    const status = c.status || 'new';
+    const lastChat = c.chatHistory && c.chatHistory.length > 0
+      ? c.chatHistory[c.chatHistory.length - 1].content.slice(0, 30) + '...'
+      : '—';
+    return `<tr onclick="openDrawer('${c.sessionId}')">
+      <td>${ts}</td>
+      <td><div class="name">${escapeHtml(c.displayName || '（無名）')}</div></td>
+      <td>${isGuest ? '<span style="color:var(--ink-500);font-size:11px">guest</span>' : `<code class="uid-short">${uidShort}</code>`}</td>
+      <td><span class="status-tag ${status}">${STATUS_LABEL[status] || status}</span></td>
+      <td style="color:var(--ink-500);font-size:12.5px">${escapeHtml(lastChat)}</td>
+    </tr>`;
+  }).join('');
+
+  area.innerHTML = `<table class="list">
+    <thead><tr><th>完成時間</th><th>名字</th><th>LINE ID</th><th>狀態</th><th>最後對話</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+}
+
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentFilter = c.dataset.status;
+    render();
+  });
+});
+
+async function openDrawer(sessionId) {
+  document.getElementById('drawer').classList.add('show');
+  document.getElementById('drawer-overlay').classList.add('show');
+  document.getElementById('drawer-body').innerHTML = '載入中...';
+  try {
+    const data = await api('/admin/lumi/api/customers/' + sessionId);
+    renderDrawer(data.session);
+  } catch (e) {
+    document.getElementById('drawer-body').innerHTML = `<div class="empty">載入失敗：${e.message}</div>`;
+  }
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('show');
+  document.getElementById('drawer-overlay').classList.remove('show');
+}
+
+function renderDrawer(s) {
+  document.getElementById('drawer-title').textContent = (s.displayName || '（無名）') + ' · 客戶詳情';
+  const isGuest = (s.lineUserId || '').startsWith('guest_');
+  const ts = s.reportGeneratedAt
+    ? new Date(s.reportGeneratedAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+    : '尚未完成';
+  const answers = s.answers || {};
+  const answerCards = ['q1','q2','q3','q4','q5','q6','q7'].map((q, i) =>
+    answers[q] ? `<div class="answer-card"><div class="q">第 ${i+1} 題</div>${escapeHtml(answers[q])}</div>` : ''
+  ).join('');
+  const reportLink = s.reportGeneratedAt ? `<a href="/lumi/report/${s.sessionId}" target="_blank" class="btn secondary" style="font-size:12px">看完整報告 →</a>` : '';
+  const timeline = (s.chatHistory && s.chatHistory.length > 0)
+    ? s.chatHistory.map(m => `<div class="msg-row">
+        <div class="msg-role ${m.role}">${m.role === 'user' ? '👤 用戶' : m.role === 'assistant' ? '🤖 Lumi' : 'system'}</div>
+        <div class="msg-content">${escapeHtml(m.content)}</div>
+      </div>`).join('')
+    : '<div style="color:var(--ink-500);font-size:13px">尚無對話</div>';
+
+  const messageForm = isGuest
+    ? `<div style="color:var(--ink-500);font-size:12.5px;background:var(--ink-100);padding:10px;border-radius:5px">⚠️ Guest 用戶（${s.lineUserId}）沒真實 LINE userId 不能推訊息。等他從 LIFF 進來才會有真 ID。</div>`
+    : `<textarea id="msg-text" placeholder="寫一段給 ${escapeHtml(s.displayName || '客戶')} 的訊息..."></textarea>
+       <div class="form-row">
+         <button class="btn" onclick="sendMessage('${s.sessionId}')">📩 推到 LINE @</button>
+       </div>`;
+
+  document.getElementById('drawer-body').innerHTML = `
+    <div class="drawer-section">
+      <h3>基本資料</h3>
+      <dl class="meta-grid">
+        <dt>名字</dt><dd>${escapeHtml(s.displayName || '（無名）')}</dd>
+        <dt>LINE ID</dt><dd>${isGuest ? '<span style="color:var(--ink-500)">guest</span> ' + escapeHtml(s.lineUserId) : '<code class="uid-short">'+escapeHtml(s.lineUserId)+'</code>'}</dd>
+        <dt>完成時間</dt><dd>${ts}</dd>
+        <dt>進度</dt><dd>第 ${s.currentQuestion || 1} 題 / 共 7 題</dd>
+        <dt>已 push</dt><dd>${s.reportPushedAt ? '✅ ' + new Date(s.reportPushedAt).toLocaleString('zh-TW') : '—'}</dd>
+      </dl>
+      <div style="margin-top:10px">${reportLink}</div>
+    </div>
+
+    <div class="drawer-section">
+      <h3>狀態 + 私人 notes</h3>
+      <select id="status-select" onchange="updateStatus('${s.sessionId}')">
+        <option value="new" ${s.status === 'new' ? 'selected' : ''}>新進</option>
+        <option value="completed_7q" ${s.status === 'completed_7q' ? 'selected' : ''}>7Q 完成</option>
+        <option value="chatting" ${s.status === 'chatting' ? 'selected' : ''}>對話中</option>
+        <option value="stuck" ${s.status === 'stuck' ? 'selected' : ''}>卡關</option>
+        <option value="converted" ${s.status === 'converted' ? 'selected' : ''}>已轉課程</option>
+      </select>
+      <textarea id="admin-notes" placeholder="私人 notes（用戶看不到）..." style="margin-top:8px">${escapeHtml(s.adminNotes || '')}</textarea>
+      <div class="form-row">
+        <button class="btn secondary" onclick="updateNotes('${s.sessionId}')">儲存 notes</button>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <h3>7Q 答案</h3>
+      ${answerCards || '<div style="color:var(--ink-500);font-size:13px">尚未完成</div>'}
+    </div>
+
+    <div class="drawer-section">
+      <h3>對話 timeline</h3>
+      <div class="timeline">${timeline}</div>
+    </div>
+
+    <div class="drawer-section">
+      <h3>推訊息到 LINE @</h3>
+      ${messageForm}
+    </div>
+  `;
+}
+
+async function sendMessage(sessionId) {
+  const text = document.getElementById('msg-text').value.trim();
+  if (!text) return toast('請輸入訊息', 'error');
+  if (!confirm(`確認推「${text.slice(0, 30)}${text.length > 30 ? '...' : ''}」到該客戶 LINE @？\n推播不可撤回。`)) return;
+  try {
+    await api(`/admin/lumi/api/customers/${sessionId}/message`, { method: 'POST', body: { text } });
+    toast('已推送 ✓', 'success');
+    document.getElementById('msg-text').value = '';
+  } catch (e) {
+    toast('推送失敗：' + e.message, 'error');
+  }
+}
+
+async function updateStatus(sessionId) {
+  const status = document.getElementById('status-select').value;
+  try {
+    await api(`/admin/lumi/api/customers/${sessionId}`, { method: 'PATCH', body: { status } });
+    toast('狀態已更新', 'success');
+    loadList();
+  } catch (e) {
+    toast('更新失敗：' + e.message, 'error');
+  }
+}
+
+async function updateNotes(sessionId) {
+  const adminNotes = document.getElementById('admin-notes').value;
+  try {
+    await api(`/admin/lumi/api/customers/${sessionId}`, { method: 'PATCH', body: { adminNotes } });
+    toast('Notes 已儲存', 'success');
+  } catch (e) {
+    toast('儲存失敗：' + e.message, 'error');
+  }
+}
+
+document.getElementById('nav-zeabur').addEventListener('click', () => {
+  window.open('https://zeabur.com/dashboard', '_blank');
+});
+
+loadList();
+setInterval(loadList, 60000);
+</script>
+</body>
+</html>
