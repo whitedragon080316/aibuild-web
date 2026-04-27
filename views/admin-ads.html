@@ -98,7 +98,31 @@
   .btn:hover { background: var(--brand-500); }
   .btn.secondary { background: var(--surface); color: var(--ink-900); border: 1px solid var(--ink-200); }
   .btn.secondary:hover { background: var(--ink-100); }
+  .btn.small { padding: 5px 10px; font-size: 11.5px; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Tab bar (filter chip style — 同 admin-lumi) */
+  .tabbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .tab-chip {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--ink-700);
+    user-select: none;
+  }
+  .tab-chip:hover { background: var(--ink-100); }
+  .tab-chip.active { background: var(--brand-700); color: #fff; border-color: var(--brand-700); }
 
   .toolbar {
     background: var(--surface);
@@ -126,6 +150,8 @@
   }
 
   .content { flex: 1; overflow-y: auto; padding: 16px 24px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
 
   /* KPI cards */
   .kpi-grid {
@@ -185,8 +211,278 @@
   .alert.error { background: #fdecea; border-color: #f4b6b0; color: #7a1f15; }
   .alert code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
 
+  /* Tab 2 — Optimization recommendation cards */
+  .reco-section {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .reco-section-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--ink-200);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink-100);
+  }
+  .reco-section-header .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-900);
+  }
+  .reco-section-header .badge {
+    background: var(--brand-700);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .reco-section-header.pause .badge { background: var(--bad); }
+  .reco-section-header.boost .badge { background: var(--good); }
+  .reco-section-header.creative .badge { background: var(--warn); }
+  .reco-section-header .desc {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--ink-500);
+  }
+  .reco-list { padding: 4px 0; }
+  .reco-item {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--ink-100);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+  .reco-item:last-child { border-bottom: 0; }
+  .reco-item .name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-900);
+    margin-bottom: 4px;
+  }
+  .reco-item .why {
+    font-size: 12.5px;
+    color: var(--ink-700);
+    line-height: 1.55;
+    margin-bottom: 6px;
+  }
+  .reco-item .why .metric {
+    background: var(--ink-100);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--ink-900);
+  }
+  .reco-item .action {
+    font-size: 12.5px;
+    color: var(--brand-700);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .reco-item .impact {
+    font-size: 12px;
+    color: var(--good);
+  }
+  .reco-empty {
+    padding: 30px 18px;
+    text-align: center;
+    color: var(--ink-500);
+    font-size: 13px;
+  }
+
+  /* Tab 3 — wizard */
+  .wizard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .wiz-step {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .wiz-step h3 {
+    font-size: 15px;
+    color: var(--brand-700);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wiz-step h3 .num {
+    background: var(--brand-700);
+    color: #fff;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .wiz-step .lead {
+    font-size: 12.5px;
+    color: var(--ink-500);
+    margin-bottom: 12px;
+  }
+  .wiz-step ol {
+    margin: 0 0 12px 22px;
+    padding: 0;
+    font-size: 13px;
+    color: var(--ink-700);
+    line-height: 1.7;
+  }
+  .wiz-step ol li { margin-bottom: 4px; }
+  .wiz-step .hint {
+    background: #fff8e8;
+    border-left: 3px solid var(--warn);
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    color: #7a5a10;
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .wiz-step .example {
+    background: var(--ink-100);
+    border: 1px solid var(--ink-200);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--ink-700);
+    line-height: 1.6;
+  }
+  .wiz-step .example .ex-label {
+    font-weight: 700;
+    color: var(--ink-900);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .wiz-step .example code {
+    background: rgba(0,0,0,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11.5px;
+  }
+  .wiz-step a.ext {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--brand-700);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .wiz-step a.ext:hover { text-decoration: underline; }
+
+  /* Tab 4 — Pixel events */
+  .event-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .event-card {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .event-card .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .event-card .ev-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+    font-family: ui-monospace, monospace;
+  }
+  .event-card .ev-pill {
+    background: var(--ink-100);
+    color: var(--ink-700);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .event-card .ev-desc {
+    font-size: 13px;
+    color: var(--ink-700);
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .event-card .ev-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .event-card .ev-meta .ev-cell {
+    background: var(--ink-100);
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+  .event-card .ev-meta .ev-label {
+    font-size: 10.5px;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  .event-card .ev-meta .ev-value {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-900);
+    font-variant-numeric: tabular-nums;
+  }
+  .event-card .ev-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .info-banner {
+    background: #ECEFF8;
+    border: 1px solid #c5cdec;
+    color: var(--brand-700);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    margin-bottom: 14px;
+    line-height: 1.55;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink-900);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
   @media (max-width: 900px) {
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .wizard { grid-template-columns: 1fr; }
+    .event-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -195,20 +491,32 @@
   <div class="brand">Bago 派 Portal<small>v1.5 · 廣告投放</small></div>
   <nav class="nav">
     <a class="nav-item" href="/admin/lumi"><span class="icon">📋</span> 客戶管理</a>
-    <a class="nav-item active"><span class="icon">📣</span> 廣告投放</a>
-    <a class="nav-item" href="https://zeabur.com/dashboard" target="_blank"><span class="icon">🚀</span> 啟動 Zeabur</a>
+    <a class="nav-item" href="/admin/setup-wizard"><span class="icon">🧙</span> 設定精靈</a>
+    <a class="nav-item" href="/admin/generator"><span class="icon">🌐</span> 網站生成</a>
+    <a class="nav-item" href="/admin/line-cards"><span class="icon">💬</span> LINE 圖卡</a>
+    <a class="nav-item" href="/admin/line-bot"><span class="icon">🤖</span> LINE 機器人</a>
+    <a class="nav-item active" href="/admin/ads"><span class="icon">📣</span> 廣告投放</a>
+    <a class="nav-item" href="/admin/course"><span class="icon">📚</span> 課程後台</a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">📊</span> 自動化直播 <small style="font-size:10px;color:var(--ink-500)">v3</small></a>
   </nav>
 </aside>
 
 <main>
   <header class="top">
-    <h1>廣告投放 <small>Meta Ads · read-only dashboard</small></h1>
+    <h1>廣告投放 <small>Meta Ads · 數據 + 優化建議 + 教學</small></h1>
     <div class="actions">
       <button class="btn secondary" id="btn-refresh">🔄 重新整理</button>
     </div>
   </header>
 
-  <div class="toolbar">
+  <div class="tabbar">
+    <span class="tab-chip active" data-tab="dashboard">📊 Tab 1 數據儀表</span>
+    <span class="tab-chip" data-tab="reco">🎯 Tab 2 優化建議</span>
+    <span class="tab-chip" data-tab="learn">📚 Tab 3 教學</span>
+    <span class="tab-chip" data-tab="pixel">🎯 Tab 4 Pixel 事件</span>
+  </div>
+
+  <div class="toolbar" id="toolbar-dates">
     <span class="chip" data-preset="today">今天</span>
     <span class="chip" data-preset="last_7d">7 天</span>
     <span class="chip active" data-preset="last_14d">14 天</span>
@@ -216,15 +524,128 @@
     <span class="meta" id="meta-info">—</span>
   </div>
 
-  <div class="content" id="content">
-    <div class="loading">載入中...</div>
+  <div class="content">
+    <!-- Tab 1: Dashboard -->
+    <div class="panel active" id="panel-dashboard">
+      <div id="dashboard-body">
+        <div class="loading">載入中...</div>
+      </div>
+    </div>
+
+    <!-- Tab 2: 優化建議 -->
+    <div class="panel" id="panel-reco">
+      <div id="reco-body">
+        <div class="loading">載入中...</div>
+      </div>
+    </div>
+
+    <!-- Tab 3: 教學 -->
+    <div class="panel" id="panel-learn">
+      <div class="info-banner">
+        <strong>四步驟新手教學</strong>　從零開始建第一個 Meta 廣告，跟著做就好。每個 step 含「💡 為什麼」與「填的欄位範例」。
+      </div>
+      <div class="wizard">
+
+        <div class="wiz-step">
+          <h3><span class="num">1</span> 開 Meta 廣告帳戶 + Pixel</h3>
+          <div class="lead">把追蹤裝好，沒這個你看不到任何數據。</div>
+          <ol>
+            <li>進 Meta Business Suite，建立「企業管理平台」帳戶</li>
+            <li>到「事件管理工具」→ 新增 Pixel（給它一個名字，例如 <code>aibuild_main</code>)</li>
+            <li>把 Pixel ID 複製下來，貼到網站環境變數 <code>META_PIXEL_ID</code></li>
+            <li>產 System User Token（給 <code>ads_read</code> + <code>ads_management</code> 權限）</li>
+            <li>到 Zeabur 設定 <code>META_ACCESS_TOKEN</code> + <code>META_AD_ACCOUNT_ID</code></li>
+          </ol>
+          <div class="hint">💡 為什麼：Pixel = 廣告與你的網站之間的橋。沒裝就沒有 Lead / Purchase 數據，Meta 也無法做受眾優化，CPL 一定爆炸。</div>
+          <div class="example">
+            <span class="ex-label">填的欄位範例</span>
+            Pixel 名稱：<code>aibuild_main</code><br>
+            網域驗證：<code>aibuild.app</code>（記得在 DNS 加 TXT 紀錄）<br>
+            事件管理：先勾 <code>Lead</code> + <code>Purchase</code> 兩個就好
+          </div>
+          <a class="ext" href="https://business.facebook.com/" target="_blank">→ 開啟 Meta Business Suite</a>
+        </div>
+
+        <div class="wiz-step">
+          <h3><span class="num">2</span> 建第一個 Campaign</h3>
+          <div class="lead">目標、受眾、預算 — 三件事決定 80% 結果。</div>
+          <ol>
+            <li>Campaign 目標：選 <strong>Leads</strong>（不要選 Engagement / Reach，會被燒沒成果）</li>
+            <li>Adset 預算：日預算 NT$300–500 起跳，學習期才跑得起來</li>
+            <li>受眾：年齡 25–55、地區台灣、興趣留 1–3 個就好（太多 Meta 學不會）</li>
+            <li>版位：用 Advantage+ 自動版位（讓系統優化）</li>
+            <li>素材：上 1 張圖 + 1 支短影片，配 3 組標題、3 組文案做 DCO</li>
+          </ol>
+          <div class="hint">💡 為什麼：Meta AI 需要 50 個轉換才出學習期。日預算太低 → 學不完 → CPL 永遠不穩。寧願少一個 adset 也要把預算集中。</div>
+          <div class="example">
+            <span class="ex-label">填的欄位範例</span>
+            Campaign 名稱：<code>0428_Lead_直播報名</code><br>
+            目標：<code>Leads</code> · 出價：<code>Lowest cost</code><br>
+            日預算：<code>NT$500</code> · 跑 <code>7 天</code> 才看數據<br>
+            受眾：<code>台灣 / 28-50 / 興趣：創業、Coaching、線上課程</code>
+          </div>
+        </div>
+
+        <div class="wiz-step">
+          <h3><span class="num">3</span> 看 Insights 看哪些指標</h3>
+          <div class="lead">不是每個數字都重要 — 抓四個就好。</div>
+          <ol>
+            <li><strong>CPL（每 lead 成本）</strong>：健康 NT$150–400，超過 600 = 警訊</li>
+            <li><strong>CTR（點擊率）</strong>：健康 ≥ 1.5%，&lt; 1% = 素材該換</li>
+            <li><strong>CPM（千次曝光成本）</strong>：健康 NT$200–500，超過 800 = 受眾太窄</li>
+            <li><strong>Lead → 客戶轉換率</strong>：健康 5–15%（看 LP / 漏斗品質）</li>
+          </ol>
+          <div class="hint">💡 為什麼：CTR 看素材，CPM 看受眾，CPL 看綜合表現。看到 CPL 高，先看是 CTR 爛（素材問題）還是 CPM 爆（受眾問題）— 對症下藥才不會白燒錢。</div>
+          <div class="example">
+            <span class="ex-label">健康範圍速查（直播報名類）</span>
+            CPL：<code>NT$150–400 ✅</code> · <code>400–600 ⚠️</code> · <code>&gt;600 ❌</code><br>
+            CTR：<code>≥1.5% ✅</code> · <code>1–1.5% ⚠️</code> · <code>&lt;1% ❌</code><br>
+            CPM：<code>NT$200–500 ✅</code> · <code>500–800 ⚠️</code> · <code>&gt;800 ❌</code>
+          </div>
+        </div>
+
+        <div class="wiz-step">
+          <h3><span class="num">4</span> 何時 Optimize（暫停 / 加預算）</h3>
+          <div class="lead">不要每天動！學習期內亂改 = 浪費錢。</div>
+          <ol>
+            <li>新 adset 至少跑 <strong>3 天 + 花費 ≥ NT$1500</strong> 才能下判斷</li>
+            <li>暫停條件：花 NT$1000 還 0 lead → 暫停（受眾或素材壞）</li>
+            <li>暫停條件：CPL &gt; 平均 ×2 持續 3 天 → 暫停</li>
+            <li>加預算：CPL &lt; 平均 ×0.7 連續 3 天 → 預算加 20%（不要直接加倍，會重新進入學習期）</li>
+            <li>素材輪替：CTR &lt; 1% 且 spend &gt; NT$500 → 換新素材，不要硬撐</li>
+          </ol>
+          <div class="hint">💡 為什麼：Meta 演算法每改一次 adset = 重新學習。預算每次最多加 20%，加太多會重置。素材衰退是必然，平均 7–14 天就要輪替。</div>
+          <div class="example">
+            <span class="ex-label">每週 SOP（建議）</span>
+            週一：看上週數據，列暫停 + 加預算清單<br>
+            週三：上新素材 1–2 組（標題 / 主圖 / 文案輪替）<br>
+            週五：檢查 CPL 趨勢，&gt;600 立即暫停止血<br>
+            其他日：<code>不要動</code>，讓演算法跑
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab 4: Pixel 事件 -->
+    <div class="panel" id="panel-pixel">
+      <div class="info-banner">
+        <strong>5 個必接的 Standard Event</strong>　以下是漏斗各階段該觸發的標準事件。「複製事件設定」會把 JSON 貼到剪貼簿，你到 Meta Pixel GUI / 工程師那邊貼即可。<br>
+        <span style="font-size:11.5px; opacity:0.8">⚠️ v1.5 24h 觸發數為 placeholder（0），v2 會接實際數據。</span>
+      </div>
+      <div class="event-grid" id="pixel-grid"></div>
+    </div>
+
   </div>
 </main>
+
+<div class="toast" id="toast">已複製到剪貼簿</div>
 
 <script>
 const HAS_META_TOKEN = '{{HAS_META_TOKEN}}' === 'true';
 const META_AD_ACCOUNT_ID = '{{META_AD_ACCOUNT_ID}}';
 
+let currentTab = 'dashboard';
 let currentPreset = 'last_14d';
 let currentData = null;
 let sortKey = 'spend';
@@ -253,13 +674,32 @@ function cplClass(cpl) {
   return 'cpl-bad';
 }
 
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg || '已複製到剪貼簿';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('已複製');
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showToast('已複製'); } catch (_) { showToast('複製失敗'); }
+    document.body.removeChild(ta);
+  }
+}
+
 async function loadData() {
-  const content = document.getElementById('content');
-  content.innerHTML = '<div class="loading">載入中...</div>';
+  const dashBody = document.getElementById('dashboard-body');
+  dashBody.innerHTML = '<div class="loading">載入中...</div>';
   document.getElementById('btn-refresh').disabled = true;
 
   if (!HAS_META_TOKEN) {
-    content.innerHTML = `
+    dashBody.innerHTML = `
       <div class="alert">
         <strong>未設定 Meta token</strong><br>
         環境變數 <code>META_ACCESS_TOKEN</code> 沒設定，無法呼叫 Meta Graph API。<br><br>
@@ -272,6 +712,7 @@ async function loadData() {
         </ol>
       </div>`;
     document.getElementById('btn-refresh').disabled = false;
+    renderReco();
     return;
   }
 
@@ -285,20 +726,21 @@ async function loadData() {
     }
     const data = await resp.json();
     currentData = data;
-    render();
+    renderDashboard();
+    renderReco();
   } catch (e) {
-    content.innerHTML = `<div class="alert error"><strong>載入失敗</strong><br>${escapeHtml(e.message)}</div>`;
+    dashBody.innerHTML = `<div class="alert error"><strong>載入失敗</strong><br>${escapeHtml(e.message)}</div>`;
   } finally {
     document.getElementById('btn-refresh').disabled = false;
   }
 }
 
-function render() {
-  const content = document.getElementById('content');
+function renderDashboard() {
+  const dashBody = document.getElementById('dashboard-body');
   const meta = document.getElementById('meta-info');
 
   if (!currentData) {
-    content.innerHTML = '<div class="loading">載入中...</div>';
+    dashBody.innerHTML = '<div class="loading">載入中...</div>';
     return;
   }
 
@@ -309,7 +751,7 @@ function render() {
     } else if (currentData.code === 190) {
       msg += '<br><br>Token 已過期，需要在 Meta Business Settings 重新產生。';
     }
-    content.innerHTML = `<div class="alert error">${msg}</div>`;
+    dashBody.innerHTML = `<div class="alert error">${msg}</div>`;
     meta.textContent = '—';
     return;
   }
@@ -344,7 +786,6 @@ function render() {
       </div>
     </div>`;
 
-  // Sort rows
   const rows = [...currentData.rows].sort((a, b) => {
     const av = a[sortKey];
     const bv = b[sortKey];
@@ -396,10 +837,9 @@ function render() {
       </table>`;
   }
 
-  content.innerHTML = kpis + tableHtml;
+  dashBody.innerHTML = kpis + tableHtml;
 
-  // Wire up sort headers
-  content.querySelectorAll('th[data-sort]').forEach(th => {
+  dashBody.querySelectorAll('th[data-sort]').forEach(th => {
     th.addEventListener('click', () => {
       const key = th.dataset.sort;
       if (sortKey === key) {
@@ -408,15 +848,259 @@ function render() {
         sortKey = key;
         sortDir = (key === 'adset_name') ? 'asc' : 'desc';
       }
-      render();
+      renderDashboard();
     });
   });
 }
 
+// Tab 2 — 優化建議（純 client-side 從 currentData 算）
+function renderReco() {
+  const body = document.getElementById('reco-body');
+
+  if (!currentData || !currentData.ok || !currentData.rows || currentData.rows.length === 0) {
+    body.innerHTML = `<div class="info-banner">尚無數據可分析。請先到 Tab 1「數據儀表」確認 Meta token 設定 + 有廣告投放紀錄。</div>`;
+    return;
+  }
+
+  const rows = currentData.rows;
+  const avgCPL = currentData.summary.avgCPL;
+
+  const pauseList = [];
+  const boostList = [];
+  const creativeList = [];
+
+  rows.forEach(r => {
+    const cpl = r.cpl;
+    const spend = Number(r.spend) || 0;
+    const leads = Number(r.leads) || 0;
+    const ctr = Number(r.ctr) || 0;
+
+    if ((avgCPL && cpl != null && cpl > avgCPL * 2) || (spend > 1000 && leads === 0)) {
+      const monthly = Math.round(spend / Math.max(1, daysFromPreset(currentData.datePreset)) * 30);
+      pauseList.push({
+        ...r,
+        kind: 'pause',
+        reason: leads === 0
+          ? `花了 <span class="metric">${fmtMoney(spend)}</span> 但 <span class="metric">0 leads</span>`
+          : `CPL <span class="metric">${fmtMoney(cpl)}</span> > 平均 <span class="metric">${fmtMoney(avgCPL)}</span> × 2`,
+        action: '暫停這個廣告組，把預算挪去 CPL 健康的廣告組',
+        impact: `預估每月可省 <span class="metric">${fmtMoney(monthly)}</span> 重新分配`,
+      });
+    }
+
+    if (avgCPL && cpl != null && cpl > 0 && cpl < avgCPL * 0.7 && leads >= 3) {
+      const projectedExtraLeads = Math.round(leads * 0.2);
+      boostList.push({
+        ...r,
+        kind: 'boost',
+        reason: `CPL <span class="metric">${fmtMoney(cpl)}</span> 比平均 <span class="metric">${fmtMoney(avgCPL)}</span> 低 ${Math.round((1 - cpl / avgCPL) * 100)}%`,
+        action: '預算 +20%（一次最多加 20%，避免重新進入學習期）',
+        impact: `預估多 <span class="metric">${projectedExtraLeads}</span> leads / 期間`,
+      });
+    }
+
+    if (ctr < 1 && spend > 500) {
+      creativeList.push({
+        ...r,
+        kind: 'creative',
+        reason: `CTR <span class="metric">${fmtPct(ctr)}</span> 低於 1% 警戒線（spend <span class="metric">${fmtMoney(spend)}</span>）`,
+        action: '上 1–2 組新素材輪替（換主圖 / 換標題 / 換 hook 開場）',
+        impact: '預估 CTR 拉到 1.5%+ 後 CPL 可降 20–35%',
+      });
+    }
+  });
+
+  function recoItemHtml(it) {
+    const kindLabel = { pause: '建議暫停', boost: '建議加預算', creative: '素材輪替' }[it.kind];
+    const copyText =
+      `[${kindLabel}] ${it.adset_name}\n` +
+      `為什麼：${stripHtml(it.reason)}\n` +
+      `建議動作：${it.action}\n` +
+      `預估效果：${stripHtml(it.impact)}\n` +
+      `Campaign：${it.campaign_name || '—'}`;
+    return `
+      <div class="reco-item">
+        <div>
+          <div class="name">${escapeHtml(it.adset_name)}${it.campaign_name ? ` <span style="color:var(--ink-500); font-weight:400; font-size:11.5px">· ${escapeHtml(it.campaign_name)}</span>` : ''}</div>
+          <div class="why">${it.reason}</div>
+          <div class="action">→ ${escapeHtml(it.action)}</div>
+          <div class="impact">${it.impact}</div>
+        </div>
+        <div>
+          <button class="btn small secondary" data-copy="${escapeHtml(copyText)}">📋 複製建議</button>
+        </div>
+      </div>`;
+  }
+
+  const sectionHtml = (title, accent, list, conditionDesc) => `
+    <div class="reco-section">
+      <div class="reco-section-header ${accent}">
+        <span class="title">${title}</span>
+        <span class="badge">${list.length} 筆</span>
+        <span class="desc">${conditionDesc}</span>
+      </div>
+      <div class="reco-list">
+        ${list.length === 0
+          ? `<div class="reco-empty">目前沒有符合條件的廣告組 ✅</div>`
+          : list.map(recoItemHtml).join('')
+        }
+      </div>
+    </div>`;
+
+  body.innerHTML = `
+    <div class="info-banner">
+      <strong>⚠️ 純建議不執行</strong>　v1.5 不會自動暫停 / 改預算 / 寫廣告。複製建議後，請自己到 Meta Ads Manager 操作。（v2 之後再加自動執行）
+    </div>
+    ${sectionHtml('🛑 建議暫停', 'pause', pauseList, 'CPL > 平均×2 OR spend > NT$1000 但 0 leads')}
+    ${sectionHtml('📈 建議加預算', 'boost', boostList, 'CPL < 平均×0.7 且 leads ≥ 3')}
+    ${sectionHtml('🎨 素材輪替', 'creative', creativeList, 'CTR < 1% 且 spend > NT$500')}
+  `;
+
+  body.querySelectorAll('button[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => copyToClipboard(btn.dataset.copy));
+  });
+}
+
+function stripHtml(s) {
+  return String(s).replace(/<[^>]+>/g, '');
+}
+
+function daysFromPreset(p) {
+  if (p === 'today') return 1;
+  if (p === 'last_7d') return 7;
+  if (p === 'last_14d') return 14;
+  if (p === 'last_30d') return 30;
+  return 14;
+}
+
+// Tab 4 — Pixel 事件
+const PIXEL_EVENTS = [
+  {
+    name: 'Lead',
+    pill: '漏斗最早',
+    desc: '使用者表達興趣的第一個訊號 — 任何場次報名 / 7Q 完成 / 加 LINE @ 前的填表動作。',
+    dedupe: '24 小時去重（同 user 只算一次）',
+    config: {
+      event_name: 'Lead',
+      trigger: '報名 / 7Q 完成 / 留電話',
+      content_category: '直播報名',
+      currency: 'TWD',
+      value: 0,
+      dedupe_window_hours: 24,
+    },
+  },
+  {
+    name: 'CompleteRegistration',
+    pill: '高意願',
+    desc: '更深一層的承諾 — 旗艦場次報名 / 確認購買意願表單 / 預約 1on1。',
+    dedupe: '24 小時去重',
+    config: {
+      event_name: 'CompleteRegistration',
+      trigger: '旗艦場次報名 / 1on1 預約',
+      content_category: '高意願',
+      currency: 'TWD',
+      value: 0,
+      dedupe_window_hours: 24,
+    },
+  },
+  {
+    name: 'Subscribe',
+    pill: '進入序列',
+    desc: 'Lead 接受 nurture — 加 LINE @ / 訂閱 email 序列 / 進入歡迎流。',
+    dedupe: '7 天去重（避免重複加好友觸發）',
+    config: {
+      event_name: 'Subscribe',
+      trigger: '加 LINE @ / 進歡迎序列',
+      content_category: 'Nurture',
+      currency: 'TWD',
+      value: 0,
+      dedupe_window_hours: 168,
+    },
+  },
+  {
+    name: 'ViewContent',
+    pill: '內容消費',
+    desc: '觀看課程影片 / 直播進度 ≥ 50%（半段以上代表真的有看）。',
+    dedupe: '依影片 ID 去重，每支影片每天 1 次',
+    config: {
+      event_name: 'ViewContent',
+      trigger: '影片進度 ≥ 50%',
+      content_category: '影片觀看',
+      content_ids: ['{video_id}'],
+      currency: 'TWD',
+      value: 0,
+      dedupe_window_hours: 24,
+    },
+  },
+  {
+    name: 'Purchase',
+    pill: '終點',
+    desc: '完成付款 — 自動化流程的最終轉換。CAPI 必傳，含金額讓 Meta AI 學會出價。',
+    dedupe: '不去重（每次付款都算）',
+    config: {
+      event_name: 'Purchase',
+      trigger: 'TapPay 付款成功 webhook',
+      content_category: '課程購買',
+      currency: 'TWD',
+      value: '{order_amount}',
+      dedupe_window_hours: 0,
+    },
+  },
+];
+
+function renderPixel() {
+  const grid = document.getElementById('pixel-grid');
+  grid.innerHTML = PIXEL_EVENTS.map(ev => {
+    const json = JSON.stringify(ev.config, null, 2);
+    return `
+      <div class="event-card">
+        <div class="header">
+          <span class="ev-name">${escapeHtml(ev.name)}</span>
+          <span class="ev-pill">${escapeHtml(ev.pill)}</span>
+        </div>
+        <div class="ev-desc">${escapeHtml(ev.desc)}</div>
+        <div class="ev-meta">
+          <div class="ev-cell">
+            <div class="ev-label">24h 觸發數</div>
+            <div class="ev-value">0 <span style="color:var(--ink-500); font-size:11px; font-weight:400">(v1.5 placeholder)</span></div>
+          </div>
+          <div class="ev-cell">
+            <div class="ev-label">去重時間</div>
+            <div class="ev-value" style="font-size:12.5px">${escapeHtml(ev.dedupe)}</div>
+          </div>
+        </div>
+        <div class="ev-actions">
+          <button class="btn small" data-copy-event="${escapeHtml(json)}">📋 複製事件設定 (JSON)</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll('button[data-copy-event]').forEach(btn => {
+    btn.addEventListener('click', () => copyToClipboard(btn.dataset.copyEvent));
+  });
+}
+
+// Tab switching
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.tab === tab);
+  });
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.toggle('active', p.id === `panel-${tab}`);
+  });
+  document.getElementById('toolbar-dates').style.display =
+    (tab === 'dashboard' || tab === 'reco') ? '' : 'none';
+}
+
+document.querySelectorAll('.tab-chip').forEach(c => {
+  c.addEventListener('click', () => switchTab(c.dataset.tab));
+});
+
 // Date preset chips
-document.querySelectorAll('.chip').forEach(c => {
+document.querySelectorAll('.toolbar .chip').forEach(c => {
   c.addEventListener('click', () => {
-    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.toolbar .chip').forEach(x => x.classList.remove('active'));
     c.classList.add('active');
     currentPreset = c.dataset.preset;
     loadData();
@@ -425,6 +1109,8 @@ document.querySelectorAll('.chip').forEach(c => {
 
 document.getElementById('btn-refresh').addEventListener('click', loadData);
 
+// Initial render
+renderPixel();
 loadData();
 </script>
 </body>

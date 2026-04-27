@@ -265,21 +265,126 @@
     max-height: 240px;
     overflow-y: auto;
   }
+  /* publish form */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .form-card h2 { font-size: 15px; color: var(--brand-700); margin-bottom: 14px; }
+  .form-card h3 { font-size: 13px; color: var(--ink-500); text-transform: uppercase; letter-spacing: 0.06em; margin: 18px 0 10px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12.5px; color: var(--ink-700); margin-bottom: 6px; font-weight: 600; }
+  .field label .req { color: #c62828; margin-left: 2px; }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="url"],
+  .field input[type="date"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--ink-200);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13.5px;
+    background: var(--surface);
+    color: var(--ink-900);
+  }
+  .field textarea { min-height: 110px; resize: vertical; font-family: 'SF Mono', Monaco, monospace; font-size: 12.5px; line-height: 1.6; }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus { outline: none; border-color: var(--brand-500); box-shadow: 0 0 0 3px rgba(59,91,219,0.12); }
+  .field .hint { font-size: 11px; color: var(--ink-500); margin-top: 4px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .row-2, .row-3 { grid-template-columns: 1fr; } }
+  .chapter-card {
+    background: var(--ink-100);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .chapter-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .chapter-head .ch-num { font-size: 12px; color: var(--brand-700); font-weight: 700; letter-spacing: 0.04em; }
+  .btn {
+    background: var(--brand-700);
+    color: #fff;
+    border: 0;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--brand-500); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn.ghost { background: var(--surface); color: var(--ink-700); border: 1px solid var(--ink-200); }
+  .btn.ghost:hover { background: var(--ink-100); }
+  .btn.danger { background: var(--surface); color: var(--status-failed); border: 1px solid var(--ink-200); }
+  .btn.danger:hover { background: #FFEBEE; border-color: var(--status-failed); }
+  .btn.accent { background: var(--accent); }
+  .btn.accent:hover { background: #c08524; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink-900);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, bottom 0.2s;
+  }
+  .toast.show { opacity: 1; bottom: 50px; }
+  .toast.error { background: var(--status-failed); }
+  .toast.ok { background: var(--status-paid); }
+  /* publish list */
+  .pub-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pub-status.draft { background: #FFF3E0; color: var(--accent); }
+  .pub-status.published { background: #E3F2E3; color: var(--status-paid); }
+  .pub-status.unpublished { background: #FFEBEE; color: var(--status-failed); }
 </style>
 </head>
 <body>
 <aside class="sidebar">
   <div class="brand">Bago 派 Portal<small>v1.5 · 課程後台</small></div>
   <nav class="nav">
-    <a class="nav-item" href="/admin/lumi"><span>📋</span> Lumi 客戶管理</a>
-    <a class="nav-item active"><span>📚</span> 課程後台</a>
+    <a class="nav-item" href="/admin/lumi"><span class="icon">📋</span> 客戶管理</a>
+    <a class="nav-item" href="/admin/setup-wizard"><span class="icon">🧙</span> 設定精靈</a>
+    <a class="nav-item" href="/admin/generator"><span class="icon">🌐</span> 網站生成</a>
+    <a class="nav-item" href="/admin/line-cards"><span class="icon">💬</span> LINE 圖卡</a>
+    <a class="nav-item" href="/admin/line-bot"><span class="icon">🤖</span> LINE 機器人</a>
+    <a class="nav-item" href="/admin/ads"><span class="icon">📣</span> 廣告投放</a>
+    <a class="nav-item active" href="/admin/course"><span class="icon">📚</span> 課程後台</a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">📊</span> 自動化直播 <small style="font-size:10px;color:var(--ink-500)">v3</small></a>
   </nav>
 </aside>
 
 <main>
   <header class="top">
     <h1>課程後台</h1>
-    <span class="read-only-badge">v1.5 · READ ONLY</span>
+    <span class="read-only-badge">v1.5 · 上架功能 BETA</span>
   </header>
 
   <div class="stats" id="stats">
@@ -290,7 +395,8 @@
   </div>
 
   <div class="toolbar">
-    <span class="chip active" data-tab="course">📚 課程內容</span>
+    <span class="chip active" data-tab="course">📚 課程列表</span>
+    <span class="chip" data-tab="publish">🚀 上架新課程</span>
     <span class="chip" data-tab="users">👥 會員列表</span>
     <span class="chip" data-tab="payments">💳 訂單列表</span>
 
@@ -366,10 +472,45 @@ document.querySelectorAll('.chip[data-tab]').forEach(c => {
     document.getElementById('users-search').style.display = currentTab === 'users' ? 'flex' : 'none';
     document.getElementById('payments-filter').style.display = currentTab === 'payments' ? 'flex' : 'none';
     if (currentTab === 'course') renderCourse();
+    else if (currentTab === 'publish') renderPublish();
     else if (currentTab === 'users') loadUsers();
     else if (currentTab === 'payments') loadPayments();
   });
 });
+
+// ----- toast -----
+function toast(msg, kind = '') {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.className = 'toast';
+    document.body.appendChild(t);
+  }
+  t.className = 'toast ' + kind;
+  t.textContent = msg;
+  // 強制 reflow 讓 transition 重觸發
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+async function apiSend(path, method, body) {
+  const resp = await fetch(path, {
+    method,
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (resp.status === 403 || resp.status === 401) {
+    window.location.href = '/admin/lumi/login';
+    throw new Error('需要重新登入');
+  }
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+  return data;
+}
 
 // ----- stats -----
 function renderStats(stats) {
@@ -461,6 +602,303 @@ function openLessonDrawer(stageTitle, lesson) {
     </div>
   `;
   showDrawer();
+}
+
+// ----- publish tab（上架新課程 / 列管）-----
+let publishCache = []; // 後台 Course list
+let editingSlug = null; // null = 新建，有值 = 編輯既有
+
+async function renderPublish() {
+  const area = document.getElementById('content-area');
+  area.innerHTML = '<div class="empty">載入中...</div>';
+  try {
+    const data = await api('/admin/course/api/courses');
+    publishCache = data.courses || [];
+    area.innerHTML = renderPublishHtml();
+    bindPublishHandlers();
+    // 預設加一個空章節
+    if (chapterRows.length === 0) addChapterRow();
+    renderChapterList();
+    renderCourseList();
+  } catch (e) {
+    area.innerHTML = `<div class="empty">載入失敗：${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderPublishHtml() {
+  return `
+    <div class="form-card">
+      <h2>🚀 <span id="form-mode">新增課程</span></h2>
+      <div class="row-2">
+        <div class="field">
+          <label>課程標題<span class="req">*</span></label>
+          <input type="text" id="f-title" placeholder="例：張力思維 — 從卡到流的 5 堂課">
+        </div>
+        <div class="field">
+          <label>銷售 LP slug<span class="req">*</span></label>
+          <input type="text" id="f-slug" placeholder="例：tension-thinking 或 張力思維">
+          <div class="hint">將對應 URL <code>/course/{slug}</code></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>課程介紹（支援 Markdown）</label>
+        <textarea id="f-description" placeholder="# 課程簡介&#10;&#10;這堂課是給..."></textarea>
+      </div>
+      <div class="field">
+        <label>主圖 URL</label>
+        <input type="url" id="f-cover" placeholder="https://...">
+        <div class="hint">建議 1200x630，可留空（預覽用漸層底圖）</div>
+      </div>
+
+      <h3>章節列表</h3>
+      <div id="chapters-area"></div>
+      <button type="button" class="btn ghost" onclick="addChapterRow()">+ 新增章節</button>
+
+      <h3>定價</h3>
+      <div class="row-3">
+        <div class="field">
+          <label>定價</label>
+          <input type="number" id="f-price" placeholder="例：12800">
+        </div>
+        <div class="field">
+          <label>早鳥價</label>
+          <input type="number" id="f-earlyPrice" placeholder="例：9800">
+        </div>
+        <div class="field">
+          <label>早鳥截止日</label>
+          <input type="date" id="f-earlyDeadline">
+        </div>
+      </div>
+
+      <h3>上架狀態</h3>
+      <div class="field">
+        <select id="f-status">
+          <option value="draft">草稿（不上架，後台預覽）</option>
+          <option value="published">上架（v1.5 預覽級別，未公開上線）</option>
+          <option value="unpublished">下架</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn" id="btn-save">💾 儲存</button>
+        <button type="button" class="btn accent" id="btn-publish">✅ 上架</button>
+        <button type="button" class="btn ghost" id="btn-preview">👁 預覽 LP</button>
+        <button type="button" class="btn ghost" id="btn-reset">🔄 清空表單</button>
+      </div>
+      <div class="hint" style="margin-top:8px;color:var(--ink-500)">
+        v1.5 上架 = 後台 DB 標 published，並未真實 publish 到公開網域；公開上線 5/28 後 ship。
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>📋 後台已存課程</h2>
+      <div id="course-list"></div>
+    </div>
+  `;
+}
+
+let chapterRows = []; // [{ name, videoUrl, duration, intro }]
+
+function addChapterRow(data = {}) {
+  chapterRows.push({
+    name: data.name || '',
+    videoUrl: data.videoUrl || '',
+    duration: data.duration || '',
+    intro: data.intro || '',
+  });
+  renderChapterList();
+}
+
+function removeChapterRow(idx) {
+  chapterRows.splice(idx, 1);
+  renderChapterList();
+}
+
+function updateChapterField(idx, field, val) {
+  if (chapterRows[idx]) chapterRows[idx][field] = val;
+}
+
+function renderChapterList() {
+  const wrap = document.getElementById('chapters-area');
+  if (!wrap) return;
+  if (chapterRows.length === 0) {
+    wrap.innerHTML = '<div class="hint" style="margin-bottom:10px">尚無章節，按下方「新增章節」加入</div>';
+    return;
+  }
+  wrap.innerHTML = chapterRows.map((c, i) => `
+    <div class="chapter-card">
+      <div class="chapter-head">
+        <span class="ch-num">第 ${i + 1} 章</span>
+        <button type="button" class="btn danger" style="padding:4px 12px;font-size:12px" onclick="removeChapterRow(${i})">移除</button>
+      </div>
+      <div class="row-2">
+        <div class="field" style="margin-bottom:10px">
+          <label>章節名稱</label>
+          <input type="text" value="${escapeHtml(c.name)}" oninput="updateChapterField(${i}, 'name', this.value)" placeholder="例：建立你的第一個原型">
+        </div>
+        <div class="field" style="margin-bottom:10px">
+          <label>時長</label>
+          <input type="text" value="${escapeHtml(c.duration)}" oninput="updateChapterField(${i}, 'duration', this.value)" placeholder="例：22:30">
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:10px">
+        <label>影片 URL</label>
+        <input type="url" value="${escapeHtml(c.videoUrl)}" oninput="updateChapterField(${i}, 'videoUrl', this.value)" placeholder="https://www.youtube.com/embed/...">
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>章節簡介</label>
+        <input type="text" value="${escapeHtml(c.intro)}" oninput="updateChapterField(${i}, 'intro', this.value)" placeholder="一句話講這章在學什麼">
+      </div>
+    </div>
+  `).join('');
+}
+
+function collectFormData() {
+  const slug = document.getElementById('f-slug').value.trim();
+  const title = document.getElementById('f-title').value.trim();
+  const description = document.getElementById('f-description').value;
+  const coverImage = document.getElementById('f-cover').value.trim();
+  const priceRaw = document.getElementById('f-price').value;
+  const earlyRaw = document.getElementById('f-earlyPrice').value;
+  const earlyDeadline = document.getElementById('f-earlyDeadline').value;
+  const status = document.getElementById('f-status').value;
+  return {
+    slug, title, description, coverImage,
+    chapters: chapterRows.filter(c => c.name || c.videoUrl || c.intro),
+    price: priceRaw === '' ? null : Number(priceRaw),
+    earlyPrice: earlyRaw === '' ? null : Number(earlyRaw),
+    earlyDeadline: earlyDeadline || null,
+    status,
+  };
+}
+
+function fillForm(course) {
+  editingSlug = course.slug;
+  document.getElementById('form-mode').textContent = `編輯：${course.title}`;
+  document.getElementById('f-title').value = course.title || '';
+  document.getElementById('f-slug').value = course.slug || '';
+  document.getElementById('f-description').value = course.description || '';
+  document.getElementById('f-cover').value = course.coverImage || '';
+  document.getElementById('f-price').value = course.price ?? '';
+  document.getElementById('f-earlyPrice').value = course.earlyPrice ?? '';
+  document.getElementById('f-earlyDeadline').value = course.earlyDeadline ? course.earlyDeadline.slice(0, 10) : '';
+  document.getElementById('f-status').value = course.status || 'draft';
+  chapterRows = (course.chapters || []).map(c => ({
+    name: c.name || '',
+    videoUrl: c.videoUrl || '',
+    duration: c.duration || '',
+    intro: c.intro || '',
+  }));
+  if (chapterRows.length === 0) chapterRows.push({ name: '', videoUrl: '', duration: '', intro: '' });
+  renderChapterList();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm() {
+  editingSlug = null;
+  document.getElementById('form-mode').textContent = '新增課程';
+  ['f-title', 'f-slug', 'f-description', 'f-cover', 'f-price', 'f-earlyPrice', 'f-earlyDeadline'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-status').value = 'draft';
+  chapterRows = [{ name: '', videoUrl: '', duration: '', intro: '' }];
+  renderChapterList();
+}
+
+async function saveCourse(forcePublishedStatus) {
+  const body = collectFormData();
+  if (!body.slug) return toast('請填 slug', 'error');
+  if (!body.title) return toast('請填課程標題', 'error');
+  if (forcePublishedStatus) body.status = 'published';
+  try {
+    let resp;
+    if (editingSlug) {
+      resp = await apiSend(`/admin/course/api/courses/${encodeURIComponent(editingSlug)}`, 'PATCH', body);
+      // 若 slug 改了 -> 後端用 :slug param 找原本的，不支援 rename slug；提示
+      if (body.slug !== editingSlug) {
+        toast('注意：slug 不可變更，已用原本的 slug 儲存', 'error');
+      }
+    } else {
+      resp = await apiSend('/admin/course/api/courses', 'POST', body);
+      editingSlug = resp.course.slug; // 切到 edit 模式
+      document.getElementById('form-mode').textContent = `編輯：${resp.course.title}`;
+    }
+    toast(forcePublishedStatus ? '✅ 已上架' : '✅ 已儲存', 'ok');
+    // refresh list
+    const data = await api('/admin/course/api/courses');
+    publishCache = data.courses || [];
+    renderCourseList();
+  } catch (e) {
+    toast('失敗：' + e.message, 'error');
+  }
+}
+
+async function deleteCourse(slug) {
+  if (!confirm(`確定要下架課程「${slug}」？\n（v1.5 為軟刪除，僅改 status，資料保留）`)) return;
+  try {
+    await apiSend(`/admin/course/api/courses/${encodeURIComponent(slug)}`, 'DELETE');
+    toast('已下架', 'ok');
+    const data = await api('/admin/course/api/courses');
+    publishCache = data.courses || [];
+    renderCourseList();
+    if (editingSlug === slug) resetForm();
+  } catch (e) {
+    toast('失敗：' + e.message, 'error');
+  }
+}
+
+async function loadCourseForEdit(slug) {
+  try {
+    const data = await api(`/admin/course/api/courses/${encodeURIComponent(slug)}`);
+    fillForm(data.course);
+    toast('已載入到表單', 'ok');
+  } catch (e) {
+    toast('載入失敗：' + e.message, 'error');
+  }
+}
+
+function previewCourse() {
+  const slug = document.getElementById('f-slug').value.trim();
+  if (!slug) return toast('請先填 slug 並儲存', 'error');
+  if (!editingSlug) return toast('請先儲存後再預覽', 'error');
+  window.open(`/admin/course/preview?slug=${encodeURIComponent(editingSlug)}`, '_blank');
+}
+
+function renderCourseList() {
+  const wrap = document.getElementById('course-list');
+  if (!wrap) return;
+  if (publishCache.length === 0) {
+    wrap.innerHTML = '<div class="empty" style="padding:24px">尚無課程，請從上方表單建立</div>';
+    return;
+  }
+  const statusLabel = { draft: '草稿', published: '已上架', unpublished: '已下架' };
+  const rows = publishCache.map(c => `
+    <tr>
+      <td><div class="name">${escapeHtml(c.title || '')}</div><div style="font-size:11px;color:var(--ink-500);margin-top:2px">/course/${escapeHtml(c.slug || '')}</div></td>
+      <td>${c.chapterCount || 0} 章</td>
+      <td>${c.price != null ? fmtMoney(c.price) : '—'}${c.earlyPrice != null ? `<div style="font-size:11px;color:var(--accent)">早鳥 ${fmtMoney(c.earlyPrice)}</div>` : ''}</td>
+      <td><span class="pub-status ${c.status}">${statusLabel[c.status] || c.status}</span></td>
+      <td style="color:var(--ink-500);font-size:12px">${fmtTime(c.updatedAt)}</td>
+      <td style="text-align:right">
+        <button class="btn ghost" style="padding:5px 10px;font-size:11.5px" onclick="loadCourseForEdit('${escapeHtml(c.slug)}')">編輯</button>
+        <button class="btn ghost" style="padding:5px 10px;font-size:11.5px" onclick="window.open('/admin/course/preview?slug=${encodeURIComponent(c.slug)}', '_blank')">預覽</button>
+        <button class="btn danger" style="padding:5px 10px;font-size:11.5px" onclick="deleteCourse('${escapeHtml(c.slug)}')">下架</button>
+      </td>
+    </tr>
+  `).join('');
+  wrap.innerHTML = `<table class="list">
+    <thead><tr><th>課程</th><th>章節</th><th>定價</th><th>狀態</th><th>更新時間</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function bindPublishHandlers() {
+  document.getElementById('btn-save').onclick = () => saveCourse(false);
+  document.getElementById('btn-publish').onclick = () => saveCourse(true);
+  document.getElementById('btn-preview').onclick = previewCourse;
+  document.getElementById('btn-reset').onclick = () => {
+    if (confirm('清空表單並退出編輯模式？')) resetForm();
+  };
 }
 
 // ----- users tab -----

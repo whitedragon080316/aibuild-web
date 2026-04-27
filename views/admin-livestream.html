@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bago 派 Portal — 自動化直播</title>
+<style>
+  :root {
+    --brand-700: #2B44B0;
+    --brand-500: #3B5BDB;
+    --accent: #D99A2B;
+    --ink-900: #1c1c1e;
+    --ink-700: #4a4a4e;
+    --ink-500: #888;
+    --ink-300: #c8c8cc;
+    --ink-200: #e5e5ea;
+    --ink-100: #f5f5f7;
+    --bg: #fafafa;
+    --surface: #fff;
+    --good: #2e7d32;
+    --warn: #D99A2B;
+    --bad: #c62828;
+    --script: #4A90E2;
+    --real: #D99A2B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink-900);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  /* ===== Sidebar ===== */
+  aside.sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--ink-200);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .brand {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ink-200);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+  }
+  .brand small { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 3px; letter-spacing: 0.04em; }
+  .nav { padding: 14px 8px; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--ink-700);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+  .nav-item:hover { background: var(--ink-100); }
+  .nav-item.active { background: #ECEFF8; color: var(--brand-700); font-weight: 600; }
+  .nav-item .icon { font-size: 15px; }
+  /* ===== Main ===== */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header.top h1 { font-size: 18px; color: var(--ink-900); font-weight: 700; }
+  header.top h1 small { font-size: 12px; color: var(--ink-500); font-weight: 400; margin-left: 8px; letter-spacing: 0.04em; }
+  header.top .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--brand-700);
+    color: #fff;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { background: var(--brand-500); }
+  .btn.secondary { background: var(--surface); color: var(--ink-900); border: 1px solid var(--ink-200); }
+  .btn.secondary:hover { background: var(--ink-100); }
+  .btn.accent { background: var(--accent); }
+  .btn.accent:hover { background: #c08a25; }
+  .btn.small { padding: 5px 10px; font-size: 12px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ===== Tabs / chips ===== */
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--ink-700);
+    user-select: none;
+  }
+  .chip.active { background: var(--brand-700); color: #fff; border-color: var(--brand-700); }
+  .chip .count { margin-left: 6px; opacity: 0.7; font-size: 11px; }
+
+  /* ===== Content panel ===== */
+  .content { flex: 1; overflow-y: auto; padding: 18px 24px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .empty, .loading { padding: 60px 20px; text-align: center; color: var(--ink-500); font-size: 14px; }
+
+  /* ===== Tab 1: Sessions cards ===== */
+  .session-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .session-card {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .session-card .title { font-size: 15px; font-weight: 700; color: var(--ink-900); }
+  .session-card .meta { font-size: 12.5px; color: var(--ink-500); display: flex; flex-direction: column; gap: 4px; }
+  .session-card .meta a { color: var(--brand-500); text-decoration: none; word-break: break-all; }
+  .session-card .meta a:hover { text-decoration: underline; }
+  .session-card .footer { display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px dashed var(--ink-200); }
+  .session-card .reg-count { font-size: 13px; }
+  .session-card .reg-count strong { font-size: 18px; color: var(--brand-700); }
+  .status-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; color: #fff; }
+  .status-pill.upcoming { background: var(--brand-500); }
+  .status-pill.live { background: var(--bad); }
+  .status-pill.ended { background: var(--ink-500); }
+
+  /* ===== Tab 2: Registrations table ===== */
+  .hint-box {
+    background: #FFF8E7;
+    border: 1px solid #F0D894;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--ink-700);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .hint-box strong { color: var(--ink-900); }
+  .filters { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
+  .filters select, .filters input {
+    padding: 7px 10px;
+    border: 1px solid var(--ink-200);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--surface);
+  }
+  .filters select:focus, .filters input:focus { outline: none; border-color: var(--brand-500); }
+  .filters label { font-size: 12px; color: var(--ink-500); }
+  .range-wrap { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; background: var(--surface); border: 1px solid var(--ink-200); border-radius: 6px; }
+  .range-wrap input[type=range] { width: 100px; }
+  .range-wrap span { font-size: 12px; color: var(--ink-700); min-width: 30px; }
+
+  .batch-toolbar {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .batch-toolbar .batch-info { font-size: 12.5px; color: var(--ink-500); margin-right: auto; }
+  .batch-toolbar .batch-info strong { color: var(--brand-700); }
+
+  table.list { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--ink-200); }
+  table.list th { background: var(--ink-100); padding: 11px 14px; text-align: left; font-size: 12px; color: var(--ink-500); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border-bottom: 1px solid var(--ink-200); }
+  table.list td { padding: 13px 14px; border-bottom: 1px solid var(--ink-100); font-size: 13.5px; vertical-align: middle; }
+  table.list tr:last-child td { border-bottom: 0; }
+  .name { font-weight: 600; color: var(--ink-900); }
+  .progress-wrap { width: 110px; height: 6px; background: var(--ink-200); border-radius: 3px; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--brand-500); transition: width 0.2s; }
+  .progress-bar.full { background: var(--good); }
+  .progress-text { font-size: 11px; color: var(--ink-500); margin-left: 6px; }
+
+  .att-pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .att-pill.attended { background: #E5F5E7; color: var(--good); border: 1px solid #B7E3BD; }
+  .att-pill.absent   { background: #FCE8E8; color: var(--bad);  border: 1px solid #F5C2C2; }
+  .att-pill.pending  { background: var(--ink-100); color: var(--ink-500); border: 1px solid var(--ink-200); }
+
+  /* ===== Tab 3: Live chat ===== */
+  .live-header {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .live-header .live-session { display: flex; align-items: center; gap: 10px; }
+  .live-pill {
+    background: var(--bad);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .live-header .countdown {
+    font-size: 12px;
+    color: var(--ink-500);
+  }
+  .live-header .countdown strong { color: var(--ink-900); font-size: 14px; font-weight: 700; }
+  .layout-chips { display: flex; gap: 6px; align-items: center; }
+  .layout-chips .label { font-size: 11.5px; color: var(--ink-500); }
+
+  .live-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 14px;
+  }
+  .live-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .live-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .live-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .live-panel {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    min-height: 460px;
+    overflow: hidden;
+  }
+  .live-panel-head {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--ink-200);
+    background: var(--ink-100);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-900);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .live-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .live-controls select {
+    padding: 5px 8px;
+    border: 1px solid var(--ink-200);
+    border-radius: 5px;
+    font-size: 12px;
+    background: var(--surface);
+    font-family: inherit;
+  }
+  .chat-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .chat-msg {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .chat-msg .dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+  }
+  .chat-msg.script .dot { background: var(--script); }
+  .chat-msg.real   .dot { background: var(--real); }
+  .chat-msg .body { flex: 1; min-width: 0; }
+  .chat-msg .head-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 2px; }
+  .chat-msg .uname { font-weight: 700; color: var(--ink-900); font-size: 12.5px; }
+  .chat-msg .uid-tag {
+    font-size: 10.5px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .chat-msg.script .uid-tag.kind { background: var(--script); }
+  .chat-msg.real   .uid-tag.kind { background: var(--real); color: #fff; }
+  .chat-msg .at { font-size: 11px; color: var(--ink-500); }
+  .chat-msg .text { color: var(--ink-700); word-break: break-word; }
+
+  .chat-input-wrap {
+    border-top: 1px solid var(--ink-200);
+    padding: 10px 14px;
+    background: var(--ink-100);
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .chat-input-wrap textarea {
+    flex: 1;
+    border: 1px solid var(--ink-200);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+    min-height: 44px;
+    max-height: 120px;
+    background: var(--surface);
+  }
+  .chat-input-wrap textarea:focus { outline: none; border-color: var(--brand-500); }
+
+  .schedule-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .schedule-item {
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .schedule-item .row1 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .schedule-item .at { font-size: 12px; color: var(--ink-700); font-weight: 700; }
+  .schedule-item .id-tag {
+    font-size: 10.5px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .schedule-item .status {
+    margin-left: auto;
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .schedule-item .status.sent     { background: #E5F5E7; color: var(--good); }
+  .schedule-item .status.pending  { background: #FFF3DB; color: var(--accent); }
+  .schedule-item .text { font-size: 12.5px; color: var(--ink-700); }
+
+  .schedule-add {
+    padding: 10px 14px;
+    border-top: 1px solid var(--ink-200);
+    background: var(--ink-100);
+  }
+
+  /* ===== Tab 4 (Flows): unchanged ===== */
+  .flow-list { display: flex; flex-direction: column; gap: 12px; }
+  .flow-card {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .flow-main { flex: 1; min-width: 0; }
+  .flow-title { font-size: 15px; font-weight: 700; color: var(--ink-900); margin-bottom: 4px; }
+  .flow-desc { font-size: 12.5px; color: var(--ink-500); margin-bottom: 8px; line-height: 1.5; }
+  .flow-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .meta-chip {
+    background: var(--ink-100);
+    border: 1px solid var(--ink-200);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    color: var(--ink-700);
+  }
+  .meta-chip.runs { background: #ECEFF8; border-color: #d8def0; color: var(--brand-700); font-weight: 600; }
+  .flow-actions { display: flex; align-items: center; gap: 10px; }
+
+  .switch { position: relative; display: inline-block; width: 42px; height: 24px; cursor: pointer; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0;
+    background-color: var(--ink-200);
+    border-radius: 999px;
+    transition: 0.2s;
+  }
+  .slider::before {
+    content: ""; position: absolute;
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .switch input:checked + .slider { background: var(--good); }
+  .switch input:checked + .slider::before { transform: translateX(18px); }
+
+  /* ===== Tab 5: Media library ===== */
+  .media-toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .media-item {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .media-item:hover { border-color: var(--brand-500); transform: translateY(-1px); }
+  .media-thumb {
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #ECEFF8 0%, #f5f5f7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    position: relative;
+  }
+  .media-thumb .duration {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  .media-thumb .tagged-flag {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: var(--brand-700);
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .media-meta { padding: 10px 12px; }
+  .media-meta .title { font-size: 13px; font-weight: 600; color: var(--ink-900); margin-bottom: 4px; line-height: 1.4; }
+  .media-meta .sub { font-size: 11px; color: var(--ink-500); }
+
+  /* ===== Tab 6: v3 preview ===== */
+  .v3-preview {
+    background: var(--surface);
+    border: 1.5px dashed var(--ink-300);
+    border-radius: 12px;
+    padding: 40px 32px;
+    text-align: center;
+    color: var(--ink-500);
+  }
+  .v3-preview h2 { font-size: 18px; color: var(--ink-700); margin-bottom: 10px; }
+  .v3-preview p { font-size: 13.5px; line-height: 1.7; margin-bottom: 6px; }
+  .v3-preview .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 22px; text-align: left; }
+  .v3-feature { background: var(--ink-100); padding: 14px; border-radius: 8px; }
+  .v3-feature h3 { font-size: 13px; color: var(--ink-700); margin-bottom: 6px; }
+  .v3-feature p { font-size: 12px; color: var(--ink-500); margin: 0; }
+
+  .toast {
+    position: fixed; top: 20px; right: 20px;
+    background: var(--ink-900); color: #fff;
+    padding: 12px 20px; border-radius: 6px;
+    font-size: 13px; z-index: 200;
+    opacity: 0; transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: var(--bad); }
+  .toast.success { background: var(--good); }
+
+  @media (max-width: 1100px) {
+    .live-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+    .v3-preview .features { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">Bago 派 Portal<small>v1.5 · 自動化直播</small></div>
+  <nav class="nav">
+    <a class="nav-item" href="/admin/lumi"><span class="icon">📋</span> 客戶管理</a>
+    <a class="nav-item" href="/admin/setup-wizard"><span class="icon">🧙</span> 設定精靈</a>
+    <a class="nav-item" href="/admin/generator"><span class="icon">🌐</span> 網站生成</a>
+    <a class="nav-item" href="/admin/line-cards"><span class="icon">💬</span> LINE 圖卡</a>
+    <a class="nav-item" href="/admin/line-bot"><span class="icon">🤖</span> LINE 機器人</a>
+    <a class="nav-item" href="/admin/ads"><span class="icon">📣</span> 廣告投放</a>
+    <a class="nav-item" href="/admin/course"><span class="icon">📚</span> 課程後台</a>
+    <a class="nav-item active" href="/admin/livestream"><span class="icon">📊</span> 自動化直播</a>
+  </nav>
+</aside>
+
+<main>
+  <header class="top">
+    <h1>自動化直播 <small>5/28 直播 demo · v1.5 · Luke 風格升級</small></h1>
+    <div class="actions">
+      <button class="btn secondary" id="btn-refresh">🔄 重新整理</button>
+    </div>
+  </header>
+
+  <div class="toolbar" id="tab-bar">
+    <span class="chip active" data-tab="sessions">場次列表</span>
+    <span class="chip" data-tab="registrations">報名紀錄</span>
+    <span class="chip" data-tab="live">即時訊息互動 💬</span>
+    <span class="chip" data-tab="flows">自動訊息流程</span>
+    <span class="chip" data-tab="media">媒體庫 📁</span>
+    <span class="chip" data-tab="webinar">自動化銷講 <small style="font-size:10px;opacity:0.7;margin-left:4px">v3</small></span>
+  </div>
+
+  <div class="content">
+    <!-- Tab 1: Sessions -->
+    <div class="panel active" id="panel-sessions">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:13px;color:var(--ink-500)">直播場次（v1.5：從環境變數 SESSION_1..N 讀，加上 hard-code demo 場次）</div>
+        <button class="btn small" onclick="toast('v3 才開放真實新增場次（目前 placeholder）','')">＋ 新增場次</button>
+      </div>
+      <div id="sessions-list"><div class="loading">載入中...</div></div>
+    </div>
+
+    <!-- Tab 2: Registrations -->
+    <div class="panel" id="panel-registrations">
+      <div class="hint-box">
+        💡 <strong>出席判定方式：</strong>系統偵測用戶打開直播頁面 + 看了多久。<strong>觀看 ≥ 50% 自動標已出席</strong>。可手動勾選改。
+      </div>
+
+      <div class="filters">
+        <select id="filter-session" onchange="loadRegistrations()"><option value="all">全部場次</option></select>
+        <select id="filter-attendance" onchange="applyRegFilters()">
+          <option value="all">全部出席狀態</option>
+          <option value="attended">已出席</option>
+          <option value="absent">未出席</option>
+          <option value="pending">未開始</option>
+        </select>
+        <div class="range-wrap">
+          <label>觀看 ≥</label>
+          <input type="range" id="filter-progress" min="0" max="100" value="0" oninput="onProgressRangeChange()">
+          <span id="filter-progress-val">0%</span>
+        </div>
+        <input type="date" id="filter-from" onchange="loadRegistrations()">
+        <input type="date" id="filter-to" onchange="loadRegistrations()">
+        <input type="text" id="filter-q" placeholder="搜尋名字..." style="flex:1;min-width:140px">
+        <button class="btn small" onclick="loadRegistrations()">搜尋</button>
+      </div>
+
+      <div class="batch-toolbar">
+        <div class="batch-info">已選擇 <strong id="batch-count">0</strong> 筆</div>
+        <button class="btn small secondary" onclick="toggleSelectAll()">全選 / 反選</button>
+        <select id="batch-tag" style="padding:5px 10px;border:1px solid var(--ink-200);border-radius:6px;font-family:inherit;font-size:12px;background:var(--surface)">
+          <option value="">選擇標籤...</option>
+          <option value="VIP">VIP</option>
+          <option value="已出席">已出席</option>
+          <option value="未出席">未出席</option>
+          <option value="高意願">高意願</option>
+          <option value="觀望中">觀望中</option>
+        </select>
+        <button class="btn small" onclick="batchTag()">批次貼標籤</button>
+        <button class="btn small accent" onclick="exportCSV()">📥 匯出 CSV</button>
+      </div>
+
+      <div id="registrations-list"><div class="loading">載入中...</div></div>
+    </div>
+
+    <!-- Tab 3: Live chat / Luke 風格 -->
+    <div class="panel" id="panel-live">
+      <div class="live-header">
+        <div class="live-session">
+          <span class="live-pill">● LIVE 中</span>
+          <div>
+            <div style="font-size:14px;font-weight:700" id="live-session-title">—</div>
+            <div class="countdown">距開播 <strong id="live-countdown">—</strong></div>
+          </div>
+        </div>
+        <div class="layout-chips">
+          <span class="label">每列顯示</span>
+          <span class="chip active" data-cols="2" onclick="setLiveCols(2, this)">2</span>
+          <span class="chip" data-cols="3" onclick="setLiveCols(3, this)">3</span>
+          <span class="chip" data-cols="4" onclick="setLiveCols(4, this)">4</span>
+        </div>
+      </div>
+
+      <div class="live-grid cols-2" id="live-grid">
+        <!-- LEFT: live chat -->
+        <div class="live-panel">
+          <div class="live-panel-head">
+            <span>💬 即時聊天</span>
+            <div class="live-controls">
+              <select id="reply-identity">
+                <option value="">回覆身分...</option>
+              </select>
+              <select id="quick-reply" onchange="applyQuickReply()">
+                <option value="">使用預語...</option>
+              </select>
+              <button class="btn small secondary" onclick="addIdentity()">＋ 新增身分</button>
+            </div>
+          </div>
+          <div class="chat-list" id="chat-list"><div class="loading">載入中...</div></div>
+          <div class="chat-input-wrap">
+            <textarea id="chat-input" placeholder="輸入訊息（Enter 送出，Shift+Enter 換行）"></textarea>
+            <button class="btn" onclick="sendChat()">送出</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: scheduled scripts -->
+        <div class="live-panel">
+          <div class="live-panel-head">
+            <span>📅 腳本排程</span>
+            <button class="btn small" onclick="toast('v3 才開放新增排程（目前 placeholder）','')">＋ 新增排程訊息</button>
+          </div>
+          <div class="schedule-list" id="schedule-list"><div class="loading">載入中...</div></div>
+          <div class="schedule-add">
+            <div style="font-size:11.5px;color:var(--ink-500);text-align:center">
+              💡 排程訊息會依設定時間自動以對應身分送出（v3 串接真實腳本引擎）
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Flows -->
+    <div class="panel" id="panel-flows">
+      <div style="font-size:13px;color:var(--ink-500);margin-bottom:14px">自動訊息流程（v1.5：純 visual list，編輯 / 新增 / 刪除 v3 才做）</div>
+      <div id="flows-list"><div class="loading">載入中...</div></div>
+    </div>
+
+    <!-- Tab 5: Media library -->
+    <div class="panel" id="panel-media">
+      <div class="media-toolbar">
+        <div style="font-size:13px;color:var(--ink-500);flex:1">媒體庫（v1.5：demo placeholder，上傳 / 標註功能 v3 才做）</div>
+        <button class="btn small secondary" onclick="toast('v3 才開放真實上傳（目前 placeholder）','')">📤 上傳媒體</button>
+        <button class="btn small secondary" onclick="toast('「主要訊息紀錄」標註 v3 才開放','')">🏷️ 標註紀錄</button>
+      </div>
+      <div id="media-list"><div class="loading">載入中...</div></div>
+    </div>
+
+    <!-- Tab 6: v3 preview -->
+    <div class="panel" id="panel-webinar">
+      <div class="v3-preview">
+        <h2>🎬 自動化銷講（v3 階段 ship）</h2>
+        <p>把預錄影片當直播播 · 假腳本對話互動 · 觀看進度自動標出席 · Pixel 歸因</p>
+        <p style="margin-top:14px;font-size:12.5px">v1.5 demo 階段先用真直播 + 即時訊息互動 + 手動推播流程，v3 才開放完整自動化銷講 pipeline。</p>
+        <div class="features">
+          <div class="v3-feature">
+            <h3>📺 預錄當直播</h3>
+            <p>固定排程播預錄影片，倒數計時 + 即時觀看數，觀眾體感同直播。</p>
+          </div>
+          <div class="v3-feature">
+            <h3>💬 假腳本對話互動排程</h3>
+            <p>聊天室預設互動腳本，按時間軸自動觸發「學員」訊息，氣氛預熱 + CTA 觸發。</p>
+          </div>
+          <div class="v3-feature">
+            <h3>📈 觀看進度自動標出席</h3>
+            <p>觀看到 50% 自動標出席 / 完看，後續推播流程依進度分群。</p>
+          </div>
+          <div class="v3-feature">
+            <h3>🎯 Pixel 歸因</h3>
+            <p>整合 Meta Pixel + CAPI，從廣告 → 報名 → 出席 → 購買全鏈路歸因。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let allSessions = [];
+let allRegistrations = [];
+let selectedRegIds = new Set();
+let currentTab = 'sessions';
+let liveData = null;
+let identityMap = {}; // name -> color
+
+async function api(path, opts = {}) {
+  const resp = await fetch(path, {
+    method: opts.method || 'GET',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (resp.status === 403) {
+    window.location.href = '/admin/lumi/login';
+    throw new Error('需要重新登入');
+  }
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+  return data;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+function fmtDateTime(d) {
+  if (!d) return '—';
+  try {
+    return new Date(d).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  } catch (e) { return '—'; }
+}
+
+// ===== Tabs =====
+document.querySelectorAll('#tab-bar .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#tab-bar .chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentTab = c.dataset.tab;
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + currentTab).classList.add('active');
+    if (currentTab === 'registrations' && allSessions.length === 0) loadSessions().then(loadRegistrations);
+    else if (currentTab === 'registrations') loadRegistrations();
+    else if (currentTab === 'flows') loadFlows();
+    else if (currentTab === 'live') loadLiveChat();
+    else if (currentTab === 'media') loadMedia();
+  });
+});
+
+// ===== Tab 1: Sessions =====
+const STATUS_LABEL = { upcoming: '即將開始', live: '進行中', ended: '已結束' };
+
+async function loadSessions() {
+  try {
+    const data = await api('/admin/livestream/api/sessions');
+    allSessions = data.sessions || [];
+    renderSessions();
+    const sel = document.getElementById('filter-session');
+    if (sel) {
+      sel.innerHTML = '<option value="all">全部場次</option>' +
+        allSessions.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.title)}</option>`).join('');
+    }
+  } catch (e) {
+    document.getElementById('sessions-list').innerHTML = `<div class="empty">載入失敗：${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderSessions() {
+  const area = document.getElementById('sessions-list');
+  if (allSessions.length === 0) {
+    area.innerHTML = '<div class="empty">還沒有任何場次</div>';
+    return;
+  }
+  area.innerHTML = '<div class="session-grid">' + allSessions.map(s => `
+    <div class="session-card">
+      <div class="title">${escapeHtml(s.title)}</div>
+      <div class="meta">
+        <div>🕐 ${escapeHtml(s.time || '—')}</div>
+        <div>🔗 <a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.url)}</a></div>
+        <div style="color:var(--ink-300);font-size:11px">ID: ${escapeHtml(s.id)}</div>
+      </div>
+      <div class="footer">
+        <div class="reg-count">報名 <strong>${s.registrations || 0}</strong> 人</div>
+        <span class="status-pill ${s.status}">${STATUS_LABEL[s.status] || s.status}</span>
+      </div>
+    </div>
+  `).join('') + '</div>';
+}
+
+// ===== Tab 2: Registrations =====
+function attendanceOf(progress) {
+  if (progress == null || progress === 0) return 'pending';
+  if (progress >= 50) return 'attended';
+  return 'absent';
+}
+const ATT_LABEL = { attended: '已出席', absent: '未出席', pending: '未開始' };
+
+async function loadRegistrations() {
+  const area = document.getElementById('registrations-list');
+  area.innerHTML = '<div class="loading">載入中...</div>';
+  const sessionId = document.getElementById('filter-session').value;
+  const from = document.getElementById('filter-from').value;
+  const to = document.getElementById('filter-to').value;
+  const q = document.getElementById('filter-q').value;
+  const params = new URLSearchParams();
+  if (sessionId && sessionId !== 'all') params.set('session', sessionId);
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+  if (q) params.set('q', q);
+  try {
+    const data = await api('/admin/livestream/api/registrations?' + params.toString());
+    allRegistrations = data.registrations || [];
+    selectedRegIds = new Set();
+    applyRegFilters();
+  } catch (e) {
+    area.innerHTML = `<div class="empty">載入失敗：${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function onProgressRangeChange() {
+  document.getElementById('filter-progress-val').textContent =
+    document.getElementById('filter-progress').value + '%';
+  applyRegFilters();
+}
+
+function applyRegFilters() {
+  const att = document.getElementById('filter-attendance').value;
+  const minProg = parseInt(document.getElementById('filter-progress').value, 10) || 0;
+  let list = allRegistrations.slice();
+  if (att !== 'all') list = list.filter(r => attendanceOf(r.progress) === att);
+  if (minProg > 0) list = list.filter(r => (r.progress || 0) >= minProg);
+  renderRegistrations(list);
+}
+
+function renderRegistrations(list) {
+  const area = document.getElementById('registrations-list');
+  if (list.length === 0) {
+    area.innerHTML = '<div class="empty">沒有符合條件的報名紀錄</div>';
+    updateBatchCount();
+    return;
+  }
+  const rows = list.map(r => {
+    const progressFull = r.progress >= 100;
+    const att = attendanceOf(r.progress);
+    const checked = selectedRegIds.has(r.id) ? 'checked' : '';
+    return `<tr>
+      <td><input type="checkbox" data-reg-id="${escapeHtml(r.id)}" ${checked} onchange="toggleSelect('${escapeHtml(r.id)}', this.checked)"></td>
+      <td><div class="name">${escapeHtml(r.name)}</div>${r.isGuest ? '<span style="color:var(--ink-500);font-size:11px">guest</span>' : ''}</td>
+      <td style="color:var(--ink-700);font-size:12.5px">${escapeHtml(r.email || '—')}</td>
+      <td><div style="font-size:12.5px">${escapeHtml(r.sessionTitle || r.sessionId)}</div><div style="color:var(--ink-500);font-size:11.5px">${escapeHtml(r.sessionTime || '')}</div></td>
+      <td style="color:var(--ink-500);font-size:12.5px">${fmtDateTime(r.registeredAt)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="progress-wrap"><div class="progress-bar ${progressFull ? 'full' : ''}" style="width:${Math.min(100, r.progress || 0)}%"></div></div>
+          <span class="progress-text">${Math.min(100, r.progress || 0)}%</span>
+        </div>
+      </td>
+      <td><span class="att-pill ${att}">${ATT_LABEL[att]}</span></td>
+      <td>
+        <button class="btn small secondary" onclick="messageUser('${escapeHtml(r.id)}','${escapeHtml(r.name)}',${r.isGuest})">💬 訊息</button>
+      </td>
+    </tr>`;
+  }).join('');
+  area.innerHTML = `<table class="list">
+    <thead><tr>
+      <th style="width:32px"><input type="checkbox" onchange="toggleSelectAll(this.checked)"></th>
+      <th>用戶</th><th>Email</th><th>場次</th><th>報名時間</th><th>觀看進度</th><th>出席狀態</th><th>操作</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+  updateBatchCount();
+}
+
+function toggleSelect(id, checked) {
+  if (checked) selectedRegIds.add(id);
+  else selectedRegIds.delete(id);
+  updateBatchCount();
+}
+
+function toggleSelectAll(forceState) {
+  const boxes = document.querySelectorAll('#registrations-list input[type=checkbox][data-reg-id]');
+  // 若無傳入，根據目前是否全選決定 → 反選 / 全選
+  let target;
+  if (typeof forceState === 'boolean') {
+    target = forceState;
+  } else {
+    const allOn = Array.from(boxes).every(b => b.checked);
+    target = !allOn;
+  }
+  boxes.forEach(b => {
+    b.checked = target;
+    if (target) selectedRegIds.add(b.dataset.regId);
+    else selectedRegIds.delete(b.dataset.regId);
+  });
+  updateBatchCount();
+}
+
+function updateBatchCount() {
+  const el = document.getElementById('batch-count');
+  if (el) el.textContent = String(selectedRegIds.size);
+}
+
+function batchTag() {
+  if (selectedRegIds.size === 0) return toast('請先勾選要貼標籤的對象', 'error');
+  const tag = document.getElementById('batch-tag').value;
+  if (!tag) return toast('請先選擇標籤', 'error');
+  toast(`已對 ${selectedRegIds.size} 筆貼上「${tag}」（v1.5 placeholder · 不會持久化）`, 'success');
+}
+
+function exportCSV() {
+  // mock CSV download
+  const rows = [['name', 'email', 'session', 'progress', 'attendance']];
+  allRegistrations.forEach(r => {
+    rows.push([
+      r.name || '',
+      r.email || '',
+      r.sessionTitle || r.sessionId || '',
+      String(r.progress || 0),
+      ATT_LABEL[attendanceOf(r.progress)] || '',
+    ]);
+  });
+  const csv = '\ufeff' + rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'livestream_registrations_' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('CSV 匯出完成（v1.5 mock data）', 'success');
+}
+
+function messageUser(sessionId, name, isGuest) {
+  if (isGuest) return toast('Guest 用戶沒有真實 LINE userId 不能推訊息', 'error');
+  window.open('/admin/lumi', '_blank');
+  toast('請到「客戶管理」找 ' + name + ' 推訊息', '');
+}
+
+// ===== Tab 3: Live chat =====
+async function loadLiveChat() {
+  try {
+    const data = await api('/admin/livestream/api/live-chat');
+    liveData = data;
+    // header
+    document.getElementById('live-session-title').textContent = data.currentSession?.title || '—';
+    document.getElementById('live-countdown').textContent = data.currentSession?.countdown || '—';
+    // identities → dropdown + map
+    const idSel = document.getElementById('reply-identity');
+    identityMap = {};
+    (data.identities || []).forEach(it => identityMap[it.name] = it.color);
+    idSel.innerHTML = '<option value="">回覆身分...</option>' +
+      (data.identities || []).map(i => `<option value="${escapeHtml(i.name)}">${escapeHtml(i.name)}</option>`).join('');
+    // quick replies
+    const qSel = document.getElementById('quick-reply');
+    qSel.innerHTML = '<option value="">使用預語...</option>' +
+      (data.quickReplies || []).map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
+    renderChat(data.messages || []);
+    renderSchedule(data.scheduled || []);
+  } catch (e) {
+    document.getElementById('chat-list').innerHTML =
+      `<div class="empty">載入失敗：${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderChat(msgs) {
+  const area = document.getElementById('chat-list');
+  if (msgs.length === 0) {
+    area.innerHTML = '<div class="empty">還沒有訊息</div>';
+    return;
+  }
+  area.innerHTML = msgs.map(m => {
+    const kindLabel = m.type === 'script' ? '腳本' : '真實';
+    const idTag = m.identity
+      ? `<span class="uid-tag" style="background:${m.identityColor || '#888'}">${escapeHtml(m.identity)}</span>`
+      : '';
+    return `<div class="chat-msg ${m.type}">
+      <div class="dot"></div>
+      <div class="body">
+        <div class="head-row">
+          <span class="uname">${escapeHtml(m.user || '匿名')}</span>
+          <span class="uid-tag kind">${kindLabel}</span>
+          ${idTag}
+          <span class="at">${escapeHtml(m.at || '')}</span>
+        </div>
+        <div class="text">${escapeHtml(m.text || '')}</div>
+      </div>
+    </div>`;
+  }).join('');
+  area.scrollTop = area.scrollHeight;
+}
+
+function renderSchedule(items) {
+  const area = document.getElementById('schedule-list');
+  if (items.length === 0) {
+    area.innerHTML = '<div class="empty">還沒有排程訊息</div>';
+    return;
+  }
+  area.innerHTML = items.map(s => {
+    const color = identityMap[s.identity] || '#888';
+    const statusKey = s.status === '已送' ? 'sent' : 'pending';
+    return `<div class="schedule-item">
+      <div class="row1">
+        <span class="at">⏱ ${escapeHtml(s.at)}</span>
+        <span class="id-tag" style="background:${color}">${escapeHtml(s.identity)}</span>
+        <span class="status ${statusKey}">${escapeHtml(s.status)}</span>
+      </div>
+      <div class="text">${escapeHtml(s.text)}</div>
+    </div>`;
+  }).join('');
+}
+
+function applyQuickReply() {
+  const sel = document.getElementById('quick-reply');
+  const txt = document.getElementById('chat-input');
+  if (sel.value) {
+    txt.value = sel.value;
+    sel.value = '';
+    txt.focus();
+  }
+}
+
+function sendChat() {
+  const idSel = document.getElementById('reply-identity');
+  const txt = document.getElementById('chat-input');
+  const message = txt.value.trim();
+  if (!message) return toast('請先輸入訊息', 'error');
+  if (!idSel.value) return toast('請先選擇回覆身分', 'error');
+  // append to local view as new script message
+  const now = new Date();
+  const at = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const newMsg = {
+    id: 'local_' + Date.now(),
+    type: 'script',
+    identity: idSel.value,
+    identityColor: identityMap[idSel.value] || '#888',
+    user: idSel.value + '_身分',
+    text: message,
+    at,
+  };
+  if (liveData) {
+    liveData.messages = liveData.messages || [];
+    liveData.messages.push(newMsg);
+    renderChat(liveData.messages);
+  }
+  txt.value = '';
+  toast('訊息已送出（v1.5 placeholder · 不會真送進直播聊天室）', 'success');
+}
+
+function addIdentity() {
+  toast('v3 才開放新增回覆身分（目前 placeholder）', '');
+}
+
+function setLiveCols(cols, el) {
+  document.querySelectorAll('.layout-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const grid = document.getElementById('live-grid');
+  grid.classList.remove('cols-2', 'cols-3', 'cols-4');
+  grid.classList.add('cols-' + cols);
+}
+
+document.addEventListener('keydown', e => {
+  if (currentTab !== 'live') return;
+  if (e.key === 'Enter' && !e.shiftKey && document.activeElement?.id === 'chat-input') {
+    e.preventDefault();
+    sendChat();
+  }
+});
+
+// ===== Tab 4: Flows =====
+const TRIGGER_LABEL = {
+  tag: '貼上標籤',
+  event: '事件觸發',
+  follow: '加入好友',
+};
+
+async function loadFlows() {
+  const area = document.getElementById('flows-list');
+  area.innerHTML = '<div class="loading">載入中...</div>';
+  try {
+    const data = await api('/admin/livestream/api/flows');
+    renderFlows(data.flows || []);
+  } catch (e) {
+    area.innerHTML = `<div class="empty">載入失敗：${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderFlows(flows) {
+  const area = document.getElementById('flows-list');
+  if (flows.length === 0) {
+    area.innerHTML = '<div class="empty">還沒有任何流程</div>';
+    return;
+  }
+  area.innerHTML = '<div class="flow-list">' + flows.map(f => `
+    <div class="flow-card">
+      <div class="flow-main">
+        <div class="flow-title">${escapeHtml(f.name)}</div>
+        <div class="flow-desc">${escapeHtml(f.description || '')}</div>
+        <div class="flow-meta">
+          <span class="meta-chip">🎯 ${escapeHtml(f.trigger)}</span>
+          <span class="meta-chip">📋 ${f.steps} 步驟</span>
+          <span class="meta-chip runs">▶ ${f.runs} 執行人次</span>
+        </div>
+      </div>
+      <div class="flow-actions">
+        <label class="switch" title="${f.enabled ? '已啟用' : '已停用'}">
+          <input type="checkbox" ${f.enabled ? 'checked' : ''} onchange="toggleFlow('${escapeHtml(f.id)}', this.checked)">
+          <span class="slider"></span>
+        </label>
+        <button class="btn small secondary" onclick="toast('v3 才開放編輯（目前 placeholder）','')">編輯</button>
+        <button class="btn small secondary" onclick="toast('v3 才開放刪除（目前 placeholder）','')">刪除</button>
+      </div>
+    </div>
+  `).join('') + '</div>';
+}
+
+function toggleFlow(id, enabled) {
+  toast(`流程「${id}」${enabled ? '已啟用' : '已停用'}（v1.5 placeholder · 不會持久化）`, '');
+}
+
+// ===== Tab 5: Media library =====
+async function loadMedia() {
+  const area = document.getElementById('media-list');
+  area.innerHTML = '<div class="loading">載入中...</div>';
+  try {
+    const data = await api('/admin/livestream/api/media');
+    renderMedia(data.media || []);
+  } catch (e) {
+    area.innerHTML = `<div class="empty">載入失敗：${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderMedia(items) {
+  const area = document.getElementById('media-list');
+  if (items.length === 0) {
+    area.innerHTML = '<div class="empty">媒體庫是空的</div>';
+    return;
+  }
+  area.innerHTML = '<div class="media-grid">' + items.map(m => `
+    <div class="media-item" onclick="toast('v3 才開放預覽 / 標註（目前 placeholder）','')">
+      <div class="media-thumb">
+        ${escapeHtml(m.thumb || (m.kind === 'video' ? '🎬' : '🖼️'))}
+        ${m.duration ? `<span class="duration">${escapeHtml(m.duration)}</span>` : ''}
+        ${m.tagged ? `<span class="tagged-flag">主要訊息</span>` : ''}
+      </div>
+      <div class="media-meta">
+        <div class="title">${escapeHtml(m.title)}</div>
+        <div class="sub">${escapeHtml(m.kind === 'video' ? '影片' : '圖片')} · ${escapeHtml(m.size || '')} · ${escapeHtml(m.uploadedAt || '')}</div>
+      </div>
+    </div>
+  `).join('') + '</div>';
+}
+
+// ===== Init =====
+document.getElementById('btn-refresh').addEventListener('click', () => {
+  if (currentTab === 'sessions') loadSessions();
+  else if (currentTab === 'registrations') loadRegistrations();
+  else if (currentTab === 'flows') loadFlows();
+  else if (currentTab === 'live') loadLiveChat();
+  else if (currentTab === 'media') loadMedia();
+});
+
+document.getElementById('filter-q').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loadRegistrations();
+});
+
+loadSessions();
+</script>
+</body>
+</html>

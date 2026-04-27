@@ -996,6 +996,7 @@ app.use('/admin/ads', require('./routes/admin-ads'));
 app.use('/admin/course', require('./routes/admin-course'));
 app.use('/admin/line-bot', require('./routes/admin-line-bot'));
 app.use('/admin/setup-wizard', require('./routes/admin-setup-wizard'));
+app.use('/admin/livestream', require('./routes/admin-livestream'));
 
 // === Internal：bot 查某 lineUserId 有沒有最近完成的 Lumi session ===
 // 用 shared secret 驗證。bot follow event 用來分流熱 lead vs 冷 follower。

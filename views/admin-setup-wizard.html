@@ -55,7 +55,23 @@
     color: var(--brand-700);
   }
   .brand small { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 3px; letter-spacing: 0.04em; }
-  .step-nav { padding: 14px 8px; flex: 1; }
+  .nav { padding: 14px 8px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--ink-700);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13.5px;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: var(--ink-100); }
+  .nav-item.active { background: #ECEFF8; color: var(--brand-700); font-weight: 600; }
+  .nav-item .icon { font-size: 15px; }
+  .step-nav { padding: 14px 8px; flex: 1; border-top: 1px solid var(--ink-200); }
   .step-nav-title {
     font-size: 11px;
     color: var(--ink-500);
@@ -410,12 +426,19 @@
 <body>
 <aside class="sidebar">
   <div class="brand">Bago 派 Portal<small>v1.5 · Setup Wizard</small></div>
+  <nav class="nav">
+    <a class="nav-item" href="/admin/lumi"><span class="icon">📋</span> 客戶管理</a>
+    <a class="nav-item active" href="/admin/setup-wizard"><span class="icon">🧙</span> 設定精靈</a>
+    <a class="nav-item" href="/admin/generator"><span class="icon">🌐</span> 網站生成</a>
+    <a class="nav-item" href="/admin/line-cards"><span class="icon">💬</span> LINE 圖卡</a>
+    <a class="nav-item" href="/admin/line-bot"><span class="icon">🤖</span> LINE 機器人</a>
+    <a class="nav-item" href="/admin/ads"><span class="icon">📣</span> 廣告投放</a>
+    <a class="nav-item" href="/admin/course"><span class="icon">📚</span> 課程後台</a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">📊</span> 自動化直播 <small style="font-size:10px;color:var(--ink-500)">v3</small></a>
+  </nav>
   <div class="step-nav">
     <div class="step-nav-title">設定步驟（共 5 步）</div>
     <div id="step-list"></div>
-    <div style="padding: 14px; margin-top: 14px; border-top: 1px solid var(--ink-200);">
-      <a href="/admin/lumi" class="btn secondary" style="width: 100%; justify-content: center;">← 回 Portal</a>
-    </div>
   </div>
 </aside>
 
