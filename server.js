@@ -851,7 +851,7 @@ app.get('/admin/lumi/login', (req, res) => {
   const expected = process.env.ADMIN_TOKEN;
   if (!expected) return res.status(503).send('ADMIN_TOKEN not configured');
   const errMsg = req.query.err ? '<div style="color:#c62828;font-size:13px;margin-bottom:10px">Token 不對</div>' : '';
-  res.send(`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bago 派 Portal — 登入</title>
+  res.send(`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIbuild · 登入</title>
 <style>
 body{font-family:-apple-system,'Noto Sans TC',sans-serif;background:#fafafa;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
 .card{background:#fff;padding:40px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.06);width:340px;border:1px solid #e5e5ea;}
@@ -863,7 +863,8 @@ button{width:100%;padding:12px;margin-top:12px;background:linear-gradient(135deg
 button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(43,68,176,0.25);}
 </style></head><body>
 <form class="card" method="POST" action="/admin/lumi/login">
-  <h1>Bago 派 Portal</h1>
+  <h1>AIbuild</h1>
+  <div style="color:#888;font-size:11px;margin:-2px 0 16px;letter-spacing:0.04em;">始於自己 終於 AI</div>
   <div class="sub">輸入 admin token 進入後台</div>
   ${errMsg}
   <input type="password" name="token" placeholder="Admin token" required autofocus autocomplete="off">
