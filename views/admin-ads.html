@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bago 派 Portal — 廣告投放</title>
+<style>
+  :root {
+    --brand-700: #2B44B0;
+    --brand-500: #3B5BDB;
+    --accent: #D99A2B;
+    --ink-900: #1c1c1e;
+    --ink-700: #4a4a4e;
+    --ink-500: #888;
+    --ink-300: #c8c8cc;
+    --ink-200: #e5e5ea;
+    --ink-100: #f5f5f7;
+    --bg: #fafafa;
+    --surface: #fff;
+    --good: #2e7d32;
+    --warn: #D99A2B;
+    --bad: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink-900);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  aside.sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--ink-200);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .brand {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ink-200);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+  }
+  .brand small { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 3px; letter-spacing: 0.04em; }
+  .nav { padding: 14px 8px; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--ink-700);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+  .nav-item:hover { background: var(--ink-100); }
+  .nav-item.active { background: #ECEFF8; color: var(--brand-700); font-weight: 600; }
+  .nav-item .icon { font-size: 15px; }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header.top h1 { font-size: 18px; color: var(--ink-900); font-weight: 700; }
+  header.top h1 small { font-size: 11px; color: var(--ink-500); margin-left: 8px; font-weight: 400; }
+  header.top .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--brand-700);
+    color: #fff;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { background: var(--brand-500); }
+  .btn.secondary { background: var(--surface); color: var(--ink-900); border: 1px solid var(--ink-200); }
+  .btn.secondary:hover { background: var(--ink-100); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--ink-700);
+  }
+  .chip.active { background: var(--brand-700); color: #fff; border-color: var(--brand-700); }
+  .toolbar .meta {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--ink-500);
+  }
+
+  .content { flex: 1; overflow-y: auto; padding: 16px 24px; }
+
+  /* KPI cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .kpi .label { font-size: 11.5px; color: var(--ink-500); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .kpi .value { font-size: 24px; font-weight: 700; color: var(--ink-900); }
+  .kpi .sub { font-size: 11.5px; color: var(--ink-500); margin-top: 4px; }
+
+  table.list { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--ink-200); }
+  table.list th {
+    background: var(--ink-100);
+    padding: 11px 14px;
+    text-align: left;
+    font-size: 12px;
+    color: var(--ink-500);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ink-200);
+    cursor: pointer;
+    user-select: none;
+  }
+  table.list th:hover { background: #ececf0; }
+  table.list th .arrow { font-size: 9px; margin-left: 4px; opacity: 0.6; }
+  table.list td { padding: 13px 14px; border-bottom: 1px solid var(--ink-100); font-size: 13.5px; }
+  table.list td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.list th.num { text-align: right; }
+  table.list tr:last-child td { border-bottom: 0; }
+  table.list .adset-name { font-weight: 600; color: var(--ink-900); }
+  table.list .adset-name .campaign { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 2px; }
+  .cpl-good { color: var(--good); font-weight: 600; }
+  .cpl-warn { color: var(--warn); font-weight: 600; }
+  .cpl-bad { color: var(--bad); font-weight: 600; }
+  .cpl-na { color: var(--ink-500); }
+
+  .empty, .loading { padding: 60px 20px; text-align: center; color: var(--ink-500); font-size: 14px; }
+  .alert {
+    background: #fff8e8;
+    border: 1px solid #f0d68a;
+    color: #7a5a10;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .alert.error { background: #fdecea; border-color: #f4b6b0; color: #7a1f15; }
+  .alert code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">Bago 派 Portal<small>v1.5 · 廣告投放</small></div>
+  <nav class="nav">
+    <a class="nav-item" href="/admin/lumi"><span class="icon">📋</span> 客戶管理</a>
+    <a class="nav-item active"><span class="icon">📣</span> 廣告投放</a>
+    <a class="nav-item" href="https://zeabur.com/dashboard" target="_blank"><span class="icon">🚀</span> 啟動 Zeabur</a>
+  </nav>
+</aside>
+
+<main>
+  <header class="top">
+    <h1>廣告投放 <small>Meta Ads · read-only dashboard</small></h1>
+    <div class="actions">
+      <button class="btn secondary" id="btn-refresh">🔄 重新整理</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <span class="chip" data-preset="today">今天</span>
+    <span class="chip" data-preset="last_7d">7 天</span>
+    <span class="chip active" data-preset="last_14d">14 天</span>
+    <span class="chip" data-preset="last_30d">30 天</span>
+    <span class="meta" id="meta-info">—</span>
+  </div>
+
+  <div class="content" id="content">
+    <div class="loading">載入中...</div>
+  </div>
+</main>
+
+<script>
+const HAS_META_TOKEN = '{{HAS_META_TOKEN}}' === 'true';
+const META_AD_ACCOUNT_ID = '{{META_AD_ACCOUNT_ID}}';
+
+let currentPreset = 'last_14d';
+let currentData = null;
+let sortKey = 'spend';
+let sortDir = 'desc';
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+}
+
+function fmtMoney(n) {
+  if (n == null || isNaN(n)) return '—';
+  return 'NT$' + Math.round(n).toLocaleString();
+}
+function fmtInt(n) {
+  if (n == null || isNaN(n)) return '—';
+  return Math.round(n).toLocaleString();
+}
+function fmtPct(n) {
+  if (n == null || isNaN(n)) return '—';
+  return n.toFixed(2) + '%';
+}
+function cplClass(cpl) {
+  if (cpl == null) return 'cpl-na';
+  if (cpl <= 300) return 'cpl-good';
+  if (cpl <= 600) return 'cpl-warn';
+  return 'cpl-bad';
+}
+
+async function loadData() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">載入中...</div>';
+  document.getElementById('btn-refresh').disabled = true;
+
+  if (!HAS_META_TOKEN) {
+    content.innerHTML = `
+      <div class="alert">
+        <strong>未設定 Meta token</strong><br>
+        環境變數 <code>META_ACCESS_TOKEN</code> 沒設定，無法呼叫 Meta Graph API。<br><br>
+        設定方式：
+        <ol style="margin:8px 0 0 20px; line-height:1.7">
+          <li>到 Meta Business Settings → System Users → 產生 long-lived token（需 ads_read 權限）</li>
+          <li>到 Zeabur Dashboard → 此 service → Variables → 新增 <code>META_ACCESS_TOKEN</code></li>
+          <li>確認 <code>META_AD_ACCOUNT_ID</code> 已設定（目前：<code>${escapeHtml(META_AD_ACCOUNT_ID)}</code>）</li>
+          <li>Redeploy 後重新整理本頁</li>
+        </ol>
+      </div>`;
+    document.getElementById('btn-refresh').disabled = false;
+    return;
+  }
+
+  try {
+    const resp = await fetch(`/admin/ads/api/insights?datePreset=${encodeURIComponent(currentPreset)}`, {
+      credentials: 'same-origin',
+    });
+    if (resp.status === 403) {
+      window.location.href = '/admin/lumi/login';
+      return;
+    }
+    const data = await resp.json();
+    currentData = data;
+    render();
+  } catch (e) {
+    content.innerHTML = `<div class="alert error"><strong>載入失敗</strong><br>${escapeHtml(e.message)}</div>`;
+  } finally {
+    document.getElementById('btn-refresh').disabled = false;
+  }
+}
+
+function render() {
+  const content = document.getElementById('content');
+  const meta = document.getElementById('meta-info');
+
+  if (!currentData) {
+    content.innerHTML = '<div class="loading">載入中...</div>';
+    return;
+  }
+
+  if (!currentData.ok) {
+    let msg = `<strong>無法載入廣告數據</strong><br>${escapeHtml(currentData.message || currentData.reason || 'unknown')}`;
+    if (currentData.reason === 'missing_token') {
+      msg += '<br><br>環境變數 <code>META_ACCESS_TOKEN</code> 未設定。';
+    } else if (currentData.code === 190) {
+      msg += '<br><br>Token 已過期，需要在 Meta Business Settings 重新產生。';
+    }
+    content.innerHTML = `<div class="alert error">${msg}</div>`;
+    meta.textContent = '—';
+    return;
+  }
+
+  const s = currentData.summary;
+  const fetched = currentData.fetchedAt
+    ? new Date(currentData.fetchedAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+    : '—';
+  meta.textContent = `帳號 ${currentData.accountId}・${currentData.rows.length} 個廣告組・更新於 ${fetched}`;
+
+  const kpis = `
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="label">總花費</div>
+        <div class="value">${fmtMoney(s.totalSpend)}</div>
+        <div class="sub">${currentData.datePreset}</div>
+      </div>
+      <div class="kpi">
+        <div class="label">總 Leads</div>
+        <div class="value">${fmtInt(s.totalLeads)}</div>
+        <div class="sub">${fmtInt(s.totalClicks)} clicks</div>
+      </div>
+      <div class="kpi">
+        <div class="label">平均 CPL</div>
+        <div class="value ${cplClass(s.avgCPL)}">${s.avgCPL == null ? '—' : fmtMoney(s.avgCPL)}</div>
+        <div class="sub">花費 / leads</div>
+      </div>
+      <div class="kpi">
+        <div class="label">平均 CTR</div>
+        <div class="value">${fmtPct(s.avgCTR)}</div>
+        <div class="sub">${fmtInt(s.totalImpressions)} impressions</div>
+      </div>
+    </div>`;
+
+  // Sort rows
+  const rows = [...currentData.rows].sort((a, b) => {
+    const av = a[sortKey];
+    const bv = b[sortKey];
+    const an = av == null ? -Infinity : av;
+    const bn = bv == null ? -Infinity : bv;
+    if (typeof an === 'string' || typeof bn === 'string') {
+      return sortDir === 'asc'
+        ? String(av || '').localeCompare(String(bv || ''))
+        : String(bv || '').localeCompare(String(av || ''));
+    }
+    return sortDir === 'asc' ? an - bn : bn - an;
+  });
+
+  let tableHtml;
+  if (rows.length === 0) {
+    tableHtml = '<div class="empty">這個區間沒有任何廣告組數據</div>';
+  } else {
+    const arrow = (key) => sortKey === key ? `<span class="arrow">${sortDir === 'asc' ? '▲' : '▼'}</span>` : '';
+    const trs = rows.map(r => `
+      <tr>
+        <td>
+          <div class="adset-name">${escapeHtml(r.adset_name)}
+            ${r.campaign_name ? `<span class="campaign">${escapeHtml(r.campaign_name)}</span>` : ''}
+          </div>
+        </td>
+        <td class="num">${fmtMoney(r.spend)}</td>
+        <td class="num">${fmtInt(r.impressions)}</td>
+        <td class="num">${fmtInt(r.clicks)}</td>
+        <td class="num">${fmtPct(r.ctr)}</td>
+        <td class="num">${fmtInt(r.leads)}</td>
+        <td class="num ${cplClass(r.cpl)}">${r.cpl == null ? '—' : fmtMoney(r.cpl)}</td>
+      </tr>
+    `).join('');
+
+    tableHtml = `
+      <table class="list">
+        <thead>
+          <tr>
+            <th data-sort="adset_name">廣告組 ${arrow('adset_name')}</th>
+            <th class="num" data-sort="spend">花費 ${arrow('spend')}</th>
+            <th class="num" data-sort="impressions">曝光 ${arrow('impressions')}</th>
+            <th class="num" data-sort="clicks">點擊 ${arrow('clicks')}</th>
+            <th class="num" data-sort="ctr">CTR ${arrow('ctr')}</th>
+            <th class="num" data-sort="leads">Leads ${arrow('leads')}</th>
+            <th class="num" data-sort="cpl">CPL ${arrow('cpl')}</th>
+          </tr>
+        </thead>
+        <tbody>${trs}</tbody>
+      </table>`;
+  }
+
+  content.innerHTML = kpis + tableHtml;
+
+  // Wire up sort headers
+  content.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (sortKey === key) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortKey = key;
+        sortDir = (key === 'adset_name') ? 'asc' : 'desc';
+      }
+      render();
+    });
+  });
+}
+
+// Date preset chips
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentPreset = c.dataset.preset;
+    loadData();
+  });
+});
+
+document.getElementById('btn-refresh').addEventListener('click', loadData);
+
+loadData();
+</script>
+</body>
+</html>

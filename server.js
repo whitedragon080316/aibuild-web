@@ -879,13 +879,13 @@ app.post('/admin/lumi/login', (req, res) => {
   const token = (req.body && req.body.token) || '';
   if (token !== expected) return res.redirect('/admin/lumi/login?err=1');
   const maxAge = 7 * 24 * 60 * 60; // 7 days
-  res.setHeader('Set-Cookie', `admin_token=${encodeURIComponent(token)}; HttpOnly; Path=/admin/lumi; SameSite=Lax; Max-Age=${maxAge}`);
+  res.setHeader('Set-Cookie', `admin_token=${encodeURIComponent(token)}; HttpOnly; Path=/admin; SameSite=Lax; Max-Age=${maxAge}`);
   res.redirect('/admin/lumi');
 });
 
 // Logout
 app.post('/admin/lumi/logout', (req, res) => {
-  res.setHeader('Set-Cookie', 'admin_token=; HttpOnly; Path=/admin/lumi; Max-Age=0');
+  res.setHeader('Set-Cookie', 'admin_token=; HttpOnly; Path=/admin; Max-Age=0');
   res.redirect('/admin/lumi/login');
 });
 
@@ -988,6 +988,14 @@ app.patch('/admin/lumi/api/customers/:sessionId', checkAdminAuth, async (req, re
     res.status(500).json({ error: e.message });
   }
 });
+
+// ============ ADMIN PORTAL v1.5 module routers ============
+app.use('/admin/generator', require('./routes/admin-generator'));
+app.use('/admin/line-cards', require('./routes/admin-line-cards'));
+app.use('/admin/ads', require('./routes/admin-ads'));
+app.use('/admin/course', require('./routes/admin-course'));
+app.use('/admin/line-bot', require('./routes/admin-line-bot'));
+app.use('/admin/setup-wizard', require('./routes/admin-setup-wizard'));
 
 // === Internal：bot 查某 lineUserId 有沒有最近完成的 Lumi session ===
 // 用 shared secret 驗證。bot follow event 用來分流熱 lead vs 冷 follower。

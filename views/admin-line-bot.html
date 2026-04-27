@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bago 派 Portal — LINE 機器人建置</title>
+<style>
+  :root {
+    --brand-700: #2B44B0;
+    --brand-500: #3B5BDB;
+    --accent: #D99A2B;
+    --ink-900: #1c1c1e;
+    --ink-700: #4a4a4e;
+    --ink-500: #888;
+    --ink-300: #c8c8cc;
+    --ink-200: #e5e5ea;
+    --ink-100: #f5f5f7;
+    --bg: #fafafa;
+    --surface: #fff;
+    --ok: #2e7d32;
+    --warn: #D99A2B;
+    --err: #c62828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink-900);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  aside.sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--ink-200);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .brand {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ink-200);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+  }
+  .brand small { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 3px; letter-spacing: 0.04em; }
+  .nav { padding: 14px 8px; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--ink-700);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+  .nav-item:hover { background: var(--ink-100); }
+  .nav-item.active { background: #ECEFF8; color: var(--brand-700); font-weight: 600; }
+  .nav-item .icon { font-size: 15px; }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  header.top h1 { font-size: 18px; color: var(--ink-900); font-weight: 700; }
+  .health-row {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 12px 24px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .health-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    border: 1px solid var(--ink-200);
+    background: var(--surface);
+  }
+  .health-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--ink-300);
+  }
+  .health-pill.ok .health-dot { background: var(--ok); }
+  .health-pill.err .health-dot { background: var(--err); }
+  .health-pill.ok { color: var(--ok); }
+  .health-pill.err { color: var(--err); }
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--ink-700);
+  }
+  .chip.active { background: var(--brand-700); color: #fff; border-color: var(--brand-700); }
+  .content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .card h2 { font-size: 15px; color: var(--ink-900); margin-bottom: 8px; }
+  .card .desc { font-size: 12.5px; color: var(--ink-500); margin-bottom: 12px; line-height: 1.6; }
+  .kv {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 8px 16px;
+    font-size: 13px;
+  }
+  .kv dt { color: var(--ink-500); }
+  .kv dd { color: var(--ink-900); word-break: break-all; }
+  .kv code {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 12px;
+    background: var(--ink-100);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .btn {
+    background: var(--brand-700);
+    color: #fff;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+  .btn:hover { background: var(--brand-500); }
+  .btn.secondary { background: var(--surface); color: var(--ink-900); border: 1px solid var(--ink-200); }
+  .btn.secondary:hover { background: var(--ink-100); }
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--ink-200);
+    border-radius: 6px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    background: var(--surface);
+    resize: vertical;
+    min-height: 280px;
+  }
+  textarea:focus { outline: none; border-color: var(--brand-500); }
+  /* ===== Flow diagram ===== */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-node {
+    background: linear-gradient(135deg, #ECEFF8, #fff);
+    border: 1.5px solid var(--brand-500);
+    border-radius: 10px;
+    padding: 14px 22px;
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--brand-700);
+    min-width: 240px;
+    max-width: 420px;
+    box-shadow: 0 1px 3px rgba(43,68,176,0.08);
+  }
+  .flow-node small { display: block; font-weight: 400; color: var(--ink-500); font-size: 11.5px; margin-top: 3px; }
+  .flow-arrow {
+    width: 2px;
+    height: 22px;
+    background: var(--brand-500);
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: -4px;
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid var(--brand-500);
+  }
+  .flow-branch {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+  }
+  .flow-branch .flow-node {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, #FDF6E7, #fff);
+    color: #8a5b1a;
+    min-width: 180px;
+  }
+  .flow-branch-arrows {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .flow-branch-arrows .flow-arrow { width: 180px; height: 2px; background: transparent; }
+  /* ===== Wave table ===== */
+  table.waves {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  table.waves th {
+    background: var(--ink-100);
+    padding: 11px 14px;
+    text-align: left;
+    font-size: 12px;
+    color: var(--ink-500);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ink-200);
+  }
+  table.waves td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--ink-100);
+    font-size: 13.5px;
+    vertical-align: top;
+  }
+  table.waves tr:last-child td { border-bottom: 0; }
+  .seg-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    margin-right: 4px;
+  }
+  .seg-tag.completed { background: var(--ok); }
+  .seg-tag.replay { background: var(--brand-500); }
+  .seg-tag.absent { background: var(--accent); }
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--ink-900);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: var(--err); }
+  .toast.success { background: var(--ok); }
+  .form-row { display: flex; gap: 10px; margin-top: 12px; align-items: center; }
+  .save-hint { font-size: 12px; color: var(--ink-500); }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">Bago 派 Portal<small>v1.5 · LINE 機器人建置</small></div>
+  <nav class="nav">
+    <a class="nav-item" href="/admin/lumi"><span class="icon">📋</span> 客戶管理</a>
+    <a class="nav-item" href="/admin/line-cards"><span class="icon">🖼️</span> LINE 圖卡</a>
+    <a class="nav-item active"><span class="icon">🤖</span> LINE 機器人建置</a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">📊</span> 自動化直播 <small style="font-size:10px;color:var(--ink-500)">v3</small></a>
+    <a class="nav-item disabled" style="opacity:0.5;cursor:not-allowed"><span class="icon">📣</span> 自動化廣告 <small style="font-size:10px;color:var(--ink-500)">v4</small></a>
+  </nav>
+</aside>
+
+<main>
+  <header class="top">
+    <h1>LINE 機器人建置</h1>
+    <div class="actions">
+      <a href="/admin/lumi" class="btn secondary">← 回客戶管理</a>
+    </div>
+  </header>
+
+  <div class="health-row" id="health-row">
+    <span class="health-pill" id="hp-webhook"><span class="health-dot"></span> Webhook</span>
+    <span class="health-pill" id="hp-token"><span class="health-dot"></span> Channel Token</span>
+    <span class="health-pill" id="hp-secret"><span class="health-dot"></span> Channel Secret</span>
+    <span class="health-pill" id="hp-ai"><span class="health-dot"></span> AI key</span>
+  </div>
+
+  <div class="toolbar">
+    <span class="chip active" data-tab="status">設定狀態</span>
+    <span class="chip" data-tab="flow">對話 flow</span>
+    <span class="chip" data-tab="prompt">AI 分身 prompt</span>
+    <span class="chip" data-tab="wave">Wave 追單時程</span>
+  </div>
+
+  <div class="content">
+    <!-- === Tab 1: 設定狀態 === -->
+    <div class="panel active" id="panel-status">
+      <div class="card">
+        <h2>LINE Channel 認證</h2>
+        <div class="desc">LINE Bot 必須在 LINE Developers Console 開好 Messaging API channel，把 Channel access token / Channel secret 設到 Zeabur env vars。下面是當前環境變數的設定狀況（不顯示 token 值本身）。</div>
+        <dl class="kv" id="status-kv">
+          <dt>載入中</dt><dd>—</dd>
+        </dl>
+      </div>
+
+      <div class="card">
+        <h2>建置教學文檔</h2>
+        <div class="desc">完整的 LINE channel + Pixel + LIFF 設定步驟（Bago 派內部 SOP）— 第一次建 bot 必看，照走 30 分鐘可以全跑通。</div>
+        <a href="/public/docs/setup-line-pixel-liff.md" target="_blank" class="btn secondary">看 setup-line-pixel-liff.md →</a>
+        <a href="https://developers.line.biz/console/" target="_blank" class="btn secondary" style="margin-left:8px">LINE Developers Console →</a>
+      </div>
+
+      <div class="card">
+        <h2>下一步 checklist</h2>
+        <div class="desc">所有綠燈才算建置完成。任一紅燈 = bot 不會回應或 AI 分身無法生成回覆。</div>
+        <ul style="font-size:13.5px;line-height:2;color:var(--ink-700);padding-left:20px">
+          <li>Webhook URL 在 LINE Console 填好（同這頁顯示的 URL）並 verify 200</li>
+          <li>Channel access token / secret 都設到 Zeabur env vars 並 deploy</li>
+          <li>AI 分身 key（Anthropic / OpenAI / Gemini 任一）已設</li>
+          <li>第二個 tab「對話 flow」全部走過一遍 → 第三個 tab 把 AI 分身 prompt 改成你的口氣</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- === Tab 2: 對話 flow === -->
+    <div class="panel" id="panel-flow">
+      <div class="card">
+        <h2>Bago 派 LINE Bot funnel 流程</h2>
+        <div class="desc">用戶從加好友到完課的完整對話路徑（pure visual reference，不可直接編輯。改 flow 要去 bot/index.js）。</div>
+
+        <div class="flow">
+          <div class="flow-node">用戶加好友<small>follow event 觸發</small></div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node">歡迎卡（welcome flex）<small>顯示品牌 + 自我介紹 + 主 CTA</small></div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node">分眾按鈕<small>「我想先診斷」/「我想看直播」/「我有問題」</small></div>
+          <div class="flow-arrow"></div>
+
+          <div class="flow-branch">
+            <div class="flow-node">Lumi 7 題診斷<small>LIFF Web chat</small></div>
+            <div class="flow-node">報名 Bago 直播<small>/live LP</small></div>
+            <div class="flow-node">異議處理 (AI 分身)<small>對話式 Q&A</small></div>
+          </div>
+
+          <div class="flow-arrow" style="margin-top: 4px;"></div>
+          <div class="flow-node">轉為 lead<small>進入 LumiSession DB / Bago 後台可見</small></div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node">Wave 追單 (D+0 ~ D+5)<small>分眾推播：完課 / 看回放 / 未到課</small></div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node" style="border-color:var(--ok); color:var(--ok); background:linear-gradient(135deg,#E8F5E9,#fff);">成交 → 課程開通<small>course token + LINE 推送 + 付款 callback</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- === Tab 3: AI 分身 prompt === -->
+    <div class="panel" id="panel-prompt">
+      <div class="card">
+        <h2>AI 分身 system prompt</h2>
+        <div class="desc">用戶在 LINE 跟 bot 聊天時，AI 分身用這段 prompt 當 system message。改完按「儲存」會即時生效（下次 webhook 進來就用新版本）。範本見 ~/my-aibuild/bot/prompts/ai-workers/ai-avatar.md。</div>
+
+        <textarea id="ai-prompt" placeholder="載入中..."></textarea>
+
+        <div class="form-row">
+          <button class="btn" onclick="savePrompt()">💾 儲存 prompt</button>
+          <button class="btn secondary" onclick="loadPrompt()">↺ 重新載入</button>
+          <span class="save-hint" id="prompt-hint">—</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>寫 AI 分身的 4 條鐵律</h2>
+        <ul style="font-size:13.5px;line-height:2;color:var(--ink-700);padding-left:20px">
+          <li><strong>不講治療 / 治好 / 根治</strong>：用「調整」「處理」「恢復」「改善」</li>
+          <li><strong>不暗示推銷</strong>：禁止「不是推銷」「沒有壓力」這類否定句</li>
+          <li><strong>不套公式</strong>：不要「您好，我是 OO，今天我想跟您介紹...」開頭，要像真人說話</li>
+          <li><strong>給一半留一半</strong>：點到具體切入角度，但不直接給答案 — 引導用戶來直播 / 報名拿完整方法</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- === Tab 4: Wave 追單時程 === -->
+    <div class="panel" id="panel-wave">
+      <div class="card">
+        <h2>6 波 Wave 追單預設時程</h2>
+        <div class="desc">直播後依分眾自動推播。純參考用 — 改實際排程要去 bot/lib 對應的 cron / scheduler 模組（v1.5 不做後台編輯）。</div>
+
+        <table class="waves">
+          <thead>
+            <tr>
+              <th style="width:80px">時間點</th>
+              <th>分眾 + 訊息主題</th>
+              <th style="width:160px">CTA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>D+0</strong><div style="color:var(--ink-500);font-size:11.5px">當日結束</div></td>
+              <td>
+                <span class="seg-tag completed">已完課</span>感謝參與 + 課程重點濃縮 + 限時方案<br>
+                <span class="seg-tag replay">看回放</span>回放連結 + 重點時間戳<br>
+                <span class="seg-tag absent">未到課</span>「沒到也不浪費你時間」+ 回放
+              </td>
+              <td>結帳 / 看回放</td>
+            </tr>
+            <tr>
+              <td><strong>D+1</strong></td>
+              <td>
+                <span class="seg-tag completed">已完課</span>常見三個猶豫拆解（價格 / 時間 / 適不適合）<br>
+                <span class="seg-tag replay">看回放</span>「看完了嗎？最關鍵那段是 XX」<br>
+                <span class="seg-tag absent">未到課</span>下一場時間 + 報名連結
+              </td>
+              <td>結帳 / 找 Bago 聊</td>
+            </tr>
+            <tr>
+              <td><strong>D+2</strong></td>
+              <td>
+                <span class="seg-tag completed">已完課</span>學員實戰案例（成交 / 起步）<br>
+                <span class="seg-tag replay">看回放</span>單一 case study 推送
+              </td>
+              <td>結帳</td>
+            </tr>
+            <tr>
+              <td><strong>D+3</strong></td>
+              <td>
+                <span class="seg-tag completed">已完課</span>限時方案最後 48 小時<br>
+                <span class="seg-tag replay">看回放</span>限時方案最後 48 小時
+              </td>
+              <td>結帳</td>
+            </tr>
+            <tr>
+              <td><strong>D+4</strong></td>
+              <td>
+                <span class="seg-tag completed">已完課</span>異議處理：「我還沒準備好怎麼辦」<br>
+                <span class="seg-tag replay">看回放</span>異議處理：「我可以自己學嗎」
+              </td>
+              <td>結帳 / 1on1</td>
+            </tr>
+            <tr>
+              <td><strong>D+5</strong></td>
+              <td>
+                <span class="seg-tag completed">已完課</span>方案結束最後一通 + Bago 親寫訊息<br>
+                <span class="seg-tag replay">看回放</span>方案結束最後一通<br>
+                <span class="seg-tag absent">未到課</span>下一場早鳥 nurture
+              </td>
+              <td>結帳</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DEFAULT_AI_PROMPT = `你是 Bago 老師的 AI 分身，在 LINE 上跟剛加好友的潛在學員聊天。
+
+# 你的角色
+- 你是 Bago 派「AI 造局術」的分身，協助用戶釐清事業卡點
+- 用真人口氣，不要客服模板
+- 給「具體切入角度」但留下「完整方法」給直播 / 課程
+
+# 鐵律（NEVER 違反）
+- 不講「治療」「治好」「根治」— 用「調整」「處理」「恢復」「改善」
+- 不講「不是推銷」「沒有壓力」這類暗示推銷的否定句
+- 不套「您好，我是 OO」公式開頭
+- 不一次給答案 — 給一半，引導來直播或 1on1
+
+# 流程
+1. 用戶第一次說話 → 簡單回應 + 反問一個具體的問題（例：「你目前事業卡在哪一段？流量、成交還是定位？」）
+2. 用戶答完 → 點出他「最不容易自己看到的角度」（一個就好）
+3. 引導下一步：報名 Bago 親自直播 或 跑 Lumi 7 題診斷
+
+# 語氣參考
+- 像朋友，不像客服
+- 短句多於長句
+- 適度用「對」「嗯」這種口語連接詞
+- 不用驚嘆號疊加（最多一個）`;
+
+let currentTab = 'status';
+
+async function api(path, opts = {}) {
+  const resp = await fetch(path, {
+    method: opts.method || 'GET',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (resp.status === 403) {
+    window.location.href = '/admin/lumi/login';
+    throw new Error('需要重新登入');
+  }
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+  return data;
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+}
+
+// ==== Tab switching ====
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentTab = c.dataset.tab;
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + currentTab).classList.add('active');
+    if (currentTab === 'prompt' && !document.getElementById('ai-prompt').dataset.loaded) {
+      loadPrompt();
+    }
+  });
+});
+
+// ==== Tab 1: status ====
+async function loadStatus() {
+  try {
+    const data = await api('/admin/line-bot/api/status');
+    setHealth('hp-webhook', !!data.webhookUrl);
+    setHealth('hp-token', data.hasChannelToken);
+    setHealth('hp-secret', data.hasChannelSecret);
+    setHealth('hp-ai', data.hasAiKey);
+
+    const kv = document.getElementById('status-kv');
+    kv.innerHTML = `
+      <dt>Webhook URL</dt>
+      <dd>${data.webhookUrl ? '<code>' + escapeHtml(data.webhookUrl) + '</code>' : '<span style="color:var(--err)">未設 PUBLIC_BASE_URL — 不能 verify webhook</span>'}</dd>
+      <dt>Channel access token</dt>
+      <dd>${data.hasChannelToken ? '<span style="color:var(--ok)">✓ 已設</span>' : '<span style="color:var(--err)">✗ 沒設 LINE_CHANNEL_ACCESS_TOKEN</span>'}</dd>
+      <dt>Channel secret</dt>
+      <dd>${data.hasChannelSecret ? '<span style="color:var(--ok)">✓ 已設</span>' : '<span style="color:var(--err)">✗ 沒設 LINE_CHANNEL_SECRET</span>'}</dd>
+      <dt>AI 分身 key</dt>
+      <dd>${data.hasAiKey ? '<span style="color:var(--ok)">✓ 已設（Anthropic / OpenAI / Gemini 任一）</span>' : '<span style="color:var(--err)">✗ 全部 AI key 都沒設 — AI 分身回不了話</span>'}</dd>
+    `;
+  } catch (e) {
+    document.getElementById('status-kv').innerHTML = `<dt>錯誤</dt><dd style="color:var(--err)">${escapeHtml(e.message)}</dd>`;
+  }
+}
+
+function setHealth(id, ok) {
+  const el = document.getElementById(id);
+  el.classList.remove('ok', 'err');
+  el.classList.add(ok ? 'ok' : 'err');
+}
+
+// ==== Tab 3: AI prompt ====
+async function loadPrompt() {
+  const ta = document.getElementById('ai-prompt');
+  ta.value = '載入中...';
+  try {
+    const data = await api('/admin/line-bot/api/config/ai_avatar_prompt');
+    const val = data.config && typeof data.config.value === 'string' ? data.config.value : '';
+    ta.value = val || DEFAULT_AI_PROMPT;
+    ta.dataset.loaded = '1';
+    const updatedAt = data.config?.updatedAt
+      ? new Date(data.config.updatedAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+      : '尚未儲存過（顯示預設範本）';
+    document.getElementById('prompt-hint').textContent = '上次更新：' + updatedAt;
+  } catch (e) {
+    ta.value = DEFAULT_AI_PROMPT;
+    document.getElementById('prompt-hint').textContent = '載入失敗：' + e.message;
+  }
+}
+
+async function savePrompt() {
+  const value = document.getElementById('ai-prompt').value;
+  if (!value || !value.trim()) return toast('Prompt 不能空白', 'error');
+  try {
+    await api('/admin/line-bot/api/config/ai_avatar_prompt', {
+      method: 'PATCH',
+      body: { value },
+    });
+    toast('Prompt 已儲存 ✓', 'success');
+    document.getElementById('prompt-hint').textContent = '上次更新：' + new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+  } catch (e) {
+    toast('儲存失敗：' + e.message, 'error');
+  }
+}
+
+// ==== Init ====
+loadStatus();
+setInterval(loadStatus, 60000);
+</script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bago 派 Portal — 網站生成</title>
+<style>
+  :root {
+    --brand-700: #2B44B0;
+    --brand-500: #3B5BDB;
+    --accent: #D99A2B;
+    --ink-900: #1c1c1e;
+    --ink-700: #4a4a4e;
+    --ink-500: #888;
+    --ink-300: #c8c8cc;
+    --ink-200: #e5e5ea;
+    --ink-100: #f5f5f7;
+    --bg: #fafafa;
+    --surface: #fff;
+    --status-stuck: #c62828;
+    --status-converted: #2e7d32;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink-900);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  /* ===== Sidebar ===== */
+  aside.sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--ink-200);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .brand {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ink-200);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+  }
+  .brand small { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 3px; letter-spacing: 0.04em; }
+  .nav { padding: 14px 8px; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--ink-700);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+  .nav-item:hover { background: var(--ink-100); }
+  .nav-item.active { background: #ECEFF8; color: var(--brand-700); font-weight: 600; }
+  .nav-item .icon { font-size: 15px; }
+  /* ===== Main ===== */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header.top h1 { font-size: 18px; color: var(--ink-900); font-weight: 700; }
+  header.top .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--brand-700);
+    color: #fff;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { background: var(--brand-500); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn.secondary { background: var(--surface); color: var(--ink-900); border: 1px solid var(--ink-200); }
+  .btn.secondary:hover { background: var(--ink-100); }
+  .btn.accent { background: var(--accent); }
+  .btn.accent:hover { background: #c08a25; }
+  /* ===== Content ===== */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 20px;
+    min-height: 0;
+  }
+  @media (max-width: 980px) {
+    .content { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .card h2 {
+    font-size: 14px;
+    color: var(--ink-700);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ink-100);
+    letter-spacing: 0.02em;
+  }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-500);
+    margin-bottom: 5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .field .hint { font-size: 11px; color: var(--ink-500); margin-top: 3px; font-weight: 400; }
+  textarea, select, input[type="text"] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--ink-200);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--surface);
+    color: var(--ink-900);
+  }
+  textarea:focus, select:focus, input:focus { outline: none; border-color: var(--brand-500); }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+  .actions-row { display: flex; gap: 8px; margin-top: 16px; }
+  .actions-row .btn { flex: 1; justify-content: center; }
+  /* ===== Preview ===== */
+  .preview-wrap {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 600px;
+  }
+  .preview-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--ink-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    background: var(--ink-100);
+  }
+  .preview-head .title { font-size: 13px; font-weight: 600; color: var(--ink-700); }
+  .preview-head .ops { display: flex; gap: 6px; }
+  .preview-body {
+    flex: 1;
+    background: #f0f0f0;
+    position: relative;
+    overflow: hidden;
+  }
+  .preview-body iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+    display: block;
+  }
+  .placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    color: var(--ink-500);
+    font-size: 13px;
+    text-align: center;
+    padding: 20px;
+  }
+  .placeholder .big { font-size: 36px; opacity: 0.4; }
+  .loading {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--ink-700);
+    font-size: 13px;
+    z-index: 5;
+  }
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--ink-200);
+    border-top-color: var(--brand-700);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--ink-900);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+    max-width: 360px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: var(--status-stuck); }
+  .toast.success { background: var(--status-converted); }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">Bago 派 Portal<small>v1.5 · 網站生成</small></div>
+  <nav class="nav">
+    <a class="nav-item" href="/admin/lumi"><span class="icon">📋</span> 客戶管理</a>
+    <a class="nav-item active"><span class="icon">🌐</span> 網站生成</a>
+    <a class="nav-item" id="nav-zeabur"><span class="icon">🚀</span> 啟動 Zeabur</a>
+    <a class="nav-item" style="opacity:0.5;cursor:not-allowed"><span class="icon">📊</span> 自動化直播 <small style="font-size:10px;color:var(--ink-500)">v3</small></a>
+    <a class="nav-item" style="opacity:0.5;cursor:not-allowed"><span class="icon">📣</span> 自動化廣告 <small style="font-size:10px;color:var(--ink-500)">v4</small></a>
+  </nav>
+</aside>
+
+<main>
+  <header class="top">
+    <h1>網站生成</h1>
+    <div class="actions">
+      <a href="/admin/lumi" class="btn secondary">← 回客戶管理</a>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- ========== 表單 ========== -->
+    <section class="card">
+      <h2>產生你的 LP</h2>
+
+      <div class="field">
+        <label>領域 / TA 描述</label>
+        <textarea id="f-niche" placeholder="例：給想把專業變成可複製商品的顧問 / 教練 / 培訓師"></textarea>
+        <div class="hint">寫「想做 X 的人」而不是職業列舉。</div>
+      </div>
+
+      <div class="field">
+        <label>主要痛點（每行一條，最多 3 條）</label>
+        <textarea id="f-pains" rows="4" placeholder="客戶都靠你親自接，無法 scale&#10;有作品但沒人找上門&#10;想做課程但不知怎麼包裝"></textarea>
+      </div>
+
+      <div class="field">
+        <label>你的解方 / Unique value</label>
+        <textarea id="f-solution" placeholder="例：用一個 AI 顧問框架，把你 1-on-1 的服務拆成可被別人交付的流程，讓你不用親上火線也能收費。"></textarea>
+      </div>
+
+      <div class="field">
+        <label>主 CTA 文案</label>
+        <input type="text" id="f-cta" placeholder="例：免費預約 30 分鐘策略諮詢" value="立即了解">
+      </div>
+
+      <div class="field">
+        <label>配色 / 風格</label>
+        <select id="f-style">
+          <option value="modern-blue">現代藍（專業 / 信任）</option>
+          <option value="warm-orange">溫暖橘（教練 / 人本）</option>
+          <option value="dark-luxury">暗黑奢華（高端 / 神祕）</option>
+          <option value="fresh-green">清新綠（自然 / 療癒）</option>
+          <option value="minimal-mono">極簡黑白（編輯感 / 留白）</option>
+        </select>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn" id="btn-generate" onclick="generate()">✨ 生成 LP</button>
+      </div>
+    </section>
+
+    <!-- ========== Preview ========== -->
+    <section class="preview-wrap">
+      <div class="preview-head">
+        <div class="title" id="preview-title">預覽（尚未生成）</div>
+        <div class="ops">
+          <button class="btn secondary" id="btn-download" onclick="downloadHtml()" disabled>下載 HTML</button>
+          <button class="btn accent" id="btn-deploy" onclick="deployZeabur()" disabled>🚀 部署到 Zeabur</button>
+        </div>
+      </div>
+      <div class="preview-body" id="preview-body">
+        <div class="placeholder" id="placeholder">
+          <div class="big">🌐</div>
+          <div>填左邊表單，點「生成 LP」</div>
+          <div style="font-size:11px">demo 用 minimum 版，AI 會用 Gemini 生整頁 self-contained HTML。</div>
+        </div>
+        <div class="loading" id="loading" style="display:none">
+          <div class="spinner"></div>
+          <div>AI 思考中... 第一次大約 20-40 秒</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ZEABUR_DEPLOY_URL = '{{ZEABUR_DEPLOY_URL}}';
+let lastHtml = '';
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function setLoading(on) {
+  document.getElementById('loading').style.display = on ? 'flex' : 'none';
+  document.getElementById('btn-generate').disabled = on;
+  document.getElementById('btn-generate').textContent = on ? '生成中...' : '✨ 生成 LP';
+}
+
+function readPains() {
+  const raw = document.getElementById('f-pains').value || '';
+  return raw.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 3);
+}
+
+async function generate() {
+  const spec = {
+    niche: document.getElementById('f-niche').value.trim(),
+    pains: readPains(),
+    solution: document.getElementById('f-solution').value.trim(),
+    cta: document.getElementById('f-cta').value.trim(),
+    style: document.getElementById('f-style').value,
+  };
+  if (!spec.niche && !spec.solution) {
+    return toast('至少要填「領域」或「解方」', 'error');
+  }
+
+  setLoading(true);
+  document.getElementById('placeholder').style.display = 'none';
+  try {
+    const resp = await fetch('/admin/generator/api/generate', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(spec),
+    });
+    if (resp.status === 403) {
+      window.location.href = '/admin/generator/login';
+      return;
+    }
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(data.error || ('HTTP ' + resp.status));
+
+    lastHtml = data.html || '';
+    renderPreview(lastHtml);
+    document.getElementById('btn-download').disabled = false;
+    document.getElementById('btn-deploy').disabled = false;
+    document.getElementById('preview-title').textContent = '預覽（' + Math.round(lastHtml.length / 1024) + ' KB）';
+    toast('生成成功 ✓', 'success');
+  } catch (e) {
+    toast('生成失敗：' + e.message, 'error');
+    document.getElementById('placeholder').style.display = 'flex';
+  } finally {
+    setLoading(false);
+  }
+}
+
+function renderPreview(html) {
+  const body = document.getElementById('preview-body');
+  // 清掉除了 loading / placeholder 之外的舊 iframe
+  Array.from(body.querySelectorAll('iframe')).forEach(n => n.remove());
+  const iframe = document.createElement('iframe');
+  iframe.setAttribute('sandbox', 'allow-same-origin');
+  iframe.srcdoc = html;
+  body.appendChild(iframe);
+}
+
+function downloadHtml() {
+  if (!lastHtml) return;
+  const blob = new Blob([lastHtml], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lp-' + new Date().toISOString().slice(0, 10) + '.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function deployZeabur() {
+  if (!lastHtml) return;
+  // v1：先下載 HTML 再帶去 Zeabur dashboard 自己拖（minimum demo）
+  toast('已下載 HTML，請在 Zeabur dashboard 建新專案上傳', 'success');
+  downloadHtml();
+  setTimeout(() => window.open(ZEABUR_DEPLOY_URL, '_blank'), 600);
+}
+
+document.getElementById('nav-zeabur').addEventListener('click', () => {
+  window.open(ZEABUR_DEPLOY_URL, '_blank');
+});
+</script>
+</body>
+</html>

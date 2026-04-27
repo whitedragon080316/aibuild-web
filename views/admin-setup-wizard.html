@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bago 派 Portal — Setup Wizard</title>
+<style>
+  :root {
+    --brand-700: #2B44B0;
+    --brand-500: #3B5BDB;
+    --brand-50: #ECEFF8;
+    --accent: #D99A2B;
+    --accent-50: #FFF5E0;
+    --ink-900: #1c1c1e;
+    --ink-700: #4a4a4e;
+    --ink-500: #888;
+    --ink-300: #c8c8cc;
+    --ink-200: #e5e5ea;
+    --ink-100: #f5f5f7;
+    --bg: #fafafa;
+    --surface: #fff;
+    --status-pending: #aaa;
+    --status-progress: #D99A2B;
+    --status-done: #2e7d32;
+    --hint-bg: #FFF8E7;
+    --hint-border: #D99A2B;
+    --code-bg: #F4F4F8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink-900);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  /* ===== Sidebar ===== */
+  aside.sidebar {
+    width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--ink-200);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+  .brand {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ink-200);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+  }
+  .brand small { display: block; font-size: 11px; color: var(--ink-500); font-weight: 400; margin-top: 3px; letter-spacing: 0.04em; }
+  .step-nav { padding: 14px 8px; flex: 1; }
+  .step-nav-title {
+    font-size: 11px;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 14px 8px;
+  }
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: var(--ink-700);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .step-item:hover { background: var(--ink-100); }
+  .step-item.active { background: var(--brand-50); color: var(--brand-700); font-weight: 600; }
+  .step-item .num {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--ink-200);
+    color: var(--ink-700);
+  }
+  .step-item.active .num { background: var(--brand-700); color: #fff; }
+  .step-item.done .num { background: var(--status-done); color: #fff; }
+  .step-item .step-title { flex: 1; }
+  .step-item .step-status {
+    font-size: 10px;
+    margin-top: 3px;
+    color: var(--ink-500);
+    font-weight: 400;
+  }
+  /* ===== Main ===== */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  header.top h1 { font-size: 18px; color: var(--ink-900); font-weight: 700; }
+  header.top .actions { display: flex; gap: 8px; }
+  /* progress bar */
+  .progress-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--ink-200);
+    padding: 14px 24px;
+    flex-shrink: 0;
+  }
+  .progress-track {
+    height: 8px;
+    background: var(--ink-200);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-500), var(--accent));
+    transition: width 0.3s;
+  }
+  .progress-text {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--ink-500);
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-text strong { color: var(--brand-700); font-weight: 600; }
+  /* ===== Content ===== */
+  .content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 32px;
+    max-width: 920px;
+  }
+  .step-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .step-head h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink-900);
+  }
+  .status-chip {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .status-chip.pending { background: var(--status-pending); }
+  .status-chip.in_progress { background: var(--status-progress); }
+  .status-chip.done { background: var(--status-done); }
+  .step-subhead {
+    font-size: 13px;
+    color: var(--ink-500);
+    margin-bottom: 20px;
+  }
+
+  /* hint box */
+  .hint {
+    background: var(--hint-bg);
+    border-left: 4px solid var(--hint-border);
+    padding: 14px 16px;
+    border-radius: 4px;
+    margin: 16px 0 22px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .hint strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 13px; }
+  .hint p { color: var(--ink-700); }
+
+  /* numbered instructions */
+  .instructions {
+    counter-reset: step-counter;
+    list-style: none;
+    margin: 16px 0 22px;
+  }
+  .instructions > li {
+    counter-increment: step-counter;
+    position: relative;
+    padding: 14px 16px 14px 56px;
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .instructions > li::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    width: 28px; height: 28px;
+    background: var(--brand-700);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .instructions a {
+    color: var(--brand-500);
+    text-decoration: underline;
+    word-break: break-all;
+  }
+  .instructions code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 12.5px;
+    color: var(--ink-900);
+  }
+  .instructions ul {
+    margin-top: 6px;
+    padding-left: 20px;
+    color: var(--ink-700);
+    font-size: 13px;
+  }
+  .instructions ul li { margin: 3px 0; }
+  .substep {
+    font-weight: 600;
+    color: var(--brand-700);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* field card */
+  .section-title {
+    font-size: 13px;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 24px 0 8px;
+    font-weight: 600;
+  }
+  .field-card {
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 22px;
+  }
+  .field-card h4 {
+    font-size: 13px;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 8px 14px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--ink-200);
+    font-size: 13px;
+    align-items: start;
+  }
+  .field-row:last-child { border-bottom: 0; }
+  .field-row dt { color: var(--ink-500); font-weight: 600; }
+  .field-row dd { color: var(--ink-900); }
+  .field-row code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 12px;
+    word-break: break-all;
+  }
+  .field-row .why {
+    display: block;
+    color: var(--ink-500);
+    font-size: 11.5px;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* next-step gate */
+  .gate {
+    margin: 22px 0;
+    padding: 14px 16px;
+    background: var(--brand-50);
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .gate strong { color: var(--brand-700); display: block; margin-bottom: 6px; }
+  .gate ul { padding-left: 20px; color: var(--ink-700); }
+  .gate ul li { margin: 3px 0; }
+
+  /* button row */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ink-200);
+  }
+  .btn {
+    background: var(--brand-700);
+    color: #fff;
+    border: 0;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+  .btn:hover:not(:disabled) { background: var(--brand-500); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn.secondary { background: var(--surface); color: var(--ink-700); border: 1px solid var(--ink-200); }
+  .btn.secondary:hover:not(:disabled) { background: var(--ink-100); }
+  .btn.success { background: var(--status-done); }
+  .btn.success:hover:not(:disabled) { background: #266b29; }
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink-500);
+    border: 0;
+  }
+  .btn.ghost:hover { color: var(--ink-900); background: var(--ink-100); }
+  .spacer { flex: 1; }
+
+  /* table inside step (used in step 4 env vars + step 3 events) */
+  table.kv {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--ink-200);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  table.kv th {
+    background: var(--ink-100);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11.5px;
+    color: var(--ink-500);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ink-200);
+  }
+  table.kv td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--ink-100);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  table.kv tr:last-child td { border-bottom: 0; }
+  table.kv code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 12px;
+    word-break: break-all;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--ink-900);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: #c62828; }
+  .toast.success { background: var(--status-done); }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand">Bago 派 Portal<small>v1.5 · Setup Wizard</small></div>
+  <div class="step-nav">
+    <div class="step-nav-title">設定步驟（共 5 步）</div>
+    <div id="step-list"></div>
+    <div style="padding: 14px; margin-top: 14px; border-top: 1px solid var(--ink-200);">
+      <a href="/admin/lumi" class="btn secondary" style="width: 100%; justify-content: center;">← 回 Portal</a>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <header class="top">
+    <h1 id="header-title">Setup Wizard</h1>
+    <div class="actions">
+      <span id="header-progress" style="font-size: 12.5px; color: var(--ink-500);"></span>
+    </div>
+  </header>
+
+  <div class="progress-bar">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+    <div class="progress-text">
+      <span id="progress-label">準備開始 Bago 派漏斗模板設定</span>
+      <span><strong id="progress-pct">0%</strong> 完成</span>
+    </div>
+  </div>
+
+  <div class="content-area" id="content-area">
+    <div style="text-align:center;color:var(--ink-500);padding:60px;">載入中...</div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ====================== Step Definitions ======================
+const STEPS = [
+  {
+    key: 'step1',
+    title: 'LINE 官方帳號 + Messaging API',
+    subtitle: '建官方帳號、啟用 Messaging API、拿 Token / Secret',
+    why: '一般 LINE 官方帳號預設只能在 LINE App 後台手動回訊息。要讓你的模板能用程式 push 訊息、接收 webhook、串 LIFF，必須啟用 Messaging API。沒啟用 = 模板根本連不上 LINE。',
+    instructions: [
+      {
+        title: '建立 LINE 官方帳號',
+        body: '開 <a href="https://manager.line.biz/" target="_blank">LINE Official Account Manager</a>，用你的 LINE 個人帳號登入，點「建立帳號」→ 填基本資料（帳號名稱建議用品牌名，之後做認證會用到，不要用「測試 123」）。',
+      },
+      {
+        title: '啟用 Messaging API',
+        body: '進該帳號後台 → 左下角齒輪「設定」→「Messaging API」分頁 → 點「啟用 Messaging API」→ 第一次用選「建立新的 Provider」並取一個名字（公司名 / 個人品牌名都可，之後改不了）→ 同意條款。',
+      },
+      {
+        title: '拿 Channel Access Token + Channel Secret',
+        body: '同一頁會看到 <code>Channel ID</code> / <code>Channel secret</code>，往下找 <code>Channel access token (long-lived)</code> → 點「Issue」→ 複製存好。<strong>不要 commit GitHub、不要貼 chat、不要截圖。</strong>後面 Step 4 會貼進 Zeabur 環境變數。',
+      },
+      {
+        title: '關自動回應、開 Webhook',
+        body: '同一頁往下：<ul><li><strong>自動回應訊息</strong>：停用（不然 Bot 一直跳預設回覆，蓋掉模板訊息）</li><li><strong>加入好友的歡迎訊息</strong>：停用（之後由模板程式接手）</li><li><strong>Webhook</strong>：啟用（URL 等部署完 Zeabur 後再回來填）</li></ul>',
+      },
+    ],
+    fields: {
+      title: '這步完成後你會拿到 3 個值',
+      rows: [
+        { k: 'Channel ID', v: '<code>1234567890</code>（10 位數）', why: '辨識 channel 用，公開可見' },
+        { k: 'Channel secret', v: '<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>（32 字）', why: 'Webhook 簽章驗證用，密碼等級' },
+        { k: 'Channel access token', v: '<code>長字串、約 170 字</code>', why: '呼叫 LINE Messaging API 發訊息用，密碼等級' },
+      ],
+    },
+    gate: {
+      title: '完成這步的條件',
+      items: [
+        '✅ 拿到 Channel ID / Channel secret / Channel access token 三個值，存在密碼管理工具裡',
+        '✅ 自動回應、加入好友歡迎訊息已停用',
+        '✅ Webhook 已啟用（URL 之後填）',
+      ],
+    },
+  },
+  {
+    key: 'step2',
+    title: 'LIFF App 設定',
+    subtitle: '建 LINE Login Channel、新增 LIFF App、拿 LIFF ID',
+    why: 'LIFF（LINE Front-end Framework）= 在 LINE App 內打開網頁並拿到用戶 LINE userId / 頭像 / 名字。Bago 派模板用 LIFF 做報名表單、直播觀看頁、諮詢預約頁。沒 LIFF，模板無法把 LP 訪客和 LINE 帳號對起來。',
+    instructions: [
+      {
+        title: '進 LINE Developers Console',
+        body: '開 <a href="https://developers.line.biz/console/" target="_blank">LINE Developers Console</a>，用同一個 LINE 帳號登入，會看到 Step 1 自動建好的 Provider，點進去。',
+      },
+      {
+        title: '建一個 LINE Login Channel',
+        body: 'LIFF 必須掛在 LINE Login Channel 上（不是 Messaging API Channel）。Provider 頁面 → 點「Create a new channel」→ Channel type 選「LINE Login」→ 填 Channel name（例 <code>&lt;品牌&gt; Login</code>）→ App types <strong>勾 Web app</strong> → 同意條款建立。',
+      },
+      {
+        title: '新增 LIFF App',
+        body: '進剛建的 LINE Login Channel → 上方分頁切到「LIFF」→ 點「Add」。欄位看下方「填的欄位範例」一格一格填。',
+      },
+      {
+        title: '拿到 LIFF ID 並存好',
+        body: '新增完成後會看到 LIFF ID 格式像 <code>1234567890-abcdefgh</code>，複製存好。Step 4 會貼進 Zeabur。',
+      },
+    ],
+    fields: {
+      title: '填 LIFF App 表單時這樣填',
+      rows: [
+        { k: 'LIFF app name', v: '<code>Bago 派漏斗</code>（任意，之後可改）', why: '辨識用' },
+        { k: 'Size', v: '<strong>Full</strong>（全螢幕）', why: '諮詢 / 直播體驗最好' },
+        { k: 'Endpoint URL', v: '<code>https://你部署到 Zeabur 的網址/liff</code><br><span class="why">部署前可先填 placeholder <code>https://example.com</code>，Step 5 拿到正式網址再回來改</span>', why: 'LIFF 打開時要載入的網頁' },
+        { k: 'Scope', v: '<strong>勾 <code>profile</code> + 勾 <code>openid</code></strong>', why: 'profile 拿頭像/名字，openid 拿穩定 userId' },
+        { k: 'Bot link feature', v: '<strong>On (Normal)</strong>', why: '用戶第一次進入會看到「加入官方帳號好友」選項，幫你抓名單' },
+        { k: 'Scan QR / Module mode', v: '都關閉（保持預設）', why: '用不到' },
+      ],
+    },
+    gate: {
+      title: '完成這步的條件',
+      items: [
+        '✅ 已建好 LINE Login Channel（與 Messaging API Channel 不同）',
+        '✅ 拿到 LIFF ID 格式 <code>xxxxxxxxxx-xxxxxxxx</code>',
+        '✅ Scope 確實勾了 <code>profile</code> + <code>openid</code>',
+      ],
+    },
+  },
+  {
+    key: 'step3',
+    title: 'Meta Pixel 追蹤事件',
+    subtitle: '建 Pixel、理解 5 個 Standard Event 的去重時間',
+    why: 'Meta Pixel = 把用戶在 LP / 直播頁的關鍵動作（看影片、報名、付款）回拋給 Meta。有 Pixel 演算法才能找類似的人投廣告（Lookalike）、把預算花在會買的人、給你準確 ROAS / CPA。沒 Pixel = 廣告投了像瞎子。',
+    instructions: [
+      {
+        title: '進 Meta 企業管理平台 → 事件管理員',
+        body: '開 <a href="https://business.facebook.com/" target="_blank">Meta 企業管理平台</a> → 左側選單「事件管理員」（Events Manager）。',
+      },
+      {
+        title: '建立 Pixel',
+        body: '點「連結資料來源」→ 選「網站」→ 取個名字 → 選「Meta Pixel」→ 點「建立 Pixel」→ 取 Pixel 名稱（例 <code>Bago 派漏斗 Pixel</code>）→ 建立。',
+      },
+      {
+        title: '拿到 Pixel ID 並存好',
+        body: '完成後拿到 Pixel ID（一串純數字，例 <code>1234567890123456</code>），複製存好。Step 4 會貼進 Zeabur。',
+      },
+      {
+        title: '（部署完再做）裝 Pixel Helper 驗 Pixel',
+        body: '部署完成後裝 Chrome 擴充 <a href="https://chrome.google.com/webstore/detail/meta-pixel-helper/fdgfkebogiimcoedlicjlajpkdmockpc" target="_blank">Meta Pixel Helper</a> → 開你的 LP → 點擴充圖示 → 應該看到 Pixel ID 對得上、有觸發 PageView。<strong>第一次部署完一定要驗 Pixel</strong>，常見錯誤是 ID 環境變數打錯一個數字 → 整套漏斗數據都廢掉。',
+      },
+    ],
+    fields: {
+      title: '5 個 Standard Event（模板自動觸發，你不用寫 code）',
+      table: [
+        ['事件', '觸發點', '去重時間建議'],
+        ['<code>Lead</code>', '任何場次報名 / 7Q 完成', '1 天'],
+        ['<code>CompleteRegistration</code>', '旗艦場次報名 / 確認購買意願', '1 天'],
+        ['<code>Subscribe</code>', '進入歡迎序列 / 加 LINE @ 好友', '30 天'],
+        ['<code>ViewContent</code>', '觀看直播 / 影片進度 ≥ 50%', '1 天'],
+        ['<code>Purchase</code>', '完成付款 / 自動流程最後一步', '30 天'],
+      ],
+      hint: '<strong>去重時間</strong>＝同一個用戶在這段時間內重複觸發只算一次。Lead/CompleteRegistration/ViewContent 用 1 天（避免演算法以為某人特別熱情）。Subscribe/Purchase 是長尾事件，30 天比較合理。',
+    },
+    gate: {
+      title: '完成這步的條件',
+      items: [
+        '✅ Meta 事件管理員建好 Pixel，拿到 16 位數 Pixel ID',
+        '✅ 理解 5 個 Standard Event 的去重時間（1 天 vs 30 天）',
+        '⏳ Pixel Helper 驗證 PageView 留到 Step 5 部署完再做',
+      ],
+    },
+  },
+  {
+    key: 'step4',
+    title: 'Zeabur 環境變數',
+    subtitle: '把所有 token / key / 密碼一條條貼進 Zeabur Variables',
+    why: '模板程式不會把 token 寫死在 code 裡（不然 push GitHub 會直接外洩）。所有敏感資訊（token / 密碼 / API key）透過環境變數注入。Zeabur 的 Variables 分頁就是專門放這些的地方。',
+    instructions: [
+      {
+        title: '到 Zeabur 服務的 Variables 分頁',
+        body: '打開 <a href="https://dash.zeabur.com/" target="_blank">Zeabur Dashboard</a> → 你的 Project → 你的 web service → 上方分頁「Variables」。（如果 Project 還沒建，去 Step 5 先建好再回來。）',
+      },
+      {
+        title: '一條條 Add Variable',
+        body: '不要用「Variable env」批次貼上功能（<strong>那個是覆蓋模式，沒貼到的會被清掉</strong>）。第一次手動一條一條加比較安全。下方表格 8 條全部貼齊。',
+      },
+      {
+        title: 'MongoDB 用 Reference 功能',
+        body: '<code>MONGODB_URI</code> 不要自己填，先在 Project 內加一個 MongoDB service（Add Service → Marketplace → MongoDB），然後在 web service 的 Variables 用 <strong>Reference</strong> 功能引用 → 連線字串會自動帶入。',
+      },
+      {
+        title: '加完等自動 redeploy',
+        body: 'Zeabur 改完變數會自動 redeploy 一次讓新變數生效。如果剛好卡在某個狀態，手動點 Redeploy。',
+      },
+    ],
+    fields: {
+      title: '8 條環境變數清單（全部都要設）',
+      table: [
+        ['變數名', '從哪裡拿', '範例'],
+        ['<code>LINE_CHANNEL_TOKEN</code>', 'Step 1.3 拿到的 Channel access token', '<code>abc123...（170 字）</code>'],
+        ['<code>LINE_CHANNEL_SECRET</code>', 'Step 1.3 拿到的 Channel secret', '<code>xyz789...（32 字）</code>'],
+        ['<code>LIFF_ID</code>', 'Step 2.4 拿到的 LIFF ID', '<code>1234567890-abcdefgh</code>'],
+        ['<code>LINE_ADD_URL</code>', 'LINE Official Account Manager → 增加好友指南 → 複製連結', '<code>https://line.me/R/ti/p/@yourbot</code>'],
+        ['<code>META_PIXEL_ID</code>', 'Step 3 拿到的 Pixel ID', '<code>1234567890123456</code>'],
+        ['<code>GEMINI_API_KEY</code>', '<a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> 產一組（記得選 Create in new project，避免共用 quota）', '<code>AIza...</code>'],
+        ['<code>MONGODB_URI</code>', 'Zeabur MongoDB service 部署後用 Reference 引用', '<code>mongodb://...</code>（自動帶入）'],
+        ['<code>ADMIN_PASSWORD</code>', '自己想一組 16 字以上強密碼（1Password / Bitwarden）', '<code>(自訂)</code>'],
+      ],
+      hint: '<strong>Variable env 是覆蓋模式</strong> — 用批次貼上必須整包貼完，不然會清掉沒貼到的變數。建議第一次手動一條條加。',
+    },
+    gate: {
+      title: '完成這步的條件',
+      items: [
+        '✅ 8 條變數全部加好（Token / Secret / LIFF_ID / LINE_ADD_URL / META_PIXEL_ID / GEMINI_API_KEY / MONGODB_URI / ADMIN_PASSWORD）',
+        '✅ <code>MONGODB_URI</code> 用 Reference 功能引用 MongoDB service（不是手填）',
+        '✅ 確認沒有用「Variable env」批次貼上把舊 var 清掉',
+      ],
+    },
+  },
+  {
+    key: 'step5',
+    title: '部署 + 綁網域',
+    subtitle: 'Fork repo、連 Zeabur、Generate Domain、回填 LIFF / Webhook URL',
+    why: '前面 4 步是準備材料，這步把材料組起來實際跑。部署完後拿到 Zeabur 給的網址（或自訂 domain），回頭把 LIFF Endpoint URL、LINE Webhook URL、Meta 網域驗證全部更新成正式網址，整套漏斗才會通。',
+    instructions: [
+      {
+        title: 'Fork 模板 Repo',
+        body: '開 Bago 派模板 repo（GitHub link 由 Bago 提供）→ 右上角「Fork」到你自己的 GitHub 帳號。<strong>Fork 之後不要直接改主 branch</strong>，要改 LP / 文案就開新 branch → 改 → 合回來，這樣模板有更新你能 pull 上游。',
+      },
+      {
+        title: '連 Zeabur 帳號 + 建 Project',
+        body: '開 <a href="https://dash.zeabur.com/" target="_blank">Zeabur Dashboard</a> → 用 GitHub 帳號登入 → 第一次登入授權 Zeabur 讀 repo → 建立新 Project（例 <code>bago-funnel</code>）。',
+      },
+      {
+        title: '部署 web service',
+        body: 'Project 內 → 「Add Service」→ 選「Git」→ 選你 Fork 的 repo → 選 branch（通常 <code>main</code>）→ Zeabur 自動偵測 Dockerfile / package.json 開始 build。<strong>Build 完不要急著測</strong>，先回 Step 4 把環境變數加完。',
+      },
+      {
+        title: '加 MongoDB Service',
+        body: '同 Project 內 → 再「Add Service」→ 選「Marketplace」→ 找 <code>MongoDB</code> → 部署完成後回 web service Variables → <code>MONGODB_URI</code> 用 Reference 引用 MongoDB service。',
+      },
+      {
+        title: 'Generate Domain 拿 Zeabur 網址',
+        body: '服務頁面 → 「Networking」分頁 → 點「Generate Domain」→ 拿到 <code>xxx.zeabur.app</code> 網址。用這個網址回頭：<ul><li>填進 <strong>LIFF Endpoint URL</strong>（Step 2 那格 placeholder 換掉）</li><li>填進 <strong>LINE Webhook URL</strong>（Step 1.4，URL 後面加 <code>/webhook</code>）</li><li>填進 <strong>Meta Pixel 網域驗證</strong></li></ul>',
+      },
+      {
+        title: '（Optional）綁自訂 Domain',
+        body: '想用自己的網址（例 <code>funnel.yourbrand.com</code>）→ Networking →「Add Custom Domain」→ Zeabur 給 CNAME → 去 DNS 服務商（Cloudflare / GoDaddy）加 → 等 5–30 分鐘 DNS 生效 → Zeabur 自動發 SSL。<strong>用自訂 domain 後 LIFF / Webhook / Pixel 網域全部要再更新一次。</strong>',
+      },
+    ],
+    fields: {
+      title: '部署完之後完成檢查清單',
+      rows: [
+        { k: 'LINE 加好友通知', v: '收得到（用另一支 LINE 加官方帳號試）' },
+        { k: 'LINE Webhook 驗證', v: 'LINE Developers Console → Messaging API → 點「Verify」應該回綠勾' },
+        { k: 'LIFF Endpoint URL', v: '已更新為正式網址（不是 placeholder）' },
+        { k: 'LIFF 開起來', v: '手機點 LIFF 連結 → 能登入並看到自己頭像/名字' },
+        { k: 'Meta Pixel Helper', v: '開 LP → 顯示 PageView 已觸發、Pixel ID 對得上' },
+        { k: '報名流程', v: '走完一次 → Meta 事件管理員看到 Lead 事件' },
+        { k: 'Zeabur Logs', v: '沒有紅字 error' },
+      ],
+    },
+    gate: {
+      title: '完成這步 = 整套漏斗通了',
+      items: [
+        '✅ 上面 7 項全部勾完',
+        '✅ 可以開始導流量進來',
+        '⚠️ 如果用自訂 domain：LIFF / Webhook / Pixel 都已更新成新網址',
+      ],
+    },
+  },
+];
+
+const STATUS_LABEL = {
+  pending: '未開始',
+  in_progress: '進行中',
+  done: '完成',
+};
+
+const STATUS_NEXT = {
+  pending: 'in_progress',
+  in_progress: 'done',
+  done: 'done',
+};
+
+let progress = {};
+let currentStepIdx = 0;
+
+// ====================== API ======================
+async function api(path, opts = {}) {
+  const resp = await fetch(path, {
+    method: opts.method || 'GET',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (resp.status === 403) {
+    window.location.href = '/admin/lumi/login';
+    throw new Error('需要重新登入');
+  }
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+  return data;
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+// ====================== Render ======================
+function renderStepList() {
+  const list = document.getElementById('step-list');
+  list.innerHTML = STEPS.map((s, i) => {
+    const status = progress[s.key] || 'pending';
+    const cls = ['step-item'];
+    if (i === currentStepIdx) cls.push('active');
+    if (status === 'done') cls.push('done');
+    return `<a class="${cls.join(' ')}" onclick="goToStep(${i})">
+      <span class="num">${status === 'done' ? '✓' : i + 1}</span>
+      <span class="step-title">
+        ${escapeHtml(s.title)}
+        <span class="step-status">${STATUS_LABEL[status]}</span>
+      </span>
+    </a>`;
+  }).join('');
+}
+
+function renderProgressBar() {
+  const doneCount = STEPS.filter(s => progress[s.key] === 'done').length;
+  const pct = Math.round((doneCount / STEPS.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-label').textContent =
+    doneCount === 0 ? '準備開始 Bago 派漏斗模板設定'
+    : doneCount === STEPS.length ? '🎉 全部完成！漏斗已準備好導流量'
+    : `已完成 ${doneCount} / ${STEPS.length} 步`;
+  document.getElementById('header-progress').textContent = `Step ${currentStepIdx + 1} / ${STEPS.length}`;
+}
+
+function renderInstructions(arr) {
+  return `<ol class="instructions">${arr.map(x => `
+    <li><span class="substep">${escapeHtml(x.title)}</span>${x.body}</li>
+  `).join('')}</ol>`;
+}
+
+function renderFieldCard(f) {
+  if (!f) return '';
+  let body = `<h4>${escapeHtml(f.title)}</h4>`;
+  if (f.rows) {
+    body += f.rows.map(r => `
+      <div class="field-row">
+        <dt>${escapeHtml(r.k)}</dt>
+        <dd>${r.v}${r.why ? `<span class="why">${escapeHtml(r.why)}</span>` : ''}</dd>
+      </div>
+    `).join('');
+  }
+  if (f.table) {
+    const [head, ...rows] = f.table;
+    body += `<table class="kv" style="margin-top:6px"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  }
+  if (f.hint) {
+    body += `<div style="margin-top:14px;padding:10px 12px;background:var(--ink-100);border-radius:5px;font-size:12.5px;color:var(--ink-700);line-height:1.6">${f.hint}</div>`;
+  }
+  return `<div class="field-card">${body}</div>`;
+}
+
+function renderStep() {
+  const s = STEPS[currentStepIdx];
+  const status = progress[s.key] || 'pending';
+  const isFirst = currentStepIdx === 0;
+  const isLast = currentStepIdx === STEPS.length - 1;
+  const isDone = status === 'done';
+
+  document.getElementById('header-title').textContent = `Step ${currentStepIdx + 1}: ${s.title}`;
+
+  document.getElementById('content-area').innerHTML = `
+    <div class="step-head">
+      <h2>Step ${currentStepIdx + 1}: ${escapeHtml(s.title)}</h2>
+      <span class="status-chip ${status}">${STATUS_LABEL[status]}</span>
+    </div>
+    <div class="step-subhead">${escapeHtml(s.subtitle)}</div>
+
+    <div class="hint">
+      <strong>💡 為什麼要做這步</strong>
+      <p>${s.why}</p>
+    </div>
+
+    <div class="section-title">操作步驟</div>
+    ${renderInstructions(s.instructions)}
+
+    <div class="section-title">填的欄位範例</div>
+    ${renderFieldCard(s.fields)}
+
+    <div class="gate">
+      <strong>${escapeHtml(s.gate.title)}</strong>
+      <ul>${s.gate.items.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn secondary" ${isFirst ? 'disabled' : ''} onclick="goToStep(${currentStepIdx - 1})">← 上一步</button>
+      <button class="btn ghost" onclick="markStatus('${s.key}', 'pending')" ${status === 'pending' ? 'disabled' : ''}>跳過 / 之後做</button>
+      <div class="spacer"></div>
+      ${isDone
+        ? `<span style="color:var(--status-done);font-size:13px;font-weight:600;margin-right:8px">✓ 已標記完成</span>
+           ${isLast ? '' : `<button class="btn" onclick="goToStep(${currentStepIdx + 1})">下一步 →</button>`}`
+        : `<button class="btn success" onclick="markStatus('${s.key}', 'done', true)">標記完成 ✓ ${isLast ? '' : '並前往下一步'}</button>`}
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+}
+
+// ====================== Actions ======================
+function goToStep(idx) {
+  if (idx < 0 || idx >= STEPS.length) return;
+  currentStepIdx = idx;
+  // 進到該 step 時若是 pending，自動轉成 in_progress（背景，不阻塞 UI）
+  const s = STEPS[idx];
+  const cur = progress[s.key] || 'pending';
+  if (cur === 'pending') {
+    setStatusSilently(s.key, 'in_progress');
+  }
+  renderAll();
+  document.getElementById('content-area').scrollTop = 0;
+}
+
+async function setStatusSilently(stepKey, status) {
+  try {
+    const data = await api(`/admin/setup-wizard/api/progress/${stepKey}`, { method: 'PATCH', body: { status } });
+    progress = data.stepStatus;
+    renderStepList();
+    renderProgressBar();
+  } catch (e) {
+    // silent fail OK；下次操作會 re-fetch
+  }
+}
+
+async function markStatus(stepKey, status, advance = false) {
+  try {
+    const data = await api(`/admin/setup-wizard/api/progress/${stepKey}`, { method: 'PATCH', body: { status } });
+    progress = data.stepStatus;
+    toast(status === 'done' ? '已標記完成 ✓' : status === 'pending' ? '已重置為未開始' : '狀態已更新', 'success');
+    if (advance && currentStepIdx < STEPS.length - 1 && status === 'done') {
+      currentStepIdx++;
+      // auto bump next from pending → in_progress
+      const nextKey = STEPS[currentStepIdx].key;
+      if ((progress[nextKey] || 'pending') === 'pending') {
+        setStatusSilently(nextKey, 'in_progress');
+      }
+    }
+    renderAll();
+  } catch (e) {
+    toast('更新失敗：' + e.message, 'error');
+  }
+}
+
+function renderAll() {
+  renderStepList();
+  renderProgressBar();
+  renderStep();
+}
+
+async function init() {
+  try {
+    const data = await api('/admin/setup-wizard/api/progress');
+    progress = data.stepStatus || {};
+    // 找第一個非 done 的 step 作為預設 current
+    const firstUndone = STEPS.findIndex(s => (progress[s.key] || 'pending') !== 'done');
+    currentStepIdx = firstUndone === -1 ? 0 : firstUndone;
+    renderAll();
+  } catch (e) {
+    document.getElementById('content-area').innerHTML =
+      `<div style="text-align:center;color:#c62828;padding:60px;">載入失敗：${escapeHtml(e.message)}</div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
