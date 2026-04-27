@@ -821,26 +821,84 @@ ${total === 0
 
 // ============ ADMIN PORTAL ============
 // /admin/lumi/* — Bago 派 portal v1：客戶管理 + 推訊息 + 啟動 Zeabur
-// Auth: query string ?token=xxx (env.ADMIN_TOKEN), 用 url 不公開 + token 雙保
-function checkAdminToken(req, res, next) {
+// Auth: httpOnly cookie 'admin_token' (set via POST /admin/lumi/login)
+function parseCookies(req) {
+  const out = {};
+  const raw = req.headers.cookie || '';
+  raw.split(';').forEach(p => {
+    const [k, ...v] = p.trim().split('=');
+    if (k) out[k] = decodeURIComponent(v.join('='));
+  });
+  return out;
+}
+
+function checkAdminAuth(req, res, next) {
   const expected = process.env.ADMIN_TOKEN;
   if (!expected) return res.status(503).json({ error: 'ADMIN_TOKEN not configured' });
-  const token = req.query.token || req.headers['x-admin-token'];
-  if (token !== expected) return res.status(403).json({ error: 'invalid token' });
+  const cookies = parseCookies(req);
+  const token = cookies.admin_token || req.headers['x-admin-token'];
+  if (token !== expected) {
+    if (req.path.startsWith('/admin/lumi/api/')) {
+      return res.status(403).json({ error: 'invalid token' });
+    }
+    return res.redirect('/admin/lumi/login');
+  }
   next();
 }
 
+// Login form (GET)
+app.get('/admin/lumi/login', (req, res) => {
+  const expected = process.env.ADMIN_TOKEN;
+  if (!expected) return res.status(503).send('ADMIN_TOKEN not configured');
+  const errMsg = req.query.err ? '<div style="color:#c62828;font-size:13px;margin-bottom:10px">Token 不對</div>' : '';
+  res.send(`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bago 派 Portal — 登入</title>
+<style>
+body{font-family:-apple-system,'Noto Sans TC',sans-serif;background:#fafafa;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+.card{background:#fff;padding:40px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.06);width:340px;border:1px solid #e5e5ea;}
+h1{color:#2B44B0;font-size:20px;margin:0 0 6px;letter-spacing:0.02em;}
+.sub{color:#888;font-size:12px;margin-bottom:20px;}
+input{width:100%;padding:12px 14px;border:1.5px solid #e5e5ea;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;}
+input:focus{outline:none;border-color:#3B5BDB;}
+button{width:100%;padding:12px;margin-top:12px;background:linear-gradient(135deg,#3B5BDB,#2B44B0);color:#fff;border:0;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(43,68,176,0.25);}
+</style></head><body>
+<form class="card" method="POST" action="/admin/lumi/login">
+  <h1>Bago 派 Portal</h1>
+  <div class="sub">輸入 admin token 進入後台</div>
+  ${errMsg}
+  <input type="password" name="token" placeholder="Admin token" required autofocus autocomplete="off">
+  <button type="submit">進入</button>
+</form>
+</body></html>`);
+});
+
+// Login submit (POST)
+app.post('/admin/lumi/login', (req, res) => {
+  const expected = process.env.ADMIN_TOKEN;
+  if (!expected) return res.status(503).send('ADMIN_TOKEN not configured');
+  const token = (req.body && req.body.token) || '';
+  if (token !== expected) return res.redirect('/admin/lumi/login?err=1');
+  const maxAge = 7 * 24 * 60 * 60; // 7 days
+  res.setHeader('Set-Cookie', `admin_token=${encodeURIComponent(token)}; HttpOnly; Path=/admin/lumi; SameSite=Lax; Max-Age=${maxAge}`);
+  res.redirect('/admin/lumi');
+});
+
+// Logout
+app.post('/admin/lumi/logout', (req, res) => {
+  res.setHeader('Set-Cookie', 'admin_token=; HttpOnly; Path=/admin/lumi; Max-Age=0');
+  res.redirect('/admin/lumi/login');
+});
+
 // Admin UI 頁
-app.get('/admin/lumi', checkAdminToken, (req, res) => {
+app.get('/admin/lumi', checkAdminAuth, (req, res) => {
   servePage(res, 'admin-lumi.html', {
-    ADMIN_TOKEN: req.query.token,
     LINE_ADD_URL: process.env.LINE_ADD_URL || 'https://lin.ee/uRKyXnW',
     ZEABUR_DEPLOY_URL: process.env.ZEABUR_DEPLOY_URL || 'https://zeabur.com/dashboard',
   });
 });
 
 // Admin API: list customers (with filter)
-app.get('/admin/lumi/api/customers', checkAdminToken, async (req, res) => {
+app.get('/admin/lumi/api/customers', checkAdminAuth, async (req, res) => {
   try {
     const { status, from, to } = req.query;
     const filter = {};
@@ -870,14 +928,14 @@ app.get('/admin/lumi/api/customers', checkAdminToken, async (req, res) => {
 });
 
 // Admin API: single customer detail
-app.get('/admin/lumi/api/customers/:sessionId', checkAdminToken, async (req, res) => {
+app.get('/admin/lumi/api/customers/:sessionId', checkAdminAuth, async (req, res) => {
   const session = await LumiSession.findOne({ sessionId: req.params.sessionId }).lean();
   if (!session) return res.status(404).json({ error: 'not found' });
   res.json({ session });
 });
 
 // Admin API: push text message to customer's LINE @
-app.post('/admin/lumi/api/customers/:sessionId/message', checkAdminToken, async (req, res) => {
+app.post('/admin/lumi/api/customers/:sessionId/message', checkAdminAuth, async (req, res) => {
   try {
     const { text } = req.body || {};
     if (!text || !text.trim()) return res.status(400).json({ error: 'text required' });
@@ -908,7 +966,7 @@ app.post('/admin/lumi/api/customers/:sessionId/message', checkAdminToken, async 
 });
 
 // Admin API: update customer status / adminNotes
-app.patch('/admin/lumi/api/customers/:sessionId', checkAdminToken, async (req, res) => {
+app.patch('/admin/lumi/api/customers/:sessionId', checkAdminAuth, async (req, res) => {
   try {
     const { status, adminNotes } = req.body || {};
     const update = { lastAdminAction: new Date() };

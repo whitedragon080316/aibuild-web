@@ -289,7 +289,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const TOKEN = '{{ADMIN_TOKEN}}';
 const LINE_ADD_URL = '{{LINE_ADD_URL}}';
 let allCustomers = [];
 let currentFilter = 'all';
@@ -303,12 +302,16 @@ const STATUS_LABEL = {
 };
 
 async function api(path, opts = {}) {
-  const url = path + (path.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(TOKEN);
-  const resp = await fetch(url, {
+  const resp = await fetch(path, {
     method: opts.method || 'GET',
+    credentials: 'same-origin',
     headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
+  if (resp.status === 403) {
+    window.location.href = '/admin/lumi/login';
+    throw new Error('需要重新登入');
+  }
   const data = await resp.json().catch(() => ({}));
   if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
   return data;
